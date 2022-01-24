@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="Theme.Design.NoActionBar">
+    <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="drawerArrowStyle">@style/BarStyle</item>
+    </style>
+    <style name="BarStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="color">@color/orange</item>
+        <item name="android:iconTint" tools:ignore="NewApi">@color/orange</item>
+        <item name="android:icon" tools:ignore="NewApi">@color/orange</item>
+        <item name="android:color" tools:ignore="NewApi">@color/orange</item>
+        <item name="android:backgroundTint" tools:ignore="NewApi">@color/orange</item>
+        <item name="android:background" tools:ignore="NewApi">@color/orange</item>
+    </style>
+
+    <style name="MyAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/orange</item>
+        <item name="android:textColor">@color/orange</item>
+    </style>
+
+
+    <style name="Theme_Dialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowMinWidthMajor">90%</item>
+        <item name="android:windowMinWidthMinor">90%</item>
+    </style>
+
+    <style name="CustomBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/CustomBottomSheetStyle</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="CustomBottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+</resources>

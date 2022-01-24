@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:cardCornerRadius="30dp"
+    app:cardElevation="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <RelativeLayout
+            android:id="@+id/appbar"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:contentDescription="@string/todo"
+                android:src="@drawable/ic_close"
+                app:tint="@color/black" />
+
+            <TextView
+                android:id="@+id/total"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="20dp"
+                android:gravity="start"
+                android:text="Customer Information"
+                android:textColor="@color/black"
+                android:textSize="36sp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="14dp"
+            android:background="@color/black_light" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="start|center"
+                android:text="Customer Name"
+                android:textSize="22sp" />
+
+            <EditText
+                android:id="@+id/customer_name"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dialog_reservation_ed"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/grey_strok" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="start|center"
+                android:text="Country Code"
+                android:textSize="22sp" />
+
+            <com.hbb20.CountryCodePicker
+                android:id="@+id/country_code_picker"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dialog_reservation_ed"
+                android:layout_weight="1"
+                android:background="@drawable/text_view_bg"
+                android:gravity="start|center"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black_light"
+                android:textSize="22sp" />
+
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="start|center"
+                android:text="Mobile"
+                android:textSize="22sp" />
+
+            <EditText
+                android:id="@+id/mobile_number"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dialog_reservation_ed"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/grey_strok" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="start|center"
+                android:text="Size"
+                android:textSize="22sp" />
+
+            <com.skydoves.powerspinner.PowerSpinnerView
+                android:id="@+id/person_size_spinner"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/dialog_reservation_ed"
+                android:layout_weight="1"
+                android:layout_margin="4dp"
+                android:background="@drawable/text_view_bg"
+                android:gravity="start|center"
+                android:hint="VIP"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black_light"
+                android:textSize="22sp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                app:spinner_arrow_gravity="end"
+                app:spinner_arrow_padding="8dp"
+                app:spinner_arrow_tint="@color/black"
+                app:spinner_divider_color="@color/light_grey"
+                app:spinner_divider_show="true"
+                app:spinner_divider_size="0.4dp"
+                app:spinner_popup_animation="dropdown"
+                app:spinner_popup_background="@color/light_bg"
+                app:spinner_popup_elevation="14dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:text="Queued Time"
+                android:textColor="@color/black_light"
+                android:textSize="22sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginBottom="10dp"
+                android:orientation="horizontal">
+
+                <com.xw.repo.BubbleSeekBar
+                    android:id="@+id/cooking_seekbar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_weight="1"
+                    app:bsb_bubble_color="@color/colorPrimary"
+                    app:bsb_bubble_text_color="@color/white"
+                    app:bsb_hide_bubble="true"
+                    app:bsb_max="120"
+                    app:bsb_min="0"
+                    app:bsb_progress="0"
+                    app:bsb_second_track_color="@color/colorPrimary"
+                    app:bsb_show_progress_in_float="false"
+                    app:bsb_track_color="@color/dark_grey" />
+
+                <TextView
+                    android:id="@+id/cooking_time"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="0"
+                    android:layout_marginEnd="15dp"
+                    android:textColor="@color/black_light"
+                    android:textSize="18sp" />
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="start|center"
+                android:text="Note"
+                android:textSize="22sp" />
+
+            <EditText
+                android:id="@+id/customer_note"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/grey_strok" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp">
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/add_waiting"
+                android:layout_weight="0.5"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_toStartOf="@id/close_button"
+                android:background="@drawable/primary_bg"
+                android:gravity="center"
+                android:text="Add"
+                android:textColor="@color/white"
+                android:textSize="26sp" />
+
+            <TextView
+                android:id="@+id/close_button"
+                android:layout_weight="0.5"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="10sp"
+                android:background="@drawable/red_bg"
+                android:gravity="center"
+                android:text="Close"
+                android:textColor="@color/white"
+                android:textSize="26sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

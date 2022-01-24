@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/product_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:padding="5dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+
+
+        <TextView
+            android:id="@+id/product_name"
+            android:text="Small"
+            android:textSize="16sp"
+            android:fontFamily="@font/montserrat_bold"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"
+            android:layout_gravity="top"
+            android:textColor="@color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+
+        <TextView
+            android:id="@+id/product_cost"
+            android:text="$ 50.75"
+            android:textSize="16sp"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/product_note"
+            android:textColor="@color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/product_note"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/chk_box_kitchen_order"
+            android:text="$ 50.75"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+        <CheckBox
+            android:id="@+id/chk_box_kitchen_order"
+            android:layout_marginStart="10dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/category"
+            android:layout_width="30dp"
+            android:buttonTint="@color/check_box_bg"
+            android:layout_height="30dp" />
+
+
+    </RelativeLayout>
+
+
+</LinearLayout>

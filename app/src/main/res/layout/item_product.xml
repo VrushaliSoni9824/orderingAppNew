@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/product_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:layout_margin="10dp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <FrameLayout
+            android:padding="8dp"
+            android:background="@color/colorPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/product_name"
+                android:textSize="@dimen/product_text_size"
+                android:textStyle="bold"
+                android:layout_gravity="top"
+                android:ellipsize="end"
+                android:maxLines="3"
+                android:textColor="@color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_marginTop="70dp"
+                android:layout_gravity="bottom"
+                android:textColor="@color/white"
+                android:gravity="start|bottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/product_cost"
+                    android:textSize="@dimen/product_price_text"
+                    android:textStyle="bold"
+                    android:layout_marginTop="70dp"
+                    android:layout_gravity="bottom"
+                    android:textColor="@color/white"
+                    android:text="price"
+                    android:gravity="start|bottom"></TextView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/product_discount"
+                    android:textSize="@dimen/product_price_text"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="70dp"
+                    android:layout_gravity="bottom"
+                    android:textColor="@color/white"
+                    android:gravity="start|bottom"
+                    android:text="discount"></TextView>
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="@dimen/dimen_10dp"
+    android:background="@drawable/bg_gray_border">
+
+    <TextView
+        android:id="@+id/listTitle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_1sdp"
+        android:drawableLeft="@drawable/ic_baseline_add_circle_24"
+        android:padding="@dimen/_6sdp"
+        android:paddingLeft="?android:attr/expandableListPreferredItemPaddingLeft"
+        android:text="aaaa"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_18sdp" />
+
+</LinearLayout>
+

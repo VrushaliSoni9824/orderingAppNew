@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:orientation="horizontal"
+    tools:ignore="MissingDefaultResource">
+
+<TextView
+    android:id="@+id/tax_name"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="0.5"
+    android:gravity="left|center_vertical"
+    android:text="GST"
+    android:textColor="@color/black"
+    android:textStyle="bold" />
+
+<TextView
+    android:id="@+id/tax"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="0.5"
+    android:gravity="right|center_vertical"
+    android:text="CAD 0"
+    android:textColor="@color/black"
+    android:textStyle="bold" />
+
+</LinearLayout>

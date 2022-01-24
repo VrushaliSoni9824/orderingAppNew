@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/frame_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            android:layout_above="@id/bottom_layout">
+
+
+
+
+        </FrameLayout>
+
+
+
+        <LinearLayout
+            android:id="@+id/bottom_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@android:color/transparent"
+                app:cardCornerRadius="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#3a404e"
+                    android:gravity="start|center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/drawer_btn"
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="4dp"
+                        android:contentDescription="@string/todo"
+                        android:padding="16dp"
+                        android:src="@drawable/ic_menu" />
+
+                    <TextView
+                        android:id="@+id/navigation_pos"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_margin="4dp"
+                        android:layout_weight="0.4"
+                        android:gravity="center"
+                        android:text="POS"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/bottom_menu_text"
+                        android:textStyle="bold" />
+
+
+                    <TextView
+                        android:id="@+id/navigation_online_order"
+                        android:layout_width="20dp"
+                        android:layout_height="match_parent"
+                        android:layout_margin="4dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Online Order (5)"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/bottom_menu_text"
+                        android:textStyle="bold" />
+
+
+                    <TextView
+                        android:id="@+id/navigation_ongoing_order"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_margin="4dp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="On Going Order (11)"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/bottom_menu_text"
+                        android:textStyle="bold" />
+
+
+                    <TextView
+                        android:id="@+id/navigation_tablee"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_margin="4dp"
+                        android:layout_weight="0.5"
+                        android:gravity="center"
+                        android:text="Tables"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/bottom_menu_text"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/notification_btn"
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"
+                        android:contentDescription="@string/todo"
+                        android:padding="16dp"
+                        android:src="@drawable/ic_notification" />
+
+                    <ImageView
+                        android:id="@+id/change_location_btn"
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginBottom="4dp"
+                        android:contentDescription="@string/todo"
+                        android:padding="16dp"
+                        android:src="@drawable/ic_exchange" />
+
+                    <ImageView
+                        android:id="@+id/logout_btn"
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="4dp"
+                        android:contentDescription="@string/todo"
+                        android:padding="16dp"
+                        android:visibility="gone"
+                        android:src="@drawable/ic_logout" />
+
+
+                </LinearLayout>
+
+
+            </androidx.cardview.widget.CardView>
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layoutDirection="ltr"
+    tools:context=".MainActivity"
+    tools:openDrawer="start">
+
+    <include
+        android:id="@+id/main_layout"
+        layout="@layout/tab_main_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:id="@+id/drawer_layout_main"
+        android:layout_width="350dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@android:color/transparent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="20dp">
+
+                <RelativeLayout
+                    android:background="@color/black"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_above="@id/v">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingBottom="10dp">
+
+                            <TextView
+                                android:id="@+id/outletname"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="20dp"
+                                android:layout_marginTop="20dp"
+                                android:layout_marginEnd="20dp"
+                                android:gravity="center"
+                                android:padding="8dp"
+                                android:text="MENUTEST"
+                                android:textColor="@color/white"
+                                android:textSize="36sp"
+                                android:textStyle="bold"
+                                android:visibility="gone" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:layout_marginStart="30dp"
+                                android:layout_marginEnd="30dp"
+                                android:visibility="gone"
+                                android:background="@color/white" />
+
+                            <TextView
+                                android:id="@+id/ll_pos"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="20dp"
+                                android:layout_marginTop="20dp"
+                                android:layout_marginEnd="20dp"
+                                android:background="@drawable/drawer_item_bg"
+                                android:gravity="center"
+                                android:padding="8dp"
+                                android:text="POS"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/drawer_text_size"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/ll_all_orders"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="20dp"
+                                android:layout_marginTop="20dp"
+                                android:layout_marginEnd="20dp"
+                                android:background="@drawable/drawer_item_bg"
+                                android:gravity="center"
+                                android:padding="8dp"
+                                android:text="All Order"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/drawer_text_size"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/ll_kitchen_display"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="20dp"
+                                android:layout_marginTop="20dp"
+                                android:layout_marginEnd="20dp"
+                                android:background="@drawable/drawer_item_bg"
+                                android:gravity="center"
+                                android:padding="8dp"
+                                android:text="Kitchen Display"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/drawer_text_size"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/ll_counter_display"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="20dp"
+                                android:layout_marginTop="20dp"
+                                android:layout_marginEnd="20dp"
+                                android:background="@drawable/drawer_item_bg"
+                                android:gravity="center"
+                                android:padding="8dp"
+                                android:text="Counter Display"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/drawer_text_size"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/llReservation"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="20dp"
+                                android:layout_marginTop="20dp"
+                                android:layout_marginEnd="20dp"
+                                android:background="@drawable/drawer_item_bg"
+                                android:gravity="center"
+                                android:padding="8dp"
+                                android:text="Reservation"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/drawer_text_size"
+                                android:textStyle="bold"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:id="@+id/llWaitingList"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="20dp"
+                                android:layout_marginTop="20dp"
+                                android:layout_marginEnd="20dp"
+                                android:background="@drawable/drawer_item_bg"
+                                android:gravity="center"
+                                android:padding="8dp"
+                                android:text="Waiting List"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/drawer_text_size"
+                                android:textStyle="bold"
+                                android:visibility="gone" />
+
+                            <TextView
+                                android:id="@+id/ll_menu"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginStart="20dp"
+                                android:layout_marginTop="20dp"
+                                android:layout_marginEnd="20dp"
+                                android:background="@drawable/drawer_item_bg"
+                                android:gravity="center"
+                                android:padding="8dp"
+                                android:text="Menu"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/drawer_text_size"
+                                android:textStyle="bold" />
+
+
+                        </LinearLayout>
+
+                    </ScrollView>
+
+                    <View
+                        android:id="@+id/v"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_above="@id/bottom_layout"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginEnd="30dp"
+                        android:layout_marginBottom="20dp"
+                        android:visibility="gone"
+                        android:background="@color/white" />
+
+                    <LinearLayout
+                        android:id="@+id/bottom_layout"
+                        android:layout_marginBottom="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/profile_image"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:visibility="gone"
+                            android:src="@mipmap/ic_launcher_round" />
+
+                        <TextView
+                            android:id="@+id/user_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:visibility="gone"
+                            android:minWidth="150dp"
+                            android:text="Mark J"
+                            android:textColor="@color/white"
+                            android:textSize="24sp" />
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.drawerlayout.widget.DrawerLayout>

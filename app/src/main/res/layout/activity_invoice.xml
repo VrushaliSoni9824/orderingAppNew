@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="730dp"
+    android:layout_height="410dp"
+    android:orientation="vertical"
+    android:weightSum="4"
+    tools:context=".activity.InvoiceActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Button" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Button" />
+
+        <Button
+            android:id="@+id/button4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Button" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="392dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/editTextTextPersonName4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="Nento" />
+
+            <Button
+                android:id="@+id/button3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Button" />
+
+            <TextView
+                android:id="@+id/textView_billingfrom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Billing From" />
+
+            <TextView
+                android:id="@+id/textView_menutest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="MENUTEST" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/textView_mobile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mobile : " />
+
+            <TextView
+                android:id="@+id/textView_Email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Email : " />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView_invoice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Invoice" />
+
+            <TextView
+                android:id="@+id/textView_invoiceno"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Invoice No : " />
+
+            <TextView
+                android:id="@+id/textView_ordertype"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Order Type : " />
+
+            <TextView
+                android:id="@+id/textView_billdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Bill Date : " />
+
+            <Button
+                android:id="@+id/button99"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Button" />
+
+            <TextView
+                android:id="@+id/textView_to"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/textView_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Rajkot, Gujrat, India" />
+
+            <TextView
+                android:id="@+id/textView_hst"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="HST No : 9876543210" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"></LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textView13"
+            android:layout_width="130dp"
+            android:layout_height="match_parent"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/textView14"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/textView15"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/textView16"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="130dp"
+            android:layout_height="match_parent"
+            android:text="TextView" />
+    </LinearLayout>
+
+</LinearLayout>

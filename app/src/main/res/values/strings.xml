@@ -1,0 +1,154 @@
+<resources>
+    <string name="app_name">Menuo Order Manager</string>
+    <string name="items_in_cart">Items in Cart  (0) </string>
+    <string name="todo">TODO</string>
+    <string name="search_item">Search item</string>
+    <string name="dine_in">Dine-In</string>
+    <string name="add_to_cart">Add To Cart</string>
+    <string name="close">Close</string>
+    <string name="_110_00">$ 110.00</string>
+    <string name="are_you_sure_you_want_to_accept_the_order">Are you sure you want to accept the order?</string>
+
+    <string name="whole_text"><![CDATA["<b>Whole: </b>"]]></string>
+    <string name="first_half_text"><![CDATA["<b>First Half: </b>"]]></string>
+    <string name="second_half_text"><![CDATA["<b>Second Half: </b>"]]></string>
+
+    <!--    by vrushali-->
+    <string-array name="port">
+        <item>NET</item>
+        <item>BT</item>
+        <item>USB</item>
+    </string-array>
+
+    <string-array name="cardTerminal">
+        <item>VISA</item>
+        <item>Master Card</item>
+    </string-array>
+
+
+    <string name="connect">Connect </string>
+    <string name="discon">disConnect</string>
+    <string name="hint">Please input IP</string>
+    <string name="contextandcode">print context,lineAndBarCode</string>
+    <string name="read">Read Buffer</string>
+    <string name="image">Print Image</string>
+    <string name="image1">Print Raste Image</string>
+    <string name="text">Print text and cutpaper</string>
+    <string name="barcode">Print barCode</string>
+    <string name="bleselect">Please select BLE dev</string>
+    <string name="usbselect">Please select USB dev</string>
+    <string name="toast_discon_success">Disconnect success</string>
+    <string name="toast_discon_faile">Disconnect success</string>
+    <string name="toast_present_con">there is no connection</string>
+    <string name="send_success">Send Success</string>
+    <string name="send_failed">Send Failed</string>
+    <string name="not_con_printer">there is no connection</string>
+    <string name="usb_pre_con">present connected Usb dev:</string>
+    <string name="con_success">Connect success</string>
+    <string name="con_failed">Connect failed</string>
+    <string name="con_has_discon">connection has disconnected</string>
+    <string name="sb">Select</string>
+    <string name="start_pos_activity">Start PosPrint</string>
+    <string name="start_76_activity">Start 76 PosPrint</string>
+    <string name="start_tsc_activity">Start TSC PosPrint</string>
+    <string name="qrcode">Print QRcode</string>
+    <string name="none_ble_device">no devices are found</string>
+    <string name="none_ipaddress">pleesa input the ipaddress first!</string>
+    <string name="connect_first">please connet the printer first!</string>
+    <string name="this_is_text">This is Text!</string>
+    <string name="text_for">text for!</string>
+    <string name="error_level">error_level</string>
+    <string name="qrcode_content">input content，create QRCode</string>
+    <string name="qrcode_clear">clear</string>
+    <string name="qrcode_creat">creat</string>
+    <string name="qrcode_print">print</string>
+    <string name="qrcode_scan">scan</string>
+    <string name="none_content">please input content first！</string>
+    <string name="check_linke">checkLink</string>
+    <string name="net_connet_loss">network connect loss,please go back and connet the printer again</string>
+    <string name="l58">58</string>
+    <string name="l80">80</string>
+    <string name="barcodePrinter">barcode printer</string>
+    <string name="teminal">Ternimal Printer</string>
+    <string name="barcode_printer">Barcode Printer</string>
+    <string name="no_device">no available  usb device</string>
+    <string name="please_device">please select device</string>
+    <string name="sample">sample</string>
+    <string name="print_text">print text</string>
+    <string name="print_barcode">print barcode</string>
+    <string name="print_qrcode">print qrcode</string>
+    <string name="print_bitmap">print bitmap</string>
+    <string name="printer_76">76 printer</string>
+    <string name="other_printer"> other printer</string>
+    <string name="printer_58IId">58IID </string>
+    <string name="POSInvoice">POS \n Invoice </string>
+    <string name="POSviewInvoice">View \n Details </string>
+
+    <!--    syncdata-->
+    <string name="is_all_data_yes">1</string>
+    <string name="is_all_data_no">0</string>
+
+    <string name="CATEGORY_UPDATE">CATEGORY_UPDATE</string>
+    <string name="CATEGORY_INSTRUCTION_UPDATE">CATEGORY_INSTRUCTION_UPDATE</string>
+    <string name="ADDON_UPDATE">ADDON_UPDATE</string>
+    <string name="VARIATION_UPDATE">VARIATION_UPDATE</string>
+    <string name="MODIFIER_UPDATE">MODIFIER_UPDATE</string>
+    <string name="RESERVATION_UPDATE">RESERVATION_UPDATE</string>
+    <string name="WAITINGLIST_UPDATE">WAITINGLIST_UPDATE</string>
+    <string name="CUSTOMER_CATEGORY_UPDATE">CUSTOMER_CATEGORY_UPDATE</string>
+    <string name="CARD_TYPE_UPDATE">CARD_TYPE_UPDATE</string>
+    <string name="ONGOING_ORDER_UPDATE">ONGOING_ORDER_UPDATE</string>
+    <string name="ALL_ORDER_UPDATE">ALL_ORDER_UPDATE</string>
+    <string name="KITCHEN_UPDATE">KITCHEN_UPDATE</string>
+    <string name="COUNTER_DISPLAY_UPDATE">COUNTER_DISPLAY_UPDATE</string>
+    <string name="SUB_USER_UPDATE">SUB_USER_UPDATE</string>
+    <string name="PRODUCT_UPDATE">PRODUCT_UPDATE</string>
+    <string name="FLOOR_UPDATE">FLOOR_UPDATE</string>
+    <string name="TABLE_UPDATE">TABLE_UPDATE</string>
+    <string name="PAYMENT_METHOD_UPDATE">PAYMENT_METHOD_UPDATE</string>
+    <string name="ONLINE_ORDER_UPDATE">ONLINE_ORDER_UPDATE</string>
+    <string name="True">1</string>
+    <string name="False">0</string>
+
+    <string name="drawer_open">Drawer Opened</string>
+    <string name="drawer_close">Drawer Closed</string>
+    <string name="lbl_RECEIPT_DATE">Receipt Date :</string>
+    <string name="lbl_DATE"> Date:</string>
+    <string name="lbl_OrderNo">Order : </string>
+    <string name="lbl_Name">Menuo.se</string>
+    <string name="lbl_delivery">Delivery</string>
+    <string name="lbl_ItemName">Item Name</string>
+    <string name="lbl_Quantity">Qty</string>
+    <string name="lbl_Price">Price</string>
+    <string name="lbl_Customer">Customer</string>
+    <string name="lbl_notes">Notes</string>
+    <string name="lbl_notes_">Yellow house, door to the left</string>
+    <string name="lbl_subTotal">SubTotal </string>
+    <string name="lbl_Delivery_free">Delivery Free </string>
+    <string name="lbl_Total">Total </string>
+
+    <!--    deliveryType-->
+    <string name="Delivery">Delivery</string>
+    <string name="Pick_Up">Pick Up</string>
+    <string name="Eat_In">Eat In </string>
+    <string name="Curbside">Curbside</string>
+    <string name="Driver_thru">Driver thru</string>
+
+    <string name="lbl_reject_possible">Call your customer to resolve the issue as politely as possible.</string>
+    <string name="lbl_reject_noification">The order will be marked as rejected and the customer will be informed with an notification.</string>
+    <string name="lbl_phone_number">Phone number:</string>
+    <string name="lbl_Cancelled">Cancelled</string>
+    <string name="lbl_StillLoggedIn">Still LoggedIn</string>
+    <string name="dialog_ok">Ok</string>
+    <string name="lbl_LoggedOut">LoggedOut</string>
+    <string name="lbl_WantToLogOut"> You want to logout</string>
+    <string name="lbl_reject"> Are you sure you want to reject?</string>
+    <string name="lbl_accept"> Are you sure you want to accept?</string>
+    <string name="lbl_reject_done"> Order rejected !</string>
+    <string name="lbl_accept_done"> Order Accepted !</string>
+    <string name="lbl_pickUpReady"> Order Ready !</string>
+    <string name="lbl_error"> Something went wrong ! Try again</string>
+    <string name="lbl_NO">No</string>
+    <string name="lbl_YES">Yes</string>
+    <string name="lbl_OK">OK</string>
+</resources>

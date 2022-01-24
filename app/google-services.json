@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "434771436210",
+    "project_id": "menuobusiness",
+    "storage_bucket": "menuobusiness.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:434771436210:android:5ed056415a7e2deb759fab",
+        "android_client_info": {
+          "package_name": "com.tjcg.menuo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "434771436210-5kmgkmoprb03oe8l9u33vl3hbunjkds0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tjcg.menuo",
+            "certificate_hash": "f98d2b171e430e5d6f3bd593317cf7b5f76f93e9"
+          }
+        },
+        {
+          "client_id": "434771436210-ls92i5jrpm9umb67p1suh0t6clh6lqjn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3Em9kdRMzEc1Tv4-7U8DUlYakWOxIgbQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "434771436210-ls92i5jrpm9umb67p1suh0t6clh6lqjn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

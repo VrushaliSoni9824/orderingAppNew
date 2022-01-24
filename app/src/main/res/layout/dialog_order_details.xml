@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:cardCornerRadius="@dimen/dialog_card_radius"
+    app:cardElevation="@dimen/dialog_card_elevation">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:orientation="vertical">
+
+
+        <RelativeLayout
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp">
+
+            <ImageView
+                android:id="@+id/close_button"
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:contentDescription="@string/todo"
+                android:src="@drawable/ic_close"
+                app:tint="@color/black" />
+
+            <TextView
+                android:id="@+id/header_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"
+                android:layout_marginStart="20dp"
+                android:gravity="start"
+                android:text="Order Details"
+                android:textColor="@color/black"
+                android:textSize="36sp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="14dp"
+            android:background="@color/black_light" />
+
+        <LinearLayout
+            android:id="@+id/header_layout"
+            android:layout_marginTop="20dp"
+            android:background="@color/colorPrimary"
+            android:orientation="horizontal"
+            android:layout_width="800dp"
+            android:layout_height="70dp" >
+
+            <TextView
+                android:text="Item"
+                android:textColor="@color/white"
+                android:textSize="@dimen/waiting_header_text"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_weight="4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:background="@color/white"
+                android:layout_width="1dp"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:text="Qty."
+                android:textColor="@color/white"
+                android:textSize="@dimen/waiting_header_text"
+                android:gravity="center"
+                android:layout_margin="4dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:background="@color/white"
+                android:layout_width="1dp"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:text="Notes"
+                android:textColor="@color/white"
+                android:textSize="@dimen/waiting_header_text"
+                android:gravity="center"
+                android:layout_margin="4dp"
+                android:layout_gravity="center"
+                android:layout_weight="3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:background="@color/white"
+                android:layout_width="1dp"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:text="Action"
+                android:textColor="@color/white"
+                android:textSize="@dimen/waiting_header_text"
+                android:gravity="center"
+                android:layout_margin="4dp"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" >
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView_order_details"
+                    android:layout_marginTop="4dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/product_addons_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

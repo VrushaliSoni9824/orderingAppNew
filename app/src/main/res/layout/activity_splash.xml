@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/img_splash"
+    tools:context=".activity.SplashActivity">
+
+    <LinearLayout
+        android:id="@+id/l"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="start|center"
+            android:text="Enter token here"
+            android:textSize="22sp" />
+
+        <EditText
+            android:id="@+id/token"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dialog_reservation_ed"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:background="@drawable/grey_strok" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/next"
+        android:text="Next"
+        android:visibility="gone"
+        android:layout_marginTop="40sp"
+        android:layout_below="@id/l"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>

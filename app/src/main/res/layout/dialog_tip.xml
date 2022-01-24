@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="650dp"
+    android:layout_height="match_parent"
+    app:cardCornerRadius="@dimen/dialog_card_radius"
+    app:cardElevation="@dimen/dialog_card_elevation">
+
+    <LinearLayout
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <RelativeLayout
+            android:id="@+id/appbar"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true">
+
+            <ImageView
+                android:id="@+id/close_button"
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:contentDescription="@string/todo"
+                android:src="@drawable/ic_close"
+                app:tint="@color/black" />
+
+            <TextView
+                android:id="@+id/total"
+                android:layout_centerVertical="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="40dp"
+                android:gravity="start"
+                android:text="Add Tip"
+                android:textColor="@color/black"
+                android:textSize="36sp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="14dp"
+            android:background="@color/black_light" />
+
+        <TextView
+            android:id="@+id/total_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginStart="40sp"
+            android:gravity="center"
+            android:text="Tip"
+            android:textSize="32sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="30sp"
+            android:layout_marginStart="30sp"
+            android:layout_marginEnd="30sp"
+            android:orientation="horizontal"
+            android:layout_width="600dp"
+            android:layout_height="70dp" >
+
+            <TextView
+                android:id="@+id/tip_type"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="$"
+                android:background="@drawable/grey_strok"
+                android:textColor="@color/black_light"
+                android:textSize="28sp" />
+
+
+            <EditText
+                android:id="@+id/tip_ed"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:inputType="number"
+                android:background="@drawable/grey_strok" />
+
+            <TextView
+                android:id="@+id/tip_type_money"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="20dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/primary_bg"
+                android:gravity="center"
+                android:text="$"
+                android:textColor="@color/white"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/tip_type_per"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+                android:background="@drawable/primary_bg_light"
+                android:gravity="center"
+                android:text="%"
+                android:textColor="@color/black_light"
+                android:textSize="30sp" />
+
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp">
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/confirm"
+                android:layout_weight="0.5"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:background="@drawable/primary_bg"
+                android:gravity="center"
+                android:text="Add"
+                android:textColor="@color/white"
+                android:textSize="26sp" />
+
+            <TextView
+                android:id="@+id/close_button2"
+                android:layout_weight="0.5"
+                android:layout_width="0dp"
+                android:layout_height="55dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="10sp"
+                android:background="@drawable/red_bg"
+                android:gravity="center"
+                android:text="Close"
+                android:textColor="@color/white"
+                android:textSize="26sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

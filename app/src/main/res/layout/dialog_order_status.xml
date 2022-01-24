@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="650dp"
+    android:layout_height="match_parent"
+    app:cardCornerRadius="@dimen/dialog_card_radius"
+    app:cardElevation="@dimen/dialog_card_elevation">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/appbar"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/close_button"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:contentDescription="@string/todo"
+                android:src="@drawable/ic_close"
+                app:tint="@color/black" />
+
+            <TextView
+                android:id="@+id/total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:gravity="center"
+                android:text="Order Status"
+                android:textColor="@color/black"
+                android:textSize="36sp"
+                android:textStyle="bold" />
+
+        </RelativeLayout>
+
+        <CheckBox
+            android:id="@+id/chkComplete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30sp"
+            android:layout_marginTop="30sp"
+            android:layout_marginEnd="30sp"
+            android:layout_marginBottom="4dp"
+            android:text="Completed"
+            android:checked="true"
+            android:textColor="@color/colorPrimary"
+            android:textSize="32dp" />
+
+        <CheckBox
+            android:id="@+id/chkOngoig"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30sp"
+            android:layout_marginTop="10sp"
+            android:layout_marginEnd="30sp"
+            android:layout_marginBottom="4dp"
+            android:text="On Going"
+            android:textColor="@color/colorPrimary"
+            android:textSize="32dp" />
+
+
+        <TextView
+            android:id="@+id/next"
+            android:layout_width="500dp"
+            android:layout_height="75dp"
+            android:layout_marginStart="30sp"
+            android:layout_marginTop="60sp"
+            android:layout_marginEnd="30sp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/primary_bg"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="Next"
+            android:textColor="@color/white"
+            android:textSize="34sp" />
+
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
