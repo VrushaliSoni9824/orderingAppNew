@@ -161,7 +161,7 @@
                 android:layout_margin="10dp"
                 android:background="@drawable/bg_black_border"
                 android:gravity="center"
-                android:text="Redy for Pick up"
+                android:text="Complete the order"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:visibility="visible" />

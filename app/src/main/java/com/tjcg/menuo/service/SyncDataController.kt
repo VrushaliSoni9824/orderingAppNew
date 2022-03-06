@@ -85,7 +85,7 @@ class SyncDataController(context: Context) {
             override fun onResponse(call: Call<String?>, response: Response<String?>) {
                 if (response.isSuccessful) {
 //                    lottieProgressDialog!!.cancelDialog()
-                    Toast.makeText(applicationContext, "Login Successfully", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(applicationContext, "Login Successfully", Toast.LENGTH_SHORT).show()
                     orderResult = response.body()!!.toString()
                     parsePaginationInfoJson(orderResult, true)
 

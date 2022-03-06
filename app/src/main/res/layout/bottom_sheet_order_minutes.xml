@@ -101,6 +101,7 @@
                     android:background="@drawable/dark_grey_border"
                     android:gravity="center"
                     android:text="45 min"
+                    android:clickable="true"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_14ssp" />
 
@@ -161,6 +162,7 @@
                     android:background="@drawable/dark_grey_border"
                     android:gravity="center"
                     android:text="80 min"
+                    android:textColor="@color/black"
                     android:textSize="@dimen/_14ssp" />
 
                 <TextView
@@ -206,10 +208,10 @@
                 android:layout_marginStart="@dimen/_5sdp"
                 android:layout_marginEnd="@dimen/_5sdp"
                 android:layout_weight="0.333"
-                android:background="@drawable/dark_red"
+                android:background="@drawable/button_orange"
                 android:gravity="center"
                 android:text="30 min"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="@dimen/_14ssp" />
 
             <TextView
@@ -286,6 +288,7 @@
                 android:gravity="center"
                 android:padding="10dp"
                 android:text="Print"
+                android:clickable="true"
                 android:textColor="@color/white"
                 android:textSize="20sp" />
 

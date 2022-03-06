@@ -32,6 +32,9 @@ interface ApiInterface {
     @GET
     fun getBusinessUsers(@Url url: String?,@Header("x-api-key") x_api_key: String?): Call<String?>?
 
+    @POST
+    fun forgetPassword(@Url url: String?): Call<String?>?
+
     @GET("orders?page_size=10&mode=dashboard&page=")
     fun getOrders(@Header("x-api-key") x_api_key: String?,
                   @Field("page_size") page_size: String?,

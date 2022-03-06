@@ -107,7 +107,7 @@ class OrderRejectActivity : AppCompatActivity() {
 
                 } else {
                     lottieProgressDialog!!.cancelDialog()
-                    val sweetAlertDialog = SweetAlertDialog(applicationContext, SweetAlertDialog.WARNING_TYPE)
+                    val sweetAlertDialog = SweetAlertDialog(this@OrderRejectActivity, SweetAlertDialog.WARNING_TYPE)
                     sweetAlertDialog.setCanceledOnTouchOutside(false)
                     sweetAlertDialog.setCancelable(false)
                     sweetAlertDialog.contentText = resources.getString(R.string.lbl_error) //sweetAlertDialog.contentTextSize = resources.getDimension(R.dimen._7ssp).roundToInt(

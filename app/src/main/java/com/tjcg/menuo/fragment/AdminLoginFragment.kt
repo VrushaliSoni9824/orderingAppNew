@@ -27,9 +27,11 @@ import android.provider.Settings
 import com.google.firebase.messaging.FirebaseMessaging
 import android.text.TextUtils
 import android.util.Base64
+import android.view.MotionEvent
 import androidx.annotation.RequiresApi
 import com.google.android.gms.tasks.*
 import com.tjcg.menuo.Expandablectivity
+import com.tjcg.menuo.ForgetPasswordActivity
 import com.tjcg.menuo.data.remote.ServiceGenerator
 import com.tjcg.menuo.data.response.Keys.KeyResponce
 import com.tjcg.menuo.data.response.Login.OutletsRS
@@ -44,6 +46,18 @@ import java.lang.Exception
 import java.lang.StringBuilder
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
+import android.text.method.PasswordTransformationMethod
+
+import android.text.method.HideReturnsTransformationMethod
+
+import android.R
+import android.graphics.drawable.Drawable
+
+
+
+
+
+
 
 
 class AdminLoginFragment : Fragment(), ResponseListener {
@@ -77,6 +91,29 @@ class AdminLoginFragment : Fragment(), ResponseListener {
         var fisrtSyncDone : Boolean = sharedPreferences.getBoolean("fisrtSyncDone",false)
         if(fisrtSyncDone){
             binding!!.cashierLoginButton.visibility=View.VISIBLE
+        }
+
+        binding!!.passwordEt.setOnTouchListener(object : View.OnTouchListener {
+            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+
+                when (event?.action) {
+                    MotionEvent.ACTION_DOWN ->{
+//                        Toast.makeText(getContext(),"show",Toast.LENGTH_SHORT).show();
+                        binding!!.passwordEt.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    } //Do Something
+                    MotionEvent.ACTION_UP->{
+                        binding!!.passwordEt.setTransformationMethod(PasswordTransformationMethod.getInstance());
+//                        binding!!.passwordEt.setCompoundDrawablesWithIntrinsicBounds(img, null, null, null)
+//                        Toast.makeText(getContext(),"hide",Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                return v?.onTouchEvent(event) ?: true
+            }
+        })
+
+        binding!!.textView4.setOnClickListener {
+            startActivity(Intent(loginActivity, ForgetPasswordActivity::class.java))
         }
 
         binding!!.adminLogin.setOnClickListener {
@@ -263,7 +300,7 @@ class AdminLoginFragment : Fragment(), ResponseListener {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(call: Call<LoginRs?>, response: Response<LoginRs?>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(activity,"siccess",Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(activity,"siccess",Toast.LENGTH_SHORT).show()
                     var accessToken=response.body()!!.result.session.access_token
                     Constants.bearrToken=accessToken
                     prefManager!!.setString("auth_token", accessToken)
@@ -292,7 +329,7 @@ class AdminLoginFragment : Fragment(), ResponseListener {
             override fun onResponse(call: Call<KeyResponce?>, response: Response<KeyResponce?>) {
                 if (response.isSuccessful) {
 //                    lottieProgressDialog!!.cancelDialog()
-                    Toast.makeText(activity,"siccess",Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(activity,"siccess",Toast.LENGTH_SHORT).show()
                     var key =response.body()!!.result[0].key
                     getOrders(key)
 
@@ -322,7 +359,7 @@ class AdminLoginFragment : Fragment(), ResponseListener {
             override fun onResponse(call: Call<String?>, response: Response<String?>) {
                 if (response.isSuccessful) {
                     lottieProgressDialog!!.cancelDialog()
-                    Toast.makeText(activity,"siccess",Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(activity,"siccess",Toast.LENGTH_SHORT).show()
                     var orderResult : String =response.body()!!.toString()
                     orderResult
 
@@ -358,7 +395,7 @@ class AdminLoginFragment : Fragment(), ResponseListener {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(call: Call<String?>, response: Response<String?>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(activity,"success",Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(activity,"success",Toast.LENGTH_SHORT).show()
                     var orderResult : String =response.body()!!.toString()
                     val jobj = JSONObject(orderResult)
                     val jsnResult : JSONArray = jobj.getJSONArray("result")!!
@@ -449,6 +486,7 @@ class AdminLoginFragment : Fragment(), ResponseListener {
 //            }.apply()
         }
     }
+
 
 
 

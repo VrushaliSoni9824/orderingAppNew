@@ -6,8 +6,6 @@ import android.os.Bundle
 import android.os.IBinder
 import android.os.RemoteException
 import androidx.appcompat.app.AppCompatActivity
-import com.tjcg.menuo.utils.Constants
-import com.tjcg.menuo.utils.PrefManager
 import woyou.aidlservice.jiuiv5.IWoyouService
 
 import android.graphics.BitmapFactory
@@ -29,8 +27,6 @@ import com.tjcg.menuo.data.response.EntitiesModel.*
 import com.tjcg.menuo.data.response.newOrder.Product
 import com.tjcg.menuo.data.response.newOrder.Result
 import com.tjcg.menuo.databinding.OrderPreviewLayoutBinding
-import com.tjcg.menuo.utils.Default
-import com.tjcg.menuo.utils.LottieProgressDialog
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -38,6 +34,12 @@ import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import android.graphics.drawable.Drawable
+
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.widget.Toast
+import com.tjcg.menuo.utils.*
 
 
 class OrderPreviewActivity : AppCompatActivity() {
@@ -85,6 +87,7 @@ class OrderPreviewActivity : AppCompatActivity() {
     var customerAddress : String = ""
     var total : String = ""
     var subtotal : String = ""
+//    var arrProNAm = java.util.ArrayList<String>()
 //     lateinit var sheetBehavior: BottomSheetBehavior<LinearLayout>
      lateinit var bottomSheet: LinearLayout
 
@@ -123,6 +126,17 @@ class OrderPreviewActivity : AppCompatActivity() {
         var i: Intent = intent
         orderId = i.getStringExtra("orderId")!!
 //        orderData = i.getStringExtra("orderData")!!
+
+        binding!!.bottomSheetOrderMinutes.textViewPrit.setOnClickListener {
+            connectPrinter(applicationContext)
+            testSunmiPrintAcceptOrder(applicationContext, orderId.toInt(), orderDate, customerNAme, customerMobno, customerAddress, customerAddress,"$", subtotal,deliveryFee, total, arrProNAme,arrProQty,arrProPrice )
+
+           // Toast.makeText(applicationContext,"Hello",Toast.LENGTH_LONG).show();
+           // connectPrinter(applicationContext)
+            //testSunmiPrint(applicationContext, orderId.toInt(), orderDate, customerNAme, customerMobno, customerAddress, customerAddress,"$", subtotal,deliveryFee, total, arrProNAme,arrProQty,arrProPrice )
+           // var bt : Bitmap = getBitmapFromView(binding!!.lvReciept)!!
+           // onClick(bt)
+        }
 
 
         arrResult= orderDao!!.getOrderDataByID(orderId);
@@ -167,6 +181,7 @@ class OrderPreviewActivity : AppCompatActivity() {
         }
 
         if(status.equals("13") || status.equals("0")){
+            binding!!.bottomSheetOrderMinutes.textViewPrit.visibility=View.GONE
             if(status.equals("13")) {
                 binding!!.bottomSheetOrderMinutes.linearMainView.visibility=View.GONE
                 binding!!.bottomSheetOrderMinutes.linearLayout4.visibility=View.GONE
@@ -189,7 +204,8 @@ class OrderPreviewActivity : AppCompatActivity() {
         binding!!.bottomSheetOrderMinutes.tv20.setOnClickListener { preparedIn = "20";setButtonColor(tv20 = true)}
         binding!!.bottomSheetOrderMinutes.tv25.setOnClickListener { preparedIn = "25";setButtonColor(tv25 = true)}
         binding!!.bottomSheetOrderMinutes.tv30.setOnClickListener { preparedIn = "30";setButtonColor(tv30 = true)}
-        binding!!.bottomSheetOrderMinutes.tv40.setOnClickListener { preparedIn = "45";setButtonColor(tv40 = true)}
+        binding!!.bottomSheetOrderMinutes.tv40.setOnClickListener { preparedIn = "40";setButtonColor(tv40 = true)}
+        binding!!.bottomSheetOrderMinutes.tv45.setOnClickListener { preparedIn = "45";setButtonColor(tv45 = true)}
         binding!!.bottomSheetOrderMinutes.tv50.setOnClickListener { preparedIn = "50";setButtonColor(tv50 = true)}
         binding!!.bottomSheetOrderMinutes.tv60.setOnClickListener { preparedIn = "60";setButtonColor(tv60 = true)}
         binding!!.bottomSheetOrderMinutes.tv70.setOnClickListener { preparedIn = "70";setButtonColor(tv70 = true)}
@@ -230,10 +246,7 @@ class OrderPreviewActivity : AppCompatActivity() {
             //showBottomSheetDialog()
         }
 
-        binding!!.bottomSheetOrderMinutes.textViewPrit.setOnClickListener {
-            connectPrinter(applicationContext)
-            testSunmiPrint(applicationContext, orderId.toInt(), orderDate, customerNAme, customerMobno, customerAddress, customerAddress,"$", subtotal,deliveryFee, total, arrProNAme,arrProQty,arrProPrice )
-        }
+
 
         /*
         try {
@@ -394,6 +407,56 @@ class OrderPreviewActivity : AppCompatActivity() {
         }
     }
 
+    fun testSunmiPrintAcceptOrder(context: Context, orderNumber: Int, date: String, customerName: String, phoneNumber: String, address1: String, address2: String, currency: String, subTotal: String, deliveryFee: String, total: String, proName : ArrayList<String>, proQty : ArrayList<String>, proPrice : ArrayList<String> ) {//, orderDetail: OrderDetail?
+        try {
+            /*       if (woyouService != null) {
+                       printerConfigure(context)
+                       woyouService!!.printText("=====================================\n\n", null)
+                       woyouService!!.printText("Date: "+orderDatte, null)
+                       woyouService!!.printText("\n", null)
+                       woyouService!!.printText("Business Detail: "+BusinessName, null)
+                       woyouService!!.printText("\n", null)
+                       woyouService!!.printText("Business phno: "+BusinessMob1, null)
+                       woyouService!!.printText("\n", null)
+                       woyouService!!.printText("Business phno 2: "+BusinessMob2, null)
+                       woyouService!!.printText("\n", null)
+
+                       woyouService!!.cutPaper(null)
+            */
+            if (woyouService != null) {
+                setHeaderData(context, orderNumber, date, customerName, phoneNumber, address1, address2)
+                woyouService!!.printText("\n", null)
+                woyouService!!.setFontSize(24f, null)
+                woyouService!!.sendRAWData(normalFont(), null)
+                woyouService!!.printText("================================\n", null)
+                woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_ItemName).toUpperCase(), 17) + " " + rightPadZeros(context.getString(R.string.lbl_Quantity).toUpperCase(), 5) + " " + leftPadZeros(context.getString(R.string.lbl_Price).toUpperCase(), 8) + "\n", null)
+                woyouService!!.printText("================================\n", null)
+                for (i in arrProNAme.indices) {
+//                    val items = orderDetail.lstobjServiceOrderItem[i]
+                    //woyouService!!.printText(rightPadZeros(truncateString(arrProNAme.get(i), 15, true) + truncateString(" " + currency + " " + arrProPrice.get(i), 15, true), 43) + "\n", null)
+                    woyouService!!.printText(rightPadZeros(truncateString(arrProNAme.get(i), 15, true),17) + rightPadZeros(truncateString(arrProQty.get(i), 15, true),5) + leftPadZeros(truncateString(" " + currency + " " + arrProPrice.get(i), 15, true), 8) + "\n", null)
+
+//                    woyouService!!.printText(rightPadZeros(truncateString("", 15, true), 27) + rightPadZeros(if (items.status == Default.COMPLETED) items.itemQty.toString() else (items.itemQty - (items.itemQty * 2)).toString(), 6) + " " + leftPadZeros(String.format(Locale.getDefault(), Constants.StringFormat, currency, getTwoDecimalValue(if (items.status == Default.COMPLETED) (items.pricePerUnit * items.itemQty) else (if (items.status == Default.SINGLERETURN) ((items.pricePerUnit - (items.pricePerUnit * 2)) * items.itemQty) else (items.pricePerUnit - (items.pricePerUnit * 2)) * items.itemQty))), 10) + "\n", null)
+                }//example for set order Object
+                woyouService!!.sendRAWData(normalFont(), null)
+                woyouService!!.printText("--------------------------------\n", null)
+                woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_subTotal), 17) + "" + leftPadZeros("$currency $subTotal", 11) + "\n", null)
+                woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_Delivery_free), 17) + "" + leftPadZeros("$currency $deliveryFee", 11) + "\n", null)
+                woyouService!!.printText("--------------------------------\n", null)
+                woyouService!!.sendRAWData(boldFont(), null)
+                woyouService!!.setFontSize(30f, null)
+                woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_Total), 14) + "" + leftPadZeros("$total", 8) + "\n", null)
+                woyouService!!.printText("\n", null)
+                woyouService!!.cutPaper(null)
+                startActivity(Intent(applicationContext, Expandablectivity::class.java).putExtra("businessID",businessID))
+                finish()
+
+            }
+        } catch (ex: RemoteException) {
+
+        }
+    }
+
 
     private fun setHeaderData(context: Context, orderNumber: Int, date: String, customerName: String, phoneNumber: String, address1: String, address2: String) {
         if (woyouService != null) {
@@ -510,6 +573,20 @@ class OrderPreviewActivity : AppCompatActivity() {
         context.applicationContext.bindService(intent, connService, Context.BIND_AUTO_CREATE)
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        startActivity(Intent(applicationContext, Expandablectivity::class.java).putExtra("businessID",businessID))
+        finish()
+
+    }
+    fun connectPrinterAcceptOrder(context: Context) {
+        val intent = Intent()
+        intent.setPackage(Constants.SERVICE_PACKAGE)
+        intent.action = Constants.SERVICE_ACTION
+        context.applicationContext.startService(intent)
+        context.applicationContext.bindService(intent, connService, Context.BIND_AUTO_CREATE)
+    }
+
 
     fun showBottomSheetDialog(){
 //        var  bottomSheetDialog: BottomSheetDialog =  BottomSheetDialog(this)
@@ -577,15 +654,23 @@ class OrderPreviewActivity : AppCompatActivity() {
             startActivity(myIntent)
         }
 
-        binding!!.bottomSheetOrderMinutes.textViewAccept.setOnClickListener {
+        /*binding!!.bottomSheetOrderMinutes.textViewAccept.setOnClickListener {
             //showBottomSheetDialog()
             setAcceptOrder(preparedIn)
         }
 
-        binding!!.bottomSheetOrderMinutes.textViewPrit.setOnClickListener {
+         */
+
+        /*binding!!.bottomSheetOrderMinutes.textViewPrit.setOnClickListener {
+            Toast.makeText(applicationContext,"btn1",Toast.LENGTH_LONG).show();
             connectPrinter(applicationContext)
-            testSunmiPrint(applicationContext, orderId.toInt(), orderDate, customerNAme, customerMobno, customerAddress, customerAddress,"$", subtotal,deliveryFee, total, arrProNAme,arrProQty,arrProPrice )
+            var bt : Bitmap = getBitmapFromView(binding!!.lvReciept)!!
+            onClick(bt)
+//            connectPrinter(applicationContext)
+//            testSunmiPrint(applicationContext, orderId.toInt(), orderDate, customerNAme, customerMobno, customerAddress, customerAddress,"$", subtotal,deliveryFee, total, arrProNAme,arrProQty,arrProPrice )
         }
+
+         */
 
 //        bottomSheetDialog.show()
     }
@@ -601,7 +686,10 @@ class OrderPreviewActivity : AppCompatActivity() {
                     orderDao!!.changeOrderStatus(orderId,Constants.acceptStatus)
                     orderDao!!.setPreparedTime(orderId,preparedTime)
                     lottieProgressDialog!!.cancelDialog()
-                    val sweetAlertDialog = SweetAlertDialog(this@OrderPreviewActivity, SweetAlertDialog.WARNING_TYPE)
+                    connectPrinter(applicationContext)
+                    testSunmiPrintAcceptOrder(applicationContext, orderId.toInt(), orderDate, customerNAme, customerMobno, customerAddress, customerAddress,"$", subtotal,deliveryFee, total, arrProNAme,arrProQty,arrProPrice )
+
+                    /*val sweetAlertDialog = SweetAlertDialog(this@OrderPreviewActivity, SweetAlertDialog.WARNING_TYPE)
                     sweetAlertDialog.setCanceledOnTouchOutside(false)
                     sweetAlertDialog.setCancelable(false)
                     sweetAlertDialog.contentText = resources.getString(R.string.lbl_accept_done) //sweetAlertDialog.contentTextSize = resources.getDimension(R.dimen._7ssp).roundToInt(
@@ -612,16 +700,23 @@ class OrderPreviewActivity : AppCompatActivity() {
                         sDialog.cancel()
                     }
                     sweetAlertDialog.setConfirmClickListener { sDialog ->
-                        startActivity(Intent(applicationContext, Expandablectivity::class.java).putExtra("businessID",businessID))
+                        connectPrinter(applicationContext)
+                        testSunmiPrintAcceptOrder(applicationContext, orderId.toInt(), orderDate, customerNAme, customerMobno, customerAddress, customerAddress,"$", subtotal,deliveryFee, total, arrProNAme,arrProQty,arrProPrice )
 
-                        finish()
-                    }.show()
 
+//                        startActivity(Intent(applicationContext, Expandablectivity::class.java).putExtra("businessID",businessID))
+//
+//                        finish()
+                    }
+//                        .show()
+
+
+                     */
 //                    Toast.makeText(applicationContext,"order accepted", Toast.LENGTH_SHORT).show()
 
                 } else {
                     lottieProgressDialog!!.cancelDialog()
-                    val sweetAlertDialog = SweetAlertDialog(applicationContext, SweetAlertDialog.WARNING_TYPE)
+                    val sweetAlertDialog = SweetAlertDialog(this@OrderPreviewActivity, SweetAlertDialog.WARNING_TYPE)
                     sweetAlertDialog.setCanceledOnTouchOutside(false)
                     sweetAlertDialog.setCancelable(false)
                     sweetAlertDialog.contentText = resources.getString(R.string.lbl_error) //sweetAlertDialog.contentTextSize = resources.getDimension(R.dimen._7ssp).roundToInt(
@@ -672,18 +767,30 @@ class OrderPreviewActivity : AppCompatActivity() {
         }
     }
     fun setButtonColor(tv11: Boolean=false,tv15: Boolean=false,tv20: Boolean=false,tv25: Boolean=false,tv30: Boolean=false,tv40: Boolean=false,tv45: Boolean = false,tv50: Boolean=false,tv60: Boolean=false,tv70: Boolean=false,tv80: Boolean=false,tv90: Boolean=false){
-        binding!!.bottomSheetOrderMinutes.tv11.setBackgroundColor(if(tv11) Color.RED else Color.WHITE)
-        binding!!.bottomSheetOrderMinutes.tv15.setBackgroundColor(if(tv15) Color.RED else Color.WHITE)
-        binding!!.bottomSheetOrderMinutes.tv20.setBackgroundColor(if(tv20) Color.RED else Color.WHITE)
-        binding!!.bottomSheetOrderMinutes.tv25.setBackgroundColor(if(tv25) Color.RED else Color.WHITE)
-        binding!!.bottomSheetOrderMinutes.tv30.setBackgroundColor(if(tv30) Color.RED else Color.WHITE)
-        binding!!.bottomSheetOrderMinutes.tv40.setBackgroundColor(if(tv40) Color.RED else Color.WHITE)
-        binding!!.bottomSheetOrderMinutes.tv45.setBackgroundColor(if(tv45) Color.RED else Color.WHITE)
-        binding!!.bottomSheetOrderMinutes.tv50.setBackgroundColor(if(tv50) Color.RED else Color.WHITE)
-        binding!!.bottomSheetOrderMinutes.tv60.setBackgroundColor(if(tv60) Color.RED else Color.WHITE)
-        binding!!.bottomSheetOrderMinutes.tv70.setBackgroundColor(if(tv70) Color.RED else Color.WHITE)
-        binding!!.bottomSheetOrderMinutes.tv80.setBackgroundColor(if(tv80) Color.RED else Color.WHITE)
-        binding!!.bottomSheetOrderMinutes.tv90.setBackgroundColor(if(tv90) Color.RED else Color.WHITE)
+        binding!!.bottomSheetOrderMinutes.tv11.setBackgroundResource(if(tv11) R.color.appOrange else R.color.white)
+        binding!!.bottomSheetOrderMinutes.tv11.setTextColor(if(tv11) Color.WHITE else Color.BLACK)
+        binding!!.bottomSheetOrderMinutes.tv15.setBackgroundResource(if(tv15) R.color.appOrange  else R.color.white)
+        binding!!.bottomSheetOrderMinutes.tv15.setTextColor(if(tv15) Color.WHITE else Color.BLACK)
+        binding!!.bottomSheetOrderMinutes.tv20.setBackgroundResource(if(tv20) R.color.appOrange  else R.color.white)
+        binding!!.bottomSheetOrderMinutes.tv20.setTextColor(if(tv20) Color.WHITE else Color.BLACK)
+        binding!!.bottomSheetOrderMinutes.tv25.setBackgroundResource(if(tv25) R.color.appOrange  else R.color.white)
+        binding!!.bottomSheetOrderMinutes.tv25.setTextColor(if(tv25) Color.WHITE else Color.BLACK)
+        binding!!.bottomSheetOrderMinutes.tv30.setBackgroundResource(if(tv30) R.color.appOrange  else R.color.white)
+        binding!!.bottomSheetOrderMinutes.tv30.setTextColor(if(tv30) Color.WHITE else Color.BLACK)
+        binding!!.bottomSheetOrderMinutes.tv40.setBackgroundResource(if(tv40) R.color.appOrange  else R.color.white)
+        binding!!.bottomSheetOrderMinutes.tv40.setTextColor(if(tv40) Color.WHITE else Color.BLACK)
+        binding!!.bottomSheetOrderMinutes.tv45.setBackgroundResource(if(tv45) R.color.appOrange  else R.color.white)
+        binding!!.bottomSheetOrderMinutes.tv45.setTextColor(if(tv45) Color.WHITE else Color.BLACK)
+        binding!!.bottomSheetOrderMinutes.tv50.setBackgroundResource(if(tv50) R.color.appOrange  else R.color.white)
+        binding!!.bottomSheetOrderMinutes.tv50.setTextColor(if(tv50) Color.WHITE else Color.BLACK)
+        binding!!.bottomSheetOrderMinutes.tv60.setBackgroundResource(if(tv60) R.color.appOrange  else R.color.white)
+        binding!!.bottomSheetOrderMinutes.tv60.setTextColor(if(tv60) Color.WHITE else Color.BLACK)
+        binding!!.bottomSheetOrderMinutes.tv70.setBackgroundResource(if(tv70) R.color.appOrange  else R.color.white)
+        binding!!.bottomSheetOrderMinutes.tv70.setTextColor(if(tv70) Color.WHITE else Color.BLACK)
+        binding!!.bottomSheetOrderMinutes.tv80.setBackgroundResource(if(tv80) R.color.appOrange  else R.color.white)
+        binding!!.bottomSheetOrderMinutes.tv80.setTextColor(if(tv80) Color.WHITE else Color.BLACK)
+        binding!!.bottomSheetOrderMinutes.tv90.setBackgroundResource(if(tv90) R.color.appOrange  else R.color.white)
+        binding!!.bottomSheetOrderMinutes.tv90.setTextColor(if(tv90) Color.WHITE else Color.BLACK)
 //        binding!!.bottomSheetOrderMinutes.tv11.setBackgroundColor(if(tv11) Color.RED else Color.WHITE)
 
 //        binding!!.bottomSheetOrderMinutes.tv11.setBackgroundColor(if(tv11) R.drawable.dark_red else R.drawable.dark_grey_border)
@@ -699,6 +806,55 @@ class OrderPreviewActivity : AppCompatActivity() {
 //        binding!!.bottomSheetOrderMinutes.tv80.setBackgroundColor(if(tv80) R.drawable.dark_red else R.drawable.dark_grey_border)
 //        binding!!.bottomSheetOrderMinutes.tv90.setBackgroundColor(if(tv90) R.drawable.dark_red else R.drawable.dark_grey_border)
 
+    }
+
+    private fun getBitmapFromView(view: View): Bitmap? {
+        //Define a bitmap with the same size as the view
+        val returnedBitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        //Bind a canvas to it
+        val canvas = Canvas(returnedBitmap)
+        //Get the view's background
+        val bgDrawable = view.background
+        if (bgDrawable != null) {
+            //has background drawable, then draw it on the canvas
+            bgDrawable.draw(canvas)
+        } else {
+            //does not have background drawable, then draw white background on the canvas
+            canvas.drawColor(Color.WHITE)
+        }
+        // draw the view on the canvas
+        view.draw(canvas)
+        //return the bitmap
+        return returnedBitmap
+    }
+    fun onClick(bitmap : Bitmap) {
+        var mytype : Int = 0;
+        if (!BluetoothUtil.isBlueToothPrinter) {
+//            SunmiPrintHelper.getInstance().printBitmap(bitmap,1)
+//            SunmiPrintHelper.getInstance().feedPaper()
+        } else {
+//            if (mytype == 0) {
+//                if (mCheckBox1.isChecked() && mCheckBox2.isChecked()) {
+//                    BluetoothUtil.sendData(ESCUtil.printBitmap(bitmap1, 3))
+//                } else if (mCheckBox1.isChecked()) {
+//                    BluetoothUtil.sendData(ESCUtil.printBitmap(bitmap1, 1))
+//                } else if (mCheckBox2.isChecked()) {
+//                    BluetoothUtil.sendData(ESCUtil.printBitmap(bitmap1, 2))
+//                } else {
+//                    BluetoothUtil.sendData(ESCUtil.printBitmap(bitmap1, 0))
+//                }
+//            } else if (mytype == 1) {
+//                BluetoothUtil.sendData(ESCUtil.selectBitmap(bitmap1, 0))
+//            } else if (mytype == 2) {
+//                BluetoothUtil.sendData(ESCUtil.selectBitmap(bitmap1, 1))
+//            } else if (mytype == 3) {
+//                BluetoothUtil.sendData(ESCUtil.selectBitmap(bitmap1, 32))
+//            } else if (mytype == 4) {
+//                BluetoothUtil.sendData(ESCUtil.selectBitmap(bitmap1, 33))
+//            }
+//            BluetoothUtil.sendData(ESCUtil.printBitmap(bitmap, 3))
+//            BluetoothUtil.sendData(ESCUtil.nextLine(3))
+        }
     }
 
 //    fun setColor()

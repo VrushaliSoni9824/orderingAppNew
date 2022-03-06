@@ -46,6 +46,7 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
     public CustomizedExpandableListAdapter2(Context context, List<String> expandableListTitle,
                                             HashMap<String, List<String>> expandableListDetail) {
 
+
         this.context = context;
         this.expandableTitleList = expandableListTitle;
         this.expandableDetailList = expandableListDetail;
@@ -85,7 +86,7 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
         TextView OrderTotal = (TextView) convertView.findViewById(R.id.OrderTotal);
         ImageView ivDot = (ImageView) convertView.findViewById(R.id.imageViewDot);
         ImageView ivNewOrder = (ImageView) convertView.findViewById(R.id.imageViewNewOrder);
-        ImageView ivOrderIcon = (ImageView) convertView.findViewById(R.id.imageViewOrderIcon);
+        ImageView ivOrderIcon = (ImageView) convertView.findViewById(R.id.imageViewOrderIcon123);
         Button btnPickUp = (Button) convertView.findViewById(R.id.btnPickUp);
         expandedListTextView.setText(expandedListText);
         String orderID = expandedListText;
@@ -139,42 +140,174 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
         }else{
             btnPickUp.setVisibility(View.GONE);
         }
+
         switch (statusType) {
             case "1":
-            case "2":
-            case "5":
-            case "6":
-            case "11":
-            case "12":
-            case "16":
-            case "17":
-            case "10":
+            {
                 ivDot.setColorFilter(context.getResources().getColor(R.color.green));
                 ivNewOrder.setColorFilter(context.getResources().getColor(R.color.green));
                 ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_item_logo));
                 break;
+            }
+            case "2":
+            {
+                ivDot.setColorFilter(context.getResources().getColor(R.color.green));
+                ivNewOrder.setColorFilter(context.getResources().getColor(R.color.green));
+                ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_item_logo));
+                break;
+            }
+            case "5":
+            {
+                ivDot.setColorFilter(context.getResources().getColor(R.color.green));
+                ivNewOrder.setColorFilter(context.getResources().getColor(R.color.green));
+                ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_item_logo));
+                break;
+            }
+            case "6":
+            {
+                ivDot.setColorFilter(context.getResources().getColor(R.color.green));
+                ivNewOrder.setColorFilter(context.getResources().getColor(R.color.green));
+                ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_item_logo));
+                break;
+            }
+            case "11":
+            {
+                ivDot.setColorFilter(context.getResources().getColor(R.color.green));
+                ivNewOrder.setColorFilter(context.getResources().getColor(R.color.green));
+                ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_item_logo));
+                break;
+            }
+            case "12":
+            {
+                ivDot.setColorFilter(context.getResources().getColor(R.color.green));
+                ivNewOrder.setColorFilter(context.getResources().getColor(R.color.green));
+                ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_item_logo));
+                break;
+            }
+            case "16":
+            {
+                ivDot.setColorFilter(context.getResources().getColor(R.color.green));
+                ivNewOrder.setColorFilter(context.getResources().getColor(R.color.green));
+                ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_item_logo));
+                break;
+            }
+            case "17":
+            {
+                ivDot.setColorFilter(context.getResources().getColor(R.color.green));
+                ivNewOrder.setColorFilter(context.getResources().getColor(R.color.green));
+                ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_item_logo));
+                break;
+            }
+            case "10":
+            {
+                ivDot.setColorFilter(context.getResources().getColor(R.color.green));
+                ivNewOrder.setColorFilter(context.getResources().getColor(R.color.green));
+                ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_item_logo));
+                break;
+            }
             case "3":
-            case "21":
-            case "20":
-            case "19":
-            case "18":
-            case "15":
-            case "14":
-            case "9":
-            case "8":
-            case "7":
-            case "4":
+            {
                 ivDot.setColorFilter(context.getResources().getColor(R.color.yellow));
                 ivNewOrder.setColorFilter(context.getResources().getColor(R.color.yellow));
                 ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_inprogress_1));
                 break;
+            }
+            case "21":
+            {
+                ivDot.setColorFilter(context.getResources().getColor(R.color.yellow));
+                ivNewOrder.setColorFilter(context.getResources().getColor(R.color.yellow));
+                ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_inprogress_1));
+                break;
+            }
+            case "20":
+            {
+                ivDot.setColorFilter(context.getResources().getColor(R.color.yellow));
+                ivNewOrder.setColorFilter(context.getResources().getColor(R.color.yellow));
+                ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_inprogress_1));
+                break;
+            }
+            case "19":
+            {
+                ivDot.setColorFilter(context.getResources().getColor(R.color.yellow));
+                ivNewOrder.setColorFilter(context.getResources().getColor(R.color.yellow));
+                ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_inprogress_1));
+                break;
+            }
+            case "18":
+            {
+                ivDot.setColorFilter(context.getResources().getColor(R.color.yellow));
+                ivNewOrder.setColorFilter(context.getResources().getColor(R.color.yellow));
+                ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_inprogress_1));
+                break;
+            }
+            case "15":
+            {
+                ivDot.setColorFilter(context.getResources().getColor(R.color.yellow));
+                ivNewOrder.setColorFilter(context.getResources().getColor(R.color.yellow));
+                ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_inprogress_1));
+                break;
+            }
+            case "14":
+            {
+                ivDot.setColorFilter(context.getResources().getColor(R.color.yellow));
+                ivNewOrder.setColorFilter(context.getResources().getColor(R.color.yellow));
+                ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_inprogress_1));
+                break;
+            }
+            case "9":
+            {
+                ivDot.setColorFilter(context.getResources().getColor(R.color.yellow));
+                ivNewOrder.setColorFilter(context.getResources().getColor(R.color.yellow));
+                ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_inprogress_1));
+                break;
+            }
+            case "8":
+            {
+                ivDot.setColorFilter(context.getResources().getColor(R.color.yellow));
+                ivNewOrder.setColorFilter(context.getResources().getColor(R.color.yellow));
+                ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_inprogress_1));
+                break;
+            }
+            case "7":
+            {
+                ivDot.setColorFilter(context.getResources().getColor(R.color.yellow));
+                ivNewOrder.setColorFilter(context.getResources().getColor(R.color.yellow));
+                ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_inprogress_1));
+                break;
+            }
+            case "4":
+            {
+                ivDot.setColorFilter(context.getResources().getColor(R.color.yellow));
+                ivNewOrder.setColorFilter(context.getResources().getColor(R.color.yellow));
+                ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_inprogress_1));
+                break;
+            }
             case "0":
-            case "13":
+            {
                 ivDot.setColorFilter(context.getResources().getColor(R.color.brown));
                 ivNewOrder.setColorFilter(context.getResources().getColor(R.color.brown));
                 ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_pending));
                 break;
-
+            }
+            case "13":
+            {
+                ivDot.setColorFilter(context.getResources().getColor(R.color.brown));
+                ivNewOrder.setColorFilter(context.getResources().getColor(R.color.brown));
+                ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_pending));
+                break;
+            }
+        }
+        switch (deliveryType) {
+            case "2":
+            {
+                ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_item_logo));
+                break;
+            }
+            case "1":
+            {
+                ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_inprogress_1));
+                break;
+            }
 
         }
         tvOrderTime.setText(orderDao.getOrderDateTime(expandedListText.toString()));
@@ -261,7 +394,8 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
         ServiceGenerator.getNentoApi().RejectORder(Constants.apiKey,orderId,"4").enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                if(response.isSuccessful()){
+                if(response.isSuccessful())
+                {
                     orderDao.changeOrderStatus(orderId, Constants.readyForPickUp);
                     lottieProgressDialog.cancelDialog();
                     SweetAlertDialog sweetAlertDialog = new SweetAlertDialog(context,SweetAlertDialog.SUCCESS_TYPE);
@@ -279,6 +413,19 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
                     sweetAlertDialog.show();
 //                    sweetAlertDialog.setContentText(context.getResources().getString(R.string.lbl_pickUpReady));
 
+                }else{
+                    lottieProgressDialog.cancelDialog();
+                    SweetAlertDialog sweetAlertDialog = new SweetAlertDialog(context,SweetAlertDialog.ERROR_TYPE);
+                    sweetAlertDialog.setContentText(context.getResources().getString(R.string.lbl_error));
+                    sweetAlertDialog.setConfirmText(context.getResources().getString(R.string.lbl_OK));
+                    sweetAlertDialog.setCancelable(false);
+                    sweetAlertDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                           sweetAlertDialog.cancel();
+                        }
+                    });
+                    sweetAlertDialog.show();
                 }
             }
 

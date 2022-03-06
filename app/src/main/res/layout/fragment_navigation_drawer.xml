@@ -105,24 +105,25 @@
             android:id="@+id/navigation_pos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:elevation="@dimen/_3sdp"
-            android:background="@drawable/bg_grey_drawer_layout_1"
             android:layout_margin="@dimen/_6sdp"
             android:layout_marginTop="@dimen/_4sdp"
             android:layout_marginBottom="@dimen/_4sdp"
-            android:padding="@dimen/_7sdp">
+            android:background="@drawable/bg_grey_drawer_layout_1"
+            android:elevation="@dimen/_3sdp"
+            android:orientation="horizontal"
+            android:padding="@dimen/_7sdp"
+            android:visibility="gone">
 
             <ImageButton
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="16dp"
-                android:padding="@dimen/_5sdp"
                 android:background="@drawable/bg_grey_drawer_layout_2"
                 android:elevation="@dimen/_5sdp"
-                android:tint="@color/orange"
-                android:src="@drawable/icon_pos" />
+                android:padding="@dimen/_5sdp"
+                android:src="@drawable/icon_pos"
+                android:tint="@color/orange" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -130,34 +131,35 @@
                 android:layout_centerVertical="true"
                 android:layout_gravity="center_vertical"
                 android:text="Address"
-                android:textStyle="bold"
-                android:textSize="@dimen/_15ssp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/orange" />
+                android:textColor="@color/orange"
+                android:textSize="@dimen/_15ssp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/navigation_tables"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:elevation="@dimen/_3sdp"
-            android:background="@drawable/bg_grey_drawer_layout_1"
             android:layout_margin="@dimen/_6sdp"
             android:layout_marginTop="@dimen/_4sdp"
             android:layout_marginBottom="@dimen/_4sdp"
-            android:padding="@dimen/_7sdp">
+            android:background="@drawable/bg_grey_drawer_layout_1"
+            android:elevation="@dimen/_3sdp"
+            android:orientation="horizontal"
+            android:padding="@dimen/_7sdp"
+            android:visibility="gone">
 
             <ImageButton
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="16dp"
-                android:padding="@dimen/_5sdp"
                 android:background="@drawable/bg_grey_drawer_layout_2"
                 android:elevation="@dimen/_5sdp"
-                android:tint="@color/orange"
-                android:src="@drawable/ic_delivery_status" />
+                android:padding="@dimen/_5sdp"
+                android:src="@drawable/ic_delivery_status"
+                android:tint="@color/orange" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -165,34 +167,35 @@
                 android:layout_centerVertical="true"
                 android:layout_gravity="center_vertical"
                 android:text="Status"
-                android:textStyle="bold"
-                android:textSize="@dimen/_15ssp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/orange" />
+                android:textColor="@color/orange"
+                android:textSize="@dimen/_15ssp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/navigation_notifications"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:elevation="@dimen/_3sdp"
-            android:background="@drawable/bg_grey_drawer_layout_1"
             android:layout_margin="@dimen/_6sdp"
             android:layout_marginTop="@dimen/_4sdp"
             android:layout_marginBottom="@dimen/_4sdp"
-            android:padding="@dimen/_7sdp">
+            android:background="@drawable/bg_grey_drawer_layout_1"
+            android:elevation="@dimen/_3sdp"
+            android:orientation="horizontal"
+            android:padding="@dimen/_7sdp"
+            android:visibility="gone">
 
             <ImageButton
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="16dp"
-                android:padding="@dimen/_5sdp"
                 android:background="@drawable/bg_grey_drawer_layout_2"
                 android:elevation="@dimen/_5sdp"
-                android:tint="@color/orange"
-                android:src="@drawable/ic_history" />
+                android:padding="@dimen/_5sdp"
+                android:src="@drawable/ic_history"
+                android:tint="@color/orange" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -200,10 +203,10 @@
                 android:layout_centerVertical="true"
                 android:layout_gravity="center_vertical"
                 android:text="History"
-                android:textStyle="bold"
-                android:textSize="@dimen/_15ssp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/orange" />
+                android:textColor="@color/orange"
+                android:textSize="@dimen/_15ssp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout

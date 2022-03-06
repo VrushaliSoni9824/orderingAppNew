@@ -84,6 +84,7 @@
                         android:background="@drawable/edit_bg2"
                         android:textColorHint="@color/light_grey"
                         android:textSize="@dimen/_10ssp"
+                        android:focusable="false"
                         app:startIconDrawable="@drawable/ic_search" />
 
                 <ImageView

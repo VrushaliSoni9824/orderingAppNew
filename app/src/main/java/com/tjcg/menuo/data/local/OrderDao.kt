@@ -8,6 +8,7 @@ import androidx.room.Query
 import com.tjcg.menuo.data.response.DriverData
 import com.tjcg.menuo.data.response.EntitiesModel.*
 import com.tjcg.menuo.data.response.newOrder.Result
+import com.tjcg.menuo.data.response.newOrder.Summary
 import com.tjcg.menuo.data.response.order.*
 import io.reactivex.Flowable
 
@@ -25,6 +26,9 @@ interface OrderDao {
 
     @Query("select id from result order by id desc")
     fun getResult(): List<Int>
+
+    @Query("select max(id) from result where status=0 or status = 13")
+    fun getMaxNewORder(): Int
 
     @Query("select id from result where status=0 or status=13 order by id desc")
     fun getPendingOrder(): List<Int>
@@ -255,6 +259,12 @@ interface OrderDao {
 
     @Query("select * from Result")
     fun getAllResult():List<Result>
+
+    @Query("select * from Result where id=:id")
+    fun getOrderById(id : String):Result
+
+//    @Query("select total from summary where order_id=:id")
+//    fun getSummaryById(id : String) : String
 
     @Query("select status from result where id=:id")
     fun getStatus(id: String): String

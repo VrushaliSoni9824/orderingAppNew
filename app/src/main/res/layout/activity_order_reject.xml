@@ -39,7 +39,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_20sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
                     android:orientation="horizontal">
 
                     <TextView
@@ -89,18 +89,15 @@
                 android:layout_weight="0.4"
                 android:orientation="vertical"
                 android:weightSum="1">
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="0.4"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="0.35"
-                    android:text="@string/lbl_reject_noification"
-                    android:textColor="@color/black"
                     android:layout_marginStart="@dimen/_5sdp"
                     android:layout_marginEnd="@dimen/_5sdp"
+                    android:layout_weight="0.75"
+                    android:text="@string/lbl_reject_noification"
+                    android:textColor="@color/black"
                     android:textSize="@dimen/_18ssp" />
 
                 <View
@@ -119,7 +116,7 @@
                     android:layout_marginStart="@dimen/_10sdp"
                     android:layout_marginEnd="@dimen/_10sdp"
                     android:layout_marginTop="@dimen/_2sdp"
-                    android:padding="10dp"
+                    android:padding="3dp"
                     android:text="Reject"
                     android:textColor="@color/white"
                     android:textSize="20sp" />
