@@ -95,6 +95,7 @@ class OrderPreviewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = OrderPreviewLayoutBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
+        connectPrinter(getApplicationContext())
 //        setContentView(R.layout.activity_order_detail)
 //        bottomSheet = findViewById(R.id.bottomSheet)
 //        sheetBehavior = BottomSheetBehavior.from(bottomSheet)
@@ -128,7 +129,7 @@ class OrderPreviewActivity : AppCompatActivity() {
 //        orderData = i.getStringExtra("orderData")!!
 
         binding!!.bottomSheetOrderMinutes.textViewPrit.setOnClickListener {
-            connectPrinter(applicationContext)
+            //connectPrinter(applicationContext)
             testSunmiPrintAcceptOrder(applicationContext, orderId.toInt(), orderDate, customerNAme, customerMobno, customerAddress, customerAddress,"$", subtotal,deliveryFee, total, arrProNAme,arrProQty,arrProPrice )
 
            // Toast.makeText(applicationContext,"Hello",Toast.LENGTH_LONG).show();
@@ -686,7 +687,7 @@ class OrderPreviewActivity : AppCompatActivity() {
                     orderDao!!.changeOrderStatus(orderId,Constants.acceptStatus)
                     orderDao!!.setPreparedTime(orderId,preparedTime)
                     lottieProgressDialog!!.cancelDialog()
-                    connectPrinter(applicationContext)
+                    //connectPrinter(applicationContext)
                     testSunmiPrintAcceptOrder(applicationContext, orderId.toInt(), orderDate, customerNAme, customerMobno, customerAddress, customerAddress,"$", subtotal,deliveryFee, total, arrProNAme,arrProQty,arrProPrice )
 
                     /*val sweetAlertDialog = SweetAlertDialog(this@OrderPreviewActivity, SweetAlertDialog.WARNING_TYPE)
