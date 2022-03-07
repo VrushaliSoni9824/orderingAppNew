@@ -24,6 +24,7 @@ import com.tjcg.menuo.utils.Default;
 import com.tjcg.menuo.utils.LottieProgressDialog;
 import com.tjcg.menuo.utils.PrefManager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -84,6 +85,7 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
         TextView tvOrderTime = (TextView) convertView.findViewById(R.id.o_time);
         TextView tvCustomer = (TextView) convertView.findViewById(R.id.o_customer);
         TextView OrderTotal = (TextView) convertView.findViewById(R.id.OrderTotal);
+        TextView tvPreparedIn = (TextView) convertView.findViewById(R.id.tvPreparedIn);
         ImageView ivDot = (ImageView) convertView.findViewById(R.id.imageViewDot);
         ImageView ivNewOrder = (ImageView) convertView.findViewById(R.id.imageViewNewOrder);
         ImageView ivOrderIcon = (ImageView) convertView.findViewById(R.id.imageViewOrderIcon123);
@@ -141,6 +143,15 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
             btnPickUp.setVisibility(View.GONE);
         }
 
+
+        Integer time = orderDao.getPreparedIn(orderID);
+        String dislayTime = "";
+
+        if(time>0 && time!=null){
+            dislayTime=String.valueOf(time)+" min";
+        }else{
+            dislayTime = "SET TIME";
+        }
         switch (statusType) {
             case "1":
             {
@@ -210,6 +221,7 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
                 ivDot.setColorFilter(context.getResources().getColor(R.color.yellow));
                 ivNewOrder.setColorFilter(context.getResources().getColor(R.color.yellow));
                 ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_inprogress_1));
+                tvPreparedIn.setText(dislayTime);
                 break;
             }
             case "21":
@@ -217,6 +229,7 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
                 ivDot.setColorFilter(context.getResources().getColor(R.color.yellow));
                 ivNewOrder.setColorFilter(context.getResources().getColor(R.color.yellow));
                 ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_inprogress_1));
+                tvPreparedIn.setText(dislayTime);
                 break;
             }
             case "20":
@@ -224,6 +237,7 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
                 ivDot.setColorFilter(context.getResources().getColor(R.color.yellow));
                 ivNewOrder.setColorFilter(context.getResources().getColor(R.color.yellow));
                 ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_inprogress_1));
+                tvPreparedIn.setText(dislayTime);
                 break;
             }
             case "19":
@@ -231,6 +245,7 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
                 ivDot.setColorFilter(context.getResources().getColor(R.color.yellow));
                 ivNewOrder.setColorFilter(context.getResources().getColor(R.color.yellow));
                 ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_inprogress_1));
+                tvPreparedIn.setText(dislayTime);
                 break;
             }
             case "18":
@@ -238,6 +253,7 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
                 ivDot.setColorFilter(context.getResources().getColor(R.color.yellow));
                 ivNewOrder.setColorFilter(context.getResources().getColor(R.color.yellow));
                 ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_inprogress_1));
+                tvPreparedIn.setText(dislayTime);
                 break;
             }
             case "15":
@@ -245,6 +261,7 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
                 ivDot.setColorFilter(context.getResources().getColor(R.color.yellow));
                 ivNewOrder.setColorFilter(context.getResources().getColor(R.color.yellow));
                 ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_inprogress_1));
+                tvPreparedIn.setText(dislayTime);
                 break;
             }
             case "14":
@@ -252,6 +269,7 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
                 ivDot.setColorFilter(context.getResources().getColor(R.color.yellow));
                 ivNewOrder.setColorFilter(context.getResources().getColor(R.color.yellow));
                 ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_inprogress_1));
+                tvPreparedIn.setText(dislayTime);
                 break;
             }
             case "9":
@@ -259,6 +277,7 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
                 ivDot.setColorFilter(context.getResources().getColor(R.color.yellow));
                 ivNewOrder.setColorFilter(context.getResources().getColor(R.color.yellow));
                 ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_inprogress_1));
+                tvPreparedIn.setText(dislayTime);
                 break;
             }
             case "8":
@@ -266,6 +285,7 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
                 ivDot.setColorFilter(context.getResources().getColor(R.color.yellow));
                 ivNewOrder.setColorFilter(context.getResources().getColor(R.color.yellow));
                 ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_inprogress_1));
+                tvPreparedIn.setText(dislayTime);
                 break;
             }
             case "7":
@@ -273,6 +293,7 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
                 ivDot.setColorFilter(context.getResources().getColor(R.color.yellow));
                 ivNewOrder.setColorFilter(context.getResources().getColor(R.color.yellow));
                 ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_inprogress_1));
+                tvPreparedIn.setText(dislayTime);
                 break;
             }
             case "4":
@@ -280,6 +301,7 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
                 ivDot.setColorFilter(context.getResources().getColor(R.color.yellow));
                 ivNewOrder.setColorFilter(context.getResources().getColor(R.color.yellow));
                 ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_inprogress_1));
+                tvPreparedIn.setText(dislayTime);
                 break;
             }
             case "0":
@@ -287,6 +309,7 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
                 ivDot.setColorFilter(context.getResources().getColor(R.color.brown));
                 ivNewOrder.setColorFilter(context.getResources().getColor(R.color.brown));
                 ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_pending));
+                tvPreparedIn.setText(dislayTime);
                 break;
             }
             case "13":
@@ -294,6 +317,7 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
                 ivDot.setColorFilter(context.getResources().getColor(R.color.brown));
                 ivNewOrder.setColorFilter(context.getResources().getColor(R.color.brown));
                 ivOrderIcon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_pending));
+                tvPreparedIn.setText(dislayTime);
                 break;
             }
         }
