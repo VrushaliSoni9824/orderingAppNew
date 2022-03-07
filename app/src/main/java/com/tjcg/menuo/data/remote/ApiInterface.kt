@@ -29,6 +29,12 @@ interface ApiInterface {
     @PUT("https://apiv4.ordering.co/v400/en/menuo/orders/{order_id}")
     fun RejectORder(@Header("x-api-key") x_api_key: String,@Path("order_id") order_id : String, @Field("status") status : String = "6"): Call<String>;
 
+    @FormUrlEncoded
+    @PUT("https://apiv4.ordering.co/v400/en/menuo/orders/{order_id}")
+    fun AcceptORder(@Header("x-api-key") x_api_key: String,@Path("order_id") order_id : String, @Field("status") status : String = "6", @Field("prepared_in") prepared_in: String="30"): Call<String>;
+
+
+
     @GET
     fun getBusinessUsers(@Url url: String?,@Header("x-api-key") x_api_key: String?): Call<String?>?
 

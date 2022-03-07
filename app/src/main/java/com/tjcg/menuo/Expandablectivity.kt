@@ -68,6 +68,8 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
     val paginationLinkNewOrder = ArrayList<String>()
     val arrNewOrderId = ArrayList<Int>()
     var businessId: String = ""
+
+
     var linkCount: Int = 0
     var linkCountNewORder: Int = 0
     lateinit var textViewOwnerName : TextView
@@ -80,6 +82,7 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_expandablectivity)
+        NewOrderId="null"
         Sentry.captureMessage("testing SDK setup");
 //        for (n in 4..0) {
 //            Log.e("aa","aa"+n.toString())

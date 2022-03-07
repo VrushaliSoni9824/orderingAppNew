@@ -36,13 +36,16 @@ interface OrderDao {
     @Query("select count(*) from result where status=0 or status=13 order by id desc")
     fun getPendingOrderCount(): Int
 
-    @Query("select id from result where status in (3,4,7,8,9,14,15,18,19,20,21) order by id desc")
+    @Query("select id from result where status in (3,7,8,9,14,15,18,19,20,21) order by id desc")
     fun getInProgressOrder(): List<Int>
 
-    @Query("select count(*) from result where status in (3,4,7,8,9,14,15,18,19,20,21) order by id desc")
+    @Query("select count(*) from result where status in (3,7,8,9,14,15,18,19,20,21) order by id desc")
     fun getInProgressOrderCount(): Int
 
-    @Query("select id from result where status in (1,2,5,6,10,11,12,16,17) order by id desc")
+    @Query("select prepared_in from result where id=:id")
+    fun getPreparedIn(id : String): Int
+
+    @Query("select id from result where status in (1,2,4,5,6,10,11,12,16,17) order by id desc")
     fun getDoneOrder(): List<Int>
 
     @Query("select delivery_type from result where id=:id")

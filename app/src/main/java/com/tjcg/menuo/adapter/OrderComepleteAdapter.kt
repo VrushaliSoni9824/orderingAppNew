@@ -34,6 +34,7 @@ class OrderComepleteAdapter(private val context: Context, private val onClickLis
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var expandedListTextView = itemView.findViewById<View>(R.id.txt_onum) as TextView
         var tvStatus = itemView.findViewById<View>(R.id.o_status) as TextView
+        var tvPreparedIn = itemView.findViewById<View>(R.id.tvPreparedIn) as TextView
         var tvOrderTime = itemView.findViewById<View>(R.id.o_time) as TextView
         var tvCustomer = itemView.findViewById<View>(R.id.o_customer) as TextView
         var OrderTotal = itemView.findViewById<View>(R.id.OrderTotal) as TextView
@@ -90,6 +91,10 @@ class OrderComepleteAdapter(private val context: Context, private val onClickLis
             }
         }
         holder.tvStatus.setText(DeliveryText)
+        var time = if(orderDao!!.getPreparedIn(orderID)>0 && orderDao!!.getPreparedIn(orderID)!= null) orderDao!!.getPreparedIn(orderID).toString()+" min" else "";
+        holder.tvPreparedIn.setText(time.toString())
+        holder.tvPreparedIn.visibility=View.GONE
+        holder.expandedListTextView.setText(orderID)
 
         val statusType = orderDao!!.getStatus(itemDetailList.toString())
 
