@@ -14,6 +14,7 @@ public class MainActivityPDF extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_p_d_f);
 
+
 //        PdfConverter converter = PdfConverter.getInstance();
 //        File file = new File(Environment.getExternalStorageDirectory().toString(), "file.pdf");
 //        String htmlString = "<html><body><p>WHITE (default)</p></body></html>";

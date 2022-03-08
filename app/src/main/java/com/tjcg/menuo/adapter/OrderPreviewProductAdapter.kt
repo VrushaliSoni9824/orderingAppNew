@@ -23,11 +23,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentTransaction
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.tjcg.menuo.data.local.AppDatabase
 import com.tjcg.menuo.data.local.OrderDao
 import com.tjcg.menuo.data.local.PosDao
 import com.tjcg.menuo.data.response.EntitiesModel.ProductEntity
+import com.tjcg.menuo.data.response.order.KitchenOrderInfo
 import com.tjcg.menuo.databinding.ItemPrintPreviewBinding
 import com.tjcg.menuo.dialog.*
 import com.tjcg.menuo.utils.LottieProgressDialog
@@ -48,6 +50,7 @@ class OrderPreviewProductAdapter(var productDataList: List<ProductEntity>, var c
     public var order_id:String="";
     public var pos:String="";
     public var customerPaidAmount: String = ""
+    var productaddonAdapter: OrderPreviewProductAddonAdapter? = null
 
 //    var param: List<NameValuePair>? = nullg
 
@@ -79,19 +82,30 @@ class OrderPreviewProductAdapter(var productDataList: List<ProductEntity>, var c
         holder.binding.textviewProductName.text=product.quantity.toString()+" x "+product.name
         var addonText : String =""
         val addonsArray = JSONArray(product.options)
+        val addonName = ArrayList<String>()
+        val addonPrice = ArrayList<String>()
+
         for (i in 0..addonsArray.length() - 1) {
             val addon = addonsArray.getJSONObject(i)
             addonText= addonText+"<b>"+addon.getString("name")+"</b> <br/>"
             val suboptionsArray = addon.getJSONArray("suboptions")
             for(j in 0..suboptionsArray.length()-1){
                 val suboption = suboptionsArray.getJSONObject(j)
-                addonText=addonText+suboption.getInt("quantity")+" X "+suboption.getString("name")+" "+suboption.getString("price")+" KR <br/>"
+                var name =  suboption.getInt("quantity").toString()+" X "+suboption.getString("name");
+                var price = suboption.getString("price");
+                addonName!!.add(name)
+                addonPrice!!.add(price)
+                addonText=addonText+suboption.getInt("quantity")+" X "+suboption.getString("name")+" "+suboption.getString("price")+" <br/>"
             }
             addonText=addonText+"<br/>"
         }
 
+        productaddonAdapter = OrderPreviewProductAddonAdapter(addonName!!,addonPrice!!,context)
+        holder.binding!!.rvAddon.layoutManager = LinearLayoutManager(context)
+        holder.binding!!.rvAddon.adapter = productaddonAdapter
+
         holder.binding.textviewProductAddons.text=Html.fromHtml(addonText)
-        holder.binding.textViewItemPrice.text=product.price.toString() +"KR"
+        holder.binding.textViewItemPrice.text=product.price.toString()
 
     }
 

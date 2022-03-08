@@ -40,7 +40,7 @@ class OrderComepleteAdapter(private val context: Context, private val onClickLis
         var OrderTotal = itemView.findViewById<View>(R.id.OrderTotal) as TextView
         var ivDot = itemView.findViewById<View>(R.id.imageViewDot) as ImageView
         var ivNewOrder = itemView.findViewById<View>(R.id.imageViewNewOrder) as ImageView
-        var ivOrderIcon = itemView.findViewById<View>(R.id.imageViewOrderIcon) as ImageView
+        var ivOrderIcon = itemView.findViewById<View>(R.id.imageViewOrderIcon123) as ImageView
         var btnPickUp = itemView.findViewById<View>(R.id.btnPickUp) as Button
         var expandedListItem = itemView.findViewById<View>(R.id.expandedListItem) as LinearLayout
     }
@@ -73,24 +73,7 @@ class OrderComepleteAdapter(private val context: Context, private val onClickLis
 
         var DeliveryText = ""
 
-        when (deliveryType) {
-            "1" -> {
-                DeliveryText = context.getString(R.string.Delivery)
-            }
-            "2" -> {
-                DeliveryText = context.getString(R.string.Pick_Up)
-            }
-            "3" -> {
-                DeliveryText = context.getString(R.string.Eat_In)
-            }
-            "4" -> {
-                DeliveryText = context.getString(R.string.Curbside)
-            }
-            "5" -> {
-                DeliveryText = context.getString(R.string.Driver_thru)
-            }
-        }
-        holder.tvStatus.setText(DeliveryText)
+
         var time = if(orderDao!!.getPreparedIn(orderID)>0 && orderDao!!.getPreparedIn(orderID)!= null) orderDao!!.getPreparedIn(orderID).toString()+" min" else "";
         holder.tvPreparedIn.setText(time.toString())
         holder.tvPreparedIn.visibility=View.GONE
@@ -105,53 +88,52 @@ class OrderComepleteAdapter(private val context: Context, private val onClickLis
         }
 
         when (statusType) {
-             "1" ->{
-                 holder.ivDot.setColorFilter(context.resources.getColor(R.color.green))
-                 holder.ivNewOrder.setColorFilter(context.resources.getColor(R.color.green))
-                 holder.ivOrderIcon.setImageDrawable(context.resources.getDrawable(R.drawable.ic_item_logo))
-             }
-             "2" ->{
-                 holder.ivDot.setColorFilter(context.resources.getColor(R.color.green))
-                 holder.ivNewOrder.setColorFilter(context.resources.getColor(R.color.green))
-                 holder.ivOrderIcon.setImageDrawable(context.resources.getDrawable(R.drawable.ic_item_logo))
-             }
-             "5" ->{
-                 holder.ivDot.setColorFilter(context.resources.getColor(R.color.green))
-                 holder.ivNewOrder.setColorFilter(context.resources.getColor(R.color.green))
-                 holder.ivOrderIcon.setImageDrawable(context.resources.getDrawable(R.drawable.ic_item_logo))
-             }
-             "6" ->{
-                 holder.ivDot.setColorFilter(context.resources.getColor(R.color.green))
-                 holder.ivNewOrder.setColorFilter(context.resources.getColor(R.color.green))
-                 holder.ivOrderIcon.setImageDrawable(context.resources.getDrawable(R.drawable.ic_item_logo))
-             }
-             "11"->{
-                 holder.ivDot.setColorFilter(context.resources.getColor(R.color.green))
-                 holder.ivNewOrder.setColorFilter(context.resources.getColor(R.color.green))
-                 holder.ivOrderIcon.setImageDrawable(context.resources.getDrawable(R.drawable.ic_item_logo))
-             }
-             "12"->{
-                 holder.ivDot.setColorFilter(context.resources.getColor(R.color.green))
-                 holder.ivNewOrder.setColorFilter(context.resources.getColor(R.color.green))
-                 holder.ivOrderIcon.setImageDrawable(context.resources.getDrawable(R.drawable.ic_item_logo))
-             }
-             "16"->{
-                 holder.ivDot.setColorFilter(context.resources.getColor(R.color.green))
-                 holder.ivNewOrder.setColorFilter(context.resources.getColor(R.color.green))
-                 holder.ivOrderIcon.setImageDrawable(context.resources.getDrawable(R.drawable.ic_item_logo))
-             }
-             "17"->{
-                 holder.ivDot.setColorFilter(context.resources.getColor(R.color.green))
-                 holder.ivNewOrder.setColorFilter(context.resources.getColor(R.color.green))
-                 holder.ivOrderIcon.setImageDrawable(context.resources.getDrawable(R.drawable.ic_item_logo))
-             }
-             "10"->{
-                 holder.ivDot.setColorFilter(context.resources.getColor(R.color.green))
-                 holder.ivNewOrder.setColorFilter(context.resources.getColor(R.color.green))
-                 holder.ivOrderIcon.setImageDrawable(context.resources.getDrawable(R.drawable.ic_item_logo))
-             }
-
+            "1", "2", "5", "6", "11", "12", "16", "17", "10" -> {
+                holder.ivDot.setColorFilter(context.resources.getColor(R.color.green))
+                holder.ivNewOrder.setColorFilter(context.resources.getColor(R.color.green))
+                holder.ivOrderIcon.setImageDrawable(context.resources.getDrawable(R.drawable.ic_item_logo))
+            }
+            "3", "21", "20", "19", "18", "15", "14", "9", "8", "7", "4" -> {
+                holder.ivDot.setColorFilter(context.resources.getColor(R.color.yellow))
+                holder.ivNewOrder.setColorFilter(context.resources.getColor(R.color.yellow))
+                holder.ivOrderIcon.setImageDrawable(context.resources.getDrawable(R.drawable.ic_inprogress_1))
+            }
+            "0", "13" -> {
+                holder.ivDot.setColorFilter(context.resources.getColor(R.color.brown))
+                holder.ivNewOrder.setColorFilter(context.resources.getColor(R.color.brown))
+                holder.ivOrderIcon.setImageDrawable(context.resources.getDrawable(R.drawable.ic_pending))
+            }
         }
+
+        when (deliveryType) {
+            "1" -> {
+                DeliveryText = context.getString(R.string.Delivery)
+            }
+            "2" -> {
+                DeliveryText = context.getString(R.string.Pick_Up)
+                holder.ivDot.setColorFilter(context.resources.getColor(R.color.yellow))
+                holder.ivNewOrder.setColorFilter(context.resources.getColor(R.color.yellow))
+                holder.ivOrderIcon.setImageDrawable(context.resources.getDrawable(R.drawable.ic_inprogress_1))
+            }
+            "3" -> {
+                DeliveryText = context.getString(R.string.Eat_In)
+            }
+            "4" -> {
+                DeliveryText = context.getString(R.string.Curbside)
+            }
+            "5" -> {
+                DeliveryText = context.getString(R.string.Driver_thru)
+            }
+        }
+        when (deliveryType) {
+            "2" -> {
+                holder.ivOrderIcon.setImageDrawable(context.resources.getDrawable(R.drawable.ic_item_logo))
+            }
+            "1" -> {
+                holder.ivOrderIcon.setImageDrawable(context.resources.getDrawable(R.drawable.ic_inprogress_1))
+            }
+        }
+        holder.tvStatus.setText(DeliveryText)
 
 
 

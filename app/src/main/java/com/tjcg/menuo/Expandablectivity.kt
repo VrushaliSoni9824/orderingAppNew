@@ -196,6 +196,7 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
                     Thread.sleep(15000)
                     mHandler.post(Runnable {
                         Log.e("timer1","timer1")
+
                         getNewOrder()
 
                     })
@@ -290,10 +291,11 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
 
             override fun onFailure(call: Call<String?>, t: Throwable) {
                 if(!isFromNewOrder) lottieProgressDialog!!.cancelDialog()
+                Log.e("tag", " =  = = =error = ==  " + url.toString())
                 getOrders(url, Constants.apiKey, true)
                 responceString = "error"
-                Toast.makeText(applicationContext, "Error", Toast.LENGTH_SHORT).show()
-                Log.e("tag", " =  = = =error = ==  " + t.message)
+//                Toast.makeText(applicationContext, "Error", Toast.LENGTH_SHORT).show()
+
             }
         })
     }
@@ -642,54 +644,6 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
                 )
                 customerTblList.add(customerDetailsEntity)
 
-
-//                val driverDetailsEntity = DriverEntity(
-//                        order.getInt("id"),
-//                        order.getString("name"),
-//                        order.getString("lastname"),
-//                        order.getString("email"),
-//                        order.getInt("login_type"),
-//                        order.getString("social_id"),
-//                        order.getString("photo"),
-//                        order.getString("birthdate"),
-//                        order.getString("phone"),
-//                        order.getInt("cellphone"),
-//                        order.getString("city_id"),
-//                        order.getString("dropdown_option_id"),
-//                        order.getString("address"),
-//                        order.getString("address_notes"),
-//                        order.getString("zipcode"),
-//                        order.getString("location"),
-//                        order.getInt("level"),
-//                        order.getInt("language_id"),
-//                        order.getBoolean("push_notifications"),
-//                        order.getBoolean("busy"),
-//                        order.getBoolean("available"),
-//                        order.getBoolean("enabled"),
-//                        order.getString("created_at"),
-//                        order.getString("updated_at"),
-//                        order.getString("deleted_at"),
-//                        order.getString("internal_number"),
-//                        order.getString("map_data"),
-//                        order.getString("middle_name"),
-//                        order.getString("second_lastname"),
-//                        order.getString("country_phone_code"),
-//                        order.getInt("priority"),
-//                        order.getString("last_order_assigned_at"),
-//                        order.getString("last_location_at"),
-//                        order.getBoolean("phone_verified"),
-//                        order.getBoolean("email_verified"),
-//                        order.getBoolean("driver_zone_restriction"),
-//                        order.getString("pin"),
-//                        order.getString("business_id"),
-//                        order.getString("franchise_id"),
-//                        order.getString("register_site_id"),
-//                        order.getString("ideal_orders"),
-//                        order.getInt("order_id")
-//
-//                )
-//                driverTblList.add(driverDetailsEntity)
-
                 val historyArray : JSONArray = order.getJSONArray("history")
                 if(historyArray.length()>0){
                     for(i in 0..historyArray!!.length()-1){
@@ -705,41 +659,6 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
                         historyTblList.add(historyDetailsEntity)
                     }
                 }
-
-//                val locationDetailsEntity = LocationEntity(
-//                        order.getInt("order_id"),
-//                        order.getDouble("lat"),
-//                        order.getDouble("lng")
-//                )
-//                locationTblList.add(locationDetailsEntity)
-
-//                val metafieldDetailsEntity = MetafieldEntity(
-//                        order.getInt("id"),
-//                        order.getInt("object_id"),
-//                        order.getString("model"),
-//                        order.getString("key"),
-//                        order.getString("value"),
-//                        order.getString("value_type"),
-//                        order.getString("created_at"),
-//                        order.getString("updated_at"),
-//                        order.getInt("order_id")
-//
-//                )
-//                metafieldTblList.add(metafieldDetailsEntity)
-
-
-//                val paymethodDetailsEntity = PaymethodEntity(
-//                        order.getInt("id"),
-//                        order.getString("name"),
-//                        order.getString("gateway"),
-//                        order.getBoolean("enabled"),
-//                        order.getString("deleted_at"),
-//                        order.getString("created_at"),
-//                        order.getString("updated_at"),
-//                        order.getInt("order_id")
-//                )
-//                paymethodTblList.add(paymethodDetailsEntity)
-
                 val productsArray : JSONArray = order.getJSONArray("products")
                 for(i in 0..productsArray.length()-1){
                     val productJson : JSONObject = productsArray.getJSONObject(i)
@@ -774,21 +693,6 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
                     )
                     productTblList.add(productDetailsEntity)
                 }
-//                val reviewDetailsEntity = ReviewEntity(
-//                        order.getInt("id"),
-//                        order.getInt("order_id"),
-//                        order.getInt("quality"),
-//                        order.getInt("delivery"),
-//                        order.getInt("service"),
-//                        order.getInt("package"),
-//                        order.getInt("user_id"),
-//                        order.getString("comment"),
-//                        order.getBoolean("enabled"),
-//                        order.getString("created_at"),
-//                        order.getString("updated_at")
-//
-//                )
-//                reviewTblList.add(reviewDetailsEntity)
 
                 val summeryObj : JSONObject = order.getJSONObject("summary")
                 val summaryDetailsEntity = SummaryEntity(
@@ -811,156 +715,6 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
                 )
                 summaryTblList.add(summaryDetailsEntity)
 
-
-//                resultList.a
-
-                /*
-
-                //buisness
-
-                var address=order.getString("address")
-                var address_notes=order.getString("address_notes")
-                var buisness_cellphone=order.getString("cellphone")
-                var city=order.getString("city")
-                var buisness_city_id=order.getString("city_id")
-                var delivery_time=order.getString("delivery_time")
-                var email=order.getString("email")
-                var header=order.getString("header")
-                var id=order.getString("id")
-                var location=order.getString("location")
-                var logo=order.getString("logo")
-                var name=order.getString("name")
-                var order_id=order.getString("order_id")
-                var phone=order.getString("phone")
-                var pickup_time=order.getString("pickup_time")
-                var zipcode=order.getString("zipcode")
-
-
-
-                //City
-
-                var administrator_id=order.getString("administrator_id")
-                var country_id=order.getString("country_id")
-                var enabled=order.getString("enabled")
-                var city_city_id=order.getString("id")
-                var city_name=order.getString("name")
-
-                //customer
-
-                var customer_address=order.getString("address")
-                var customer_address_notes=order.getString("address_notes")
-                var cellphone=order.getString("cellphone")
-                var customer_city_name=order.getString("name")
-                var country_phone_code=order.getString("country_phone_code")
-                var dropdown_option=order.getString("dropdown_option")
-                var dropdown_option_id=order.getString("dropdown_option_id")
-                var customer_email=order.getString("email")
-                var customer_id=order.getString("id")
-                var internal_number=order.getString("internal_number")
-                var lastname=order.getString("lastname")
-                var customer_location=order.getString("location")
-                var map_data=order.getString("map_data")
-                var middle_name=order.getString("middle_name")
-                var customer_name=order.getString("name")
-                var customer_order_id=order.getString("order_id")
-                var customer_phone=order.getString("phone")
-                var photo=order.getString("photo")
-                var second_lastname=order.getString("second_lastname")
-                var tag=order.getString("tag")
-                var customer_zipcode=order.getString("zipcode")
-
-                //History
-
-                var created_at=order.getString("created_at")
-                var data=order.getString("data")
-                var history_id=order.getString("id")
-                var history_order_id=order.getString("order_id")
-                var type=order.getString("type")
-                var updated_at=order.getString("updated_at")
-
-                //location
-
-                var lat=order.getString("lat")
-                var lng=order.getString("lng")
-                var location_zipcode=order.getString("zipcode")
-                var zoom=order.getString("zoom")
-
-               //orderRs
-
-                var error=order.getString("error")
-                var pagination=order.getString("pagination")
-                var result=order.getString("result")
-
-                //pagination
-
-                var back_page=order.getString("back_page")
-                var current_page=order.getString("current_page")
-                var fisrt_page=order.getString("fisrt_page")
-                var from=order.getString("from")
-                var last_page=order.getString("last_page")
-                var next_page=order.getString("next_page")
-                var page_size=order.getString("page_size")
-                var to=order.getString("to")
-                var total=order.getString("total")
-                var total_pages=order.getString("total_pages")
-
-                //paymethod
-
-                var paymethod_created_at=order.getString("created_at")
-                var deleted_at=order.getString("deleted_at")
-                var paymethod_enabled=order.getString("enabled")
-                var gateway=order.getString("gateway")
-                var paymethod_id=order.getString("id")
-                var paymethod_name=order.getString("name")
-                var paymethod_updated_at=order.getString("updated_at")
-
-                //product
-
-                var category_id=order.getString("category_id")
-                var comment=order.getString("comment")
-                var featured=order.getString("featured")
-                var fee_fixed=order.getString("fee_fixed")
-                var fee_percentage=order.getString("fee_percentage")
-                var product_id_onlyID=order.getString("id")
-                var images=order.getString("images")
-                var in_offer=order.getString("in_offer")
-                var ingredients=order.getString("ingredients")
-                var product_name=order.getString("name")
-                var offer_include_options=order.getString("offer_include_options")
-                var offer_price=order.getString("offer_price")
-                var offer_rate=order.getString("offer_rate")
-                var offer_rate_type=order.getString("offer_rate_type")
-                var options=order.getString("options")
-                var product_order_id=order.getString("order_id")
-                var price=order.getString("price")
-                var priority=order.getString("priority")
-                var product_id=order.getString("product_id")
-                var quantity=order.getString("quantity")
-                var reporting_data=order.getString("reporting_data")
-                var status=order.getString("status")
-                var tax_rate=order.getString("tax_rate")
-                var tax_total=order.getString("tax_total")
-                var tax_type=order.getString("tax_type")
-                var product_total=order.getString("total")
-                var upselling=order.getString("upselling")
-
-                //Summary
-
-                var delivery_price=order.getString("delivery_price")
-                var delivery_price_with_discount=order.getString("delivery_price_with_discount")
-                var discount=order.getString("discount")
-                var driver_tip=order.getString("driver_tip")
-                var driver_tip_rate=order.getString("driver_tip_rate")
-                var service_fee=order.getString("service_fee")
-                var service_fee_rate=order.getString("service_fee_rate")
-                var service_fee_with_discount=order.getString("service_fee_with_discount")
-                var subtotal=order.getString("subtotal")
-                var subtotal_with_discount=order.getString("subtotal_with_discount")
-                var tax=order.getString("tax")
-                var summary_tax_rate=order.getString("tax_rate")
-                var tax_with_discount=order.getString("tax_with_discount")
-                var summary_total=order.getString("total")
-                 */
             }
 
             orderDao!!.insertOrderResult(resultList!!)
@@ -985,13 +739,20 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
                         var orderData : Result = orderDao!!.getOrderById(NewOrderId.toString())
                         var summery : SummaryEntity = orderDao!!.getSummaryById(NewOrderId.toString())
 //                        NewOrderId=null
-                        if(!mplayer.isPlaying)
-                        {
-                            mplayer.isLooping=true
-                            mplayer.start()
-                        }
                         if(orderData != null) {
-                            showDialog(orderData.id.toString(),orderData.delivery_datetime.toString(),summery.total.toString(),orderData.status.toString())
+
+                            var lastAcceptedOrder=prefManager!!.getString(SharedPreferencesKeys.lastAcceptedOrder);
+                            if(!lastAcceptedOrder.equals(NewOrderId)){
+                            if(!mplayer.isPlaying)
+                            {
+                                Log.e("newupor",NewOrderId.toString())
+                                mplayer.isLooping=true
+                                mplayer.start()
+                                NewOrderId =  null
+                            }
+                            showDialog(orderData.id.toString(),orderData.delivery_datetime.toString(),summery.total.toString(),orderData.delivery_type.toString())
+                            }
+
                         }
 //                        val acceptOrderDialog = NewOrderDialog(this,orderData.id.toString(),orderData.delivery_datetime.toString(),summery.total.toString())
 //                        acceptOrderDialog.show(supportFragmentManager, "")
@@ -1395,14 +1156,17 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
 //    }
 
     private fun showDialog( orderId : String, date: String, amt : String, deliveryType : String) {
-        val dialog = Dialog(this)
+//        val dialog = Dialog(application)
+        val dialog = Dialog(this@Expandablectivity)
+
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(false)
         dialog.setContentView(R.layout.dialog_new_order)
         val textView9 = dialog.findViewById(R.id.textView9) as TextView
         val textView6 = dialog.findViewById(R.id.textView6) as TextView
-//        val textView8 = dialog.findViewById(R.id.textView8) as TextView
+        val textView8 = dialog.findViewById(R.id.textView8) as TextView
         val tvDate = dialog.findViewById(R.id.tvDate) as TextView
+        val tvTime = dialog.findViewById(R.id.tvTime) as TextView
 
 
         var deliveryType1 : String = ""
@@ -1416,9 +1180,13 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
         Log.e("logdel",deliveryType1.toString())
         Log.e("logdel",deliveryType.toString())
         textView9.setText("Order ID :"+orderId.toString())
-        textView6.setText("Total Amount :"+amt.toString()+" Kr")
-//        textView8.setText(deliveryType1.toString())
-        tvDate.setText(date.toString())
+        textView6.setText(amt.toString()+" Kr")
+        textView8.setText(deliveryType1.toString())
+        val dateWithMinute = date.dropLast(3)
+        val time: String? = dateWithMinute.substringAfterLast(" ")
+        val date: String? = dateWithMinute.substringBefore(" ")
+        tvDate.setText(" Date: "+date.toString()+"  ")
+        tvTime.setText("   "+time.toString()+"  ")
 
         val btnclose = dialog.findViewById(R.id.btnclose) as ImageView
         val confirmOrderBtn = dialog.findViewById(R.id.confirm_order_btn) as TextView
@@ -1441,8 +1209,10 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
             i.putExtra("orderId", orderId)
             i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(i)
+//            finish()
 
         }
+
         dialog.show()
 
     }

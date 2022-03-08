@@ -12,6 +12,7 @@ object SharedPreferencesKeys {
     const val table_management = "table_management"
     const val menu_management = "menu_management"
     const val isFromLogin = "isFromLogin"
+    const val lastAcceptedOrder = "lastAcceptedOrder"
     const val businessName = "BusinessName"
     const val businessOwner = "businessOwner"
 }

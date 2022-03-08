@@ -202,7 +202,7 @@ class CustomizedExpandableListAdapter(
     }
 
     fun readyForPickUp(orderId : String){
-        ServiceGenerator.nentoApi.RejectORder(Constants.apiKey,orderId,"4")!!.enqueue(object :
+        ServiceGenerator.nentoApi.RejectORder(Constants.apiKey,orderId,"1")!!.enqueue(object :
             Callback<String?> {
             @SuppressLint("NewApi", "ResourceAsColor")
             @RequiresApi(Build.VERSION_CODES.O)

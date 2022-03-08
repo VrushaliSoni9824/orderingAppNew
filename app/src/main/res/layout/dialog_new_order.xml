@@ -32,6 +32,7 @@
                 android:layout_marginEnd="0dp"
                 android:contentDescription="@string/todo"
                 android:src="@drawable/ic_close"
+                android:visibility="gone"
                 app:tint="@color/black" />
 
             <TextView
@@ -99,6 +100,19 @@
 
         <TextView
             android:id="@+id/tvDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="20sp"
+            android:layout_marginEnd="10dp"
+            android:gravity="center"
+            android:text="2022-01-02 17:46"
+            android:textColor="@android:color/black"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

@@ -389,11 +389,12 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
         TextView listTitleTextView = (TextView) convertView.findViewById(R.id.listTitle);
         listTitleTextView.setTypeface(null, Typeface.BOLD);
 
+
         Integer orderCount=0;
-        if(listTitle.equals("Inprogress Orders")) {
+        if(listTitle.equals("Väntar Orders")) {
             orderCount=orderDao.getInProgressOrderCount();
         }
-        if(listTitle.equals("Pending Orders")){
+        if(listTitle.equals("Pågående Orders")){
             orderCount=orderDao.getPendingOrderCount();
         }
         listTitleTextView.setText(listTitle+" ("+orderCount.toString()+") ");

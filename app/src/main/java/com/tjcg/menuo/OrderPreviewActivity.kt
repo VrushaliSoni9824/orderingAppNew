@@ -159,7 +159,7 @@ class OrderPreviewActivity : AppCompatActivity() {
         subtotal = arrSummery.subtotal.toString()
         var deliveryFee : String =arrSummery.delivery_price.toString()
         total= arrSummery.total.toString()
-        var preparedIn = arrResult.prepared_in.toString()
+        //var preparedIn = arrResult.prepared_in.toString()
 
 
         val pendingStatus = java.util.ArrayList<String>()
@@ -172,14 +172,16 @@ class OrderPreviewActivity : AppCompatActivity() {
         pendingStatus.add("16")
         pendingStatus.add("17")
         pendingStatus.add("10")
-
+        preparedIn = orderDao!!.getPreparedIn(orderId.toString()).toString()
         status = arrResult.status.toString()
-        if(!pendingStatus.contains(status)){
-            var time = orderDao!!.getPreparedIn(orderId.toString()).toString()
-            binding!!.textViewPreparedIn.text = time+" min"
+        if(pendingStatus.contains(status)){
+            binding!!.textViewPreparedIn.visibility=View.VISIBLE
+            binding!!.textViewPreparedIn.text = preparedIn+" min"
+        }else{
+            binding!!.textViewPreparedIn.visibility=View.GONE
         }
         binding!!.textOrderID.text=orderId.toString()
-        binding!!.textviewOrderDate.text=orderDate
+        binding!!.textviewOrderDate.text=orderDate.dropLast(3).toString()
         binding!!.textviewCustomerName.text=customerNAme
         binding!!.customerMobno.text=if(customerMobno.equals("null") || customerMobno.equals("")) "" else customerMobno
         binding!!.textviewCustomerAddress.text=customerAddress
@@ -187,10 +189,24 @@ class OrderPreviewActivity : AppCompatActivity() {
         binding!!.textViewSubtotal.text=subtotal
         binding!!.textviewdeliveryfee.text=deliveryFee
         binding!!.textviewTotal.text=total
-        binding!!.textViewPreparedIn.text=if(preparedIn.toString().equals("null") || preparedIn.toString().equals(""))
+
+        val deliveryType = orderDao!!.getDeliveryType(orderId)
+        var DeliveryText = ""
+        when (deliveryType) {
+            "1" -> DeliveryText = getString(R.string.Delivery)
+            "2" -> DeliveryText = getString(R.string.Pick_Up)
+            "3" -> DeliveryText = getString(R.string.Eat_In)
+            "4" -> DeliveryText = getString(R.string.Curbside)
+            "5" -> DeliveryText = getString(R.string.Driver_thru)
+        }
+        binding!!.tvStatus.setText(DeliveryText)
+
+       /* binding!!.textViewPreparedIn.text=if(preparedIn.toString().equals("null") || preparedIn.toString().equals(""))
             ""
         else
-                preparedIn.toString()
+                preparedIn.toString()+" min"
+
+        */
         productAdapter = OrderPreviewProductAdapter(arrProduct,applicationContext)
         binding!!.rvProduct.layoutManager = LinearLayoutManager(applicationContext)
         binding!!.rvProduct.adapter = productAdapter
@@ -261,7 +277,11 @@ class OrderPreviewActivity : AppCompatActivity() {
         }
 
         binding!!.bottomSheetOrderMinutes.textViewAccept.setOnClickListener {
+            if(preparedIn.equals("0") || preparedIn.equals("null") || preparedIn.equals(" ")){
+                preparedIn="30"
+            }
             if(status.equals("13")) preparedIn= "0"
+
             setAcceptOrder(preparedIn)
             //showBottomSheetDialog()
         }
@@ -443,6 +463,7 @@ class OrderPreviewActivity : AppCompatActivity() {
 
                        woyouService!!.cutPaper(null)
             */
+
             if (woyouService != null) {
                 setHeaderData(context, orderNumber, date, customerName, phoneNumber, address1, address2)
                 woyouService!!.printText("\n", null)
@@ -697,7 +718,7 @@ class OrderPreviewActivity : AppCompatActivity() {
 
     fun setAcceptOrder(preparedTime : String){
         lottieProgressDialog!!.showDialog()
-        ServiceGenerator.nentoApi.AcceptORder(Constants.apiKey,orderId,"7")!!.enqueue(object :
+        ServiceGenerator.nentoApi.AcceptORder(Constants.apiKey,orderId,"7",preparedTime)!!.enqueue(object :
             Callback<String?> {
             @SuppressLint("NewApi", "ResourceAsColor")
             @RequiresApi(Build.VERSION_CODES.O)
@@ -707,6 +728,7 @@ class OrderPreviewActivity : AppCompatActivity() {
                     orderDao!!.setPreparedTime(orderId,preparedTime)
                     lottieProgressDialog!!.cancelDialog()
 //                    connectPrinter(applicationContext)
+                    prefManager!!.setString(SharedPreferencesKeys.lastAcceptedOrder,orderId);
                     testSunmiPrintAcceptOrder(applicationContext, orderId.toInt(), orderDate, customerNAme, customerMobno, customerAddress, customerAddress,"$", subtotal,deliveryFee, total, arrProNAme,arrProQty,arrProPrice )
 
                     /*val sweetAlertDialog = SweetAlertDialog(this@OrderPreviewActivity, SweetAlertDialog.WARNING_TYPE)

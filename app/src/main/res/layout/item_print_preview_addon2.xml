@@ -11,43 +11,9 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:weightSum="2">
-
-            <TextView
-                android:id="@+id/textviewProductName"
-                android:layout_width="@dimen/dimen_0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:text="1 X PIZZA PRIMAVERA"
-                android:textColor="@color/black"
-                android:textSize="@dimen/_12ssp" />
-
-            <TextView
-                android:id="@+id/textViewItemPrice"
-                android:layout_width="@dimen/dimen_0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="end"
-                android:text="100kr"
-                android:textColor="@color/black"
-                android:textSize="@dimen/_12ssp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:weightSum="2">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvAddon"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
 
             <TextView
                 android:id="@+id/textviewProductAddons"
@@ -58,8 +24,7 @@
                 android:layout_weight="1"
                 android:text="1 X PIZZA PRIMAVERA"
                 android:textColor="@color/black"
-                android:textSize="@dimen/_12ssp"
-                android:visibility="gone" />
+                android:textSize="@dimen/_12ssp" />
 
             <TextView
                 android:id="@+id/textViewItemAddonPrice"
@@ -70,8 +35,7 @@
                 android:gravity="end"
                 android:text="100kr"
                 android:textColor="@color/black"
-                android:textSize="@dimen/_12ssp"
-                android:visibility="gone" />
+                android:textSize="@dimen/_12ssp" />
 
             <TextView
                 android:layout_width="@dimen/dimen_0dp"
@@ -87,12 +51,4 @@
 
     </LinearLayout>
 
-    <View
-        android:id="@+id/view"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_1sdp"
-        android:layout_marginTop="@dimen/_3sdp"
-        android:layout_marginBottom="@dimen/_3sdp"
-        android:layout_weight="1"
-        android:background="@color/light_grey" />
 </LinearLayout>
