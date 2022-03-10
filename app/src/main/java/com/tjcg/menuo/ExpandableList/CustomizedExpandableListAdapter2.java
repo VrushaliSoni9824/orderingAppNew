@@ -391,10 +391,10 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
 
 
         Integer orderCount=0;
-        if(listTitle.equals("Pågående Orders")) {
+        if(listTitle.equals("Pågående")) {
             orderCount=orderDao.getInProgressOrderCount();
         }
-        if(listTitle.equals("Väntar Orders")){
+        if(listTitle.equals("Väntar")){
             orderCount=orderDao.getPendingOrderCount();
         }
         listTitleTextView.setText(listTitle+" ("+orderCount.toString()+") ");
@@ -435,9 +435,11 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
                             context.startActivity(i);
                         }
                     });
-                    sweetAlertDialog.show();
+//                    sweetAlertDialog.show();
 //                    sweetAlertDialog.setContentText(context.getResources().getString(R.string.lbl_pickUpReady));
-
+                    Intent i = new Intent(context, Expandablectivity.class);
+                    i.putExtra("businessID",businessID);
+                    context.startActivity(i);
                 }else{
                     lottieProgressDialog.cancelDialog();
                     SweetAlertDialog sweetAlertDialog = new SweetAlertDialog(context,SweetAlertDialog.ERROR_TYPE);

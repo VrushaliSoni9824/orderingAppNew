@@ -50,6 +50,19 @@
 
         </RelativeLayout>
 
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginStart="20sp"
+            android:layout_marginEnd="10dp"
+            android:gravity="center"
+            android:text="Order : 7989"
+            android:textColor="@android:color/black"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -70,20 +83,7 @@
             android:textColor="@android:color/black"
             android:textSize="24sp"
             android:textStyle="bold"
-            tools:visibility="gone" />
-
-        <TextView
-            android:id="@+id/textView9"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:layout_marginStart="20sp"
-            android:layout_marginEnd="10dp"
-            android:gravity="center"
-            android:text="Order# : 7989"
-            android:textColor="@android:color/black"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:visibility="visible" />
 
         <TextView
             android:id="@+id/textView6"

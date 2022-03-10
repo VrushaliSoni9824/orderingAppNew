@@ -56,8 +56,8 @@ object ExpandableListDataItems {
         expandableDetailList["Inprogress Orders"] = orderIdsProcessing
         expandableDetailList["Pending Orders"] = orderIDsComplete*/
 //        expandableDetailList["Done"] = orderIDsComplete
-        expandableDetailList["Väntar Orders"] = orderIdsPending
-        expandableDetailList["Pågående Orders"] = orderIdsProcessing
+        expandableDetailList["Väntar"] = orderIdsPending
+        expandableDetailList["Pågående"] = orderIdsProcessing
 
 //        expandableDetailList["Pending Orders"] = orderIdsPending
 //        expandableDetailList["Inprocess Orders"] = orderIdsProcessing

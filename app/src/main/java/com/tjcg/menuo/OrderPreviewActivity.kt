@@ -175,11 +175,12 @@ class OrderPreviewActivity : AppCompatActivity() {
         pendingStatus.add("10")
         preparedIn = orderDao!!.getPreparedIn(orderId.toString()).toString()
         status = arrResult.status.toString()
-        if(pendingStatus.contains(status)){
+        if(preparedIn.equals("0") || preparedIn.equals("null")){
+            binding!!.textViewPreparedIn.visibility=View.GONE
+        }else{
             binding!!.textViewPreparedIn.visibility=View.VISIBLE
             binding!!.textViewPreparedIn.text = preparedIn+" min"
-        }else{
-            binding!!.textViewPreparedIn.visibility=View.GONE
+
         }
         binding!!.textOrderID.text="#"+orderId.toString()
         binding!!.textviewOrderDate.text=orderDate.dropLast(3).toString()

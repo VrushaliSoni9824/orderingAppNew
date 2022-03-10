@@ -1131,7 +1131,7 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
         }
         Log.e("logdel",deliveryType1.toString())
         Log.e("logdel",deliveryType.toString())
-        textView9.setText(orderId.toString())
+        textView9.setText("#"+orderId.toString())
         textView6.setText(amt.toString()+" Kr")
         textView8.setText(deliveryType1.toString())
         val dateWithMinute = date.dropLast(3)
