@@ -353,6 +353,7 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
                     Toast.makeText(applicationContext, "Wrong detail", Toast.LENGTH_SHORT).show()
 //                    Toast.makeText(mainActivity,"Error while fetching invoice detail..",Toast.LENGTH_SHORT).show()
                     Log.e("tag", " =  = = =error = ==  " + response.message())
+                    getPaginationInfor(url,key,isFromNewOrder)
                 }
             }
 
@@ -395,6 +396,7 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
 //                getOrders(url,Constants.apiKey)
                 responceString = "error"
                 Toast.makeText(applicationContext, "Error", Toast.LENGTH_SHORT).show()
+                getOrderDetail(url,key,orderId)
                 Log.e("tag", " =  = = =error = ==  " + t.message)
             }
         })
@@ -743,6 +745,7 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
 
                             var lastAcceptedOrder=prefManager!!.getString(SharedPreferencesKeys.lastAcceptedOrder);
                             if(!lastAcceptedOrder.equals(NewOrderId)){
+                                showDialog(orderData.id.toString(),orderData.delivery_datetime.toString(),summery.total.toString(),orderData.delivery_type.toString())
                             if(!mplayer.isPlaying)
                             {
                                 Log.e("newupor",NewOrderId.toString())
@@ -750,7 +753,7 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
                                 mplayer.start()
                                 NewOrderId =  null
                             }
-                            showDialog(orderData.id.toString(),orderData.delivery_datetime.toString(),summery.total.toString(),orderData.delivery_type.toString())
+
                             }
 
                         }
@@ -814,57 +817,6 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
 
     }
 
-    fun getOnlineOrder(url: String, key: String) {
-        lottieProgressDialog!!.showDialog()
-        var responceString: String = ""
-
-        ServiceGenerator.nentoApi.getUsers(url, key)!!.enqueue(object :
-                Callback<String?> {
-            @SuppressLint("NewApi", "ResourceAsColor")
-            @RequiresApi(Build.VERSION_CODES.O)
-            override fun onResponse(call: Call<String?>, response: Response<String?>) {
-                if (response.isSuccessful) {
-                    lottieProgressDialog!!.cancelDialog()
-//                    Toast.makeText(applicationContext, "siccess", Toast.LENGTH_SHORT).show()
-                    orderResult = response.body()!!.toString()
-                    responceString = orderResult
-
-//                    expandableDetailList = ExpandableListDataItems.getData(responceString, applicationContext)
-//                    expandableTitleList = ArrayList(expandableDetailList!!.keys)
-//                    expandableListAdapter =
-//                            CustomizedExpandableListAdapter(
-//                                    applicationContext,
-//                                    expandableTitleList,
-//                                    expandableDetailList
-//                            )
-//                    expandableListViewExample!!.setAdapter(expandableListAdapter)
-
-
-//                    var jobj = JSONObject(orderResult)
-//                    jobj
-
-//                    var i = Intent(applicationContext,Expandablectivity::class.java)
-//                    i.putExtra("odata",orderResult)
-//                    startActivity(i)
-
-                } else {
-                    lottieProgressDialog!!.cancelDialog()
-                    responceString = "error"
-                    Toast.makeText(applicationContext, "Wrong detail", Toast.LENGTH_SHORT).show()
-//                    Toast.makeText(mainActivity,"Error while fetching invoice detail..",Toast.LENGTH_SHORT).show()
-                    Log.e("tag", " =  = = =error = ==  " + response.message())
-                }
-            }
-
-            override fun onFailure(call: Call<String?>, t: Throwable) {
-                lottieProgressDialog!!.cancelDialog()
-                getOrders(url, Constants.apiKey)
-                responceString = "error"
-                Toast.makeText(applicationContext, "Error", Toast.LENGTH_SHORT).show()
-                Log.e("tag", " =  = = =error = ==  " + t.message)
-            }
-        })
-    }
 
     fun parsePaginationInfoJson(jsonString: String, isFirstTime: Boolean, isFromNewOrder: Boolean = false) {
 
@@ -1179,7 +1131,7 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
         }
         Log.e("logdel",deliveryType1.toString())
         Log.e("logdel",deliveryType.toString())
-        textView9.setText("Order ID :"+orderId.toString())
+        textView9.setText(orderId.toString())
         textView6.setText(amt.toString()+" Kr")
         textView8.setText(deliveryType1.toString())
         val dateWithMinute = date.dropLast(3)

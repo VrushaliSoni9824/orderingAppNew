@@ -391,10 +391,10 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
 
 
         Integer orderCount=0;
-        if(listTitle.equals("Väntar Orders")) {
+        if(listTitle.equals("Pågående Orders")) {
             orderCount=orderDao.getInProgressOrderCount();
         }
-        if(listTitle.equals("Pågående Orders")){
+        if(listTitle.equals("Väntar Orders")){
             orderCount=orderDao.getPendingOrderCount();
         }
         listTitleTextView.setText(listTitle+" ("+orderCount.toString()+") ");

@@ -79,6 +79,9 @@ interface OrderDao {
     @Query("select * from product where order_id=:id")
     fun getProductById(id: String): List<ProductEntity>
 
+    @Query("select sum(total) from product where order_id=:id")
+    fun getSubTotal(id: String): Int
+
     @Query("select * from summary where order_id=:id")
     fun getSummaryById(id: String): SummaryEntity
 

@@ -91,11 +91,11 @@ class OrderPreviewProductAdapter(var productDataList: List<ProductEntity>, var c
             val suboptionsArray = addon.getJSONArray("suboptions")
             for(j in 0..suboptionsArray.length()-1){
                 val suboption = suboptionsArray.getJSONObject(j)
-                var name =  suboption.getInt("quantity").toString()+" X "+suboption.getString("name");
+                var name =  suboption.getInt("quantity").toString()+" x "+suboption.getString("name");
                 var price = suboption.getString("price");
                 addonName!!.add(name)
                 addonPrice!!.add(price)
-                addonText=addonText+suboption.getInt("quantity")+" X "+suboption.getString("name")+" "+suboption.getString("price")+" <br/>"
+                addonText=addonText+suboption.getInt("quantity")+" x "+suboption.getString("name")+" "+suboption.getString("price")+" <br/>"
             }
             addonText=addonText+"<br/>"
         }

@@ -114,10 +114,9 @@ class OrderPreviewActivity : AppCompatActivity() {
 
         binding!!.imageViewBack.setOnClickListener {
             if (!isFromDoneActivity){
-                val i = Intent(this, Expandablectivity::class.java)
-                i.putExtra("businessID", businessID)
-                startActivity(i)
+                startActivity(Intent(applicationContext, Expandablectivity::class.java).putExtra("businessID",businessID))
                 finish()
+
             }else{
                 val i = Intent(this, OrderCompleteActivity::class.java)
                 i.putExtra("businessID", businessID)
@@ -151,14 +150,16 @@ class OrderPreviewActivity : AppCompatActivity() {
         arrSummery= orderDao!!.getSummaryById(orderId);
 
         var orderId : String = arrResult.id.toString()
-        orderDate = arrResult.created_at.toString()
+        orderDate = arrResult.delivery_datetime.toString()
         customerNAme = arrCustomer.name
         customerMobno = arrCustomer.phone
         customerAddress =arrCustomer.address
         var note : String = arrCustomer.address_notes
-        subtotal = arrSummery.subtotal.toString()
+//        subtotal = arrSummery.total.toString()
+        subtotal= orderDao!!.getSubTotal(orderId.toString()).toString();
         var deliveryFee : String =arrSummery.delivery_price.toString()
         total= arrSummery.total.toString()
+
         //var preparedIn = arrResult.prepared_in.toString()
 
 
@@ -180,7 +181,7 @@ class OrderPreviewActivity : AppCompatActivity() {
         }else{
             binding!!.textViewPreparedIn.visibility=View.GONE
         }
-        binding!!.textOrderID.text=orderId.toString()
+        binding!!.textOrderID.text="#"+orderId.toString()
         binding!!.textviewOrderDate.text=orderDate.dropLast(3).toString()
         binding!!.textviewCustomerName.text=customerNAme
         binding!!.customerMobno.text=if(customerMobno.equals("null") || customerMobno.equals("")) "" else customerMobno
@@ -470,12 +471,12 @@ class OrderPreviewActivity : AppCompatActivity() {
                 woyouService!!.setFontSize(24f, null)
                 woyouService!!.sendRAWData(normalFont(), null)
                 woyouService!!.printText("================================\n", null)
-                woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_ItemName).toUpperCase(), 17) + " " + rightPadZeros(context.getString(R.string.lbl_Quantity).toUpperCase(), 5) + " " + leftPadZeros(context.getString(R.string.lbl_Price).toUpperCase(), 8) + "\n", null)
+                woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_ItemName).toUpperCase(), 22) + leftPadZeros(context.getString(R.string.lbl_Price).toUpperCase(), 8) + "\n", null)
                 woyouService!!.printText("================================\n", null)
                 for (i in arrProNAme.indices) {
 //                    val items = orderDetail.lstobjServiceOrderItem[i]
                     //woyouService!!.printText(rightPadZeros(truncateString(arrProNAme.get(i), 15, true) + truncateString(" " + currency + " " + arrProPrice.get(i), 15, true), 43) + "\n", null)
-                    woyouService!!.printText(rightPadZeros(truncateString(arrProNAme.get(i), 15, true),17) + rightPadZeros(truncateString(arrProQty.get(i), 15, true),5) + leftPadZeros(truncateString(" " + currency + " " + arrProPrice.get(i), 15, true), 8) + "\n", null)
+                    woyouService!!.printText(rightPadZeros(truncateString(arrProQty.get(i), 15, true)+"x"+truncateString(arrProNAme.get(i), 15, true),22) + leftPadZeros(truncateString(" " + currency + " " + arrProPrice.get(i), 15, true), 8) + "\n", null)
 
 //                    woyouService!!.printText(rightPadZeros(truncateString("", 15, true), 27) + rightPadZeros(if (items.status == Default.COMPLETED) items.itemQty.toString() else (items.itemQty - (items.itemQty * 2)).toString(), 6) + " " + leftPadZeros(String.format(Locale.getDefault(), Constants.StringFormat, currency, getTwoDecimalValue(if (items.status == Default.COMPLETED) (items.pricePerUnit * items.itemQty) else (if (items.status == Default.SINGLERETURN) ((items.pricePerUnit - (items.pricePerUnit * 2)) * items.itemQty) else (items.pricePerUnit - (items.pricePerUnit * 2)) * items.itemQty))), 10) + "\n", null)
                 }//example for set order Object
@@ -501,6 +502,27 @@ class OrderPreviewActivity : AppCompatActivity() {
 
     private fun setHeaderData(context: Context, orderNumber: Int, date: String, customerName: String, phoneNumber: String, address1: String, address2: String) {
         if (woyouService != null) {
+            var deliveryType: String = orderDao!!.getDeliveryType(orderNumber.toString())
+            var DeliveryText: String = ""
+            when (deliveryType) {
+                "1" -> {
+                    DeliveryText = context.getString(R.string.Delivery)
+                }
+                "2" -> {
+                    DeliveryText = context.getString(R.string.Pick_Up)
+                }
+                "3" -> {
+                    DeliveryText = context.getString(R.string.Eat_In)
+                }
+                "4" -> {
+                    DeliveryText = context.getString(R.string.Curbside)
+                }
+                "5" -> {
+                    DeliveryText = context.getString(R.string.Driver_thru)
+                }
+            }
+
+
             woyouService!!.setFontSize(40f, null)
             woyouService!!.sendRAWData(boldFont(), null)
             woyouService!!.sendRAWData(alignCenter(), null)
@@ -512,7 +534,7 @@ class OrderPreviewActivity : AppCompatActivity() {
             woyouService!!.sendRAWData(normalFont(), null)
             woyouService!!.printText("${context.getString(R.string.lbl_OrderNo)}" + " : $orderNumber" + "\n", null)
             woyouService!!.sendRAWData(boldFont(), null)
-            woyouService!!.printText(truncateString(context.getString(R.string.lbl_delivery).toUpperCase(), 30) + "\n", null)
+            woyouService!!.printText(truncateString(DeliveryText.toUpperCase(), 30) + "\n", null)
             woyouService!!.setFontSize(24f, null)
             woyouService!!.sendRAWData(normalFont(), null)
             woyouService!!.printText("${context.getString(R.string.lbl_DATE)} " + date.toUpperCase() + "\n", null) // createdDate
