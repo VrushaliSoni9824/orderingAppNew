@@ -101,17 +101,17 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
                 SweetAlertDialog pDialog = new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE);
                 pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
                 pDialog.setTitleText("Orders App");
-                pDialog.setContentText("Do you confirm that this order is ready to pickup?");
+                pDialog.setContentText("Vill du verkligen slutföra ordern?");
 //                pDialog.setCancelText("Cancel");
 //                pDialog.setConfirmText("Ok");
-                pDialog.setCancelButton("Cancel", new SweetAlertDialog.OnSweetClickListener() {
+                pDialog.setCancelButton("Nej", new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
 
                         pDialog.cancel();
                     }
                 });
-                pDialog.setConfirmButton("Ok", new SweetAlertDialog.OnSweetClickListener() {
+                pDialog.setConfirmButton("Ja", new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         readyForPickUp(orderID);
@@ -416,7 +416,7 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
 
     public void readyForPickUp(String orderId){
         lottieProgressDialog.showDialog();
-        ServiceGenerator.getNentoApi().RejectORder(Constants.apiKey,orderId,"4").enqueue(new Callback<String>() {
+        ServiceGenerator.getNentoApi().RejectORder(Constants.apiKey,orderId,"1").enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 if(response.isSuccessful())
@@ -430,6 +430,7 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
                     sweetAlertDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                         @Override
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.cancel();
                             Intent i = new Intent(context, Expandablectivity.class);
                             i.putExtra("businessID",businessID);
                             context.startActivity(i);

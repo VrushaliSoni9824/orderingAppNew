@@ -62,7 +62,7 @@ class OrderComepleteAdapter(private val context: Context, private val onClickLis
             val pDialog = SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
             pDialog.progressHelper.barColor = Color.parseColor("#A5DC86")
             pDialog.titleText = "Orders App"
-            pDialog.contentText = "Do you confirm that this order is ready to pickup?"
+            pDialog.contentText = "Vill du verkligen slutföra ordern?"
             //                pDialog.setCancelText("Cancel");
 //                pDialog.setConfirmText("Ok");
             pDialog.setCancelButton("Cancel") { pDialog.cancel() }

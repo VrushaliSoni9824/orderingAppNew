@@ -40,6 +40,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.widget.Toast
 import com.tjcg.menuo.utils.*
+import org.json.JSONArray
 
 
 class OrderPreviewActivity : AppCompatActivity() {
@@ -131,7 +132,7 @@ class OrderPreviewActivity : AppCompatActivity() {
 
         binding!!.bottomSheetOrderMinutes.textViewPrit.setOnClickListener {
 
-            testSunmiPrintAcceptOrder(applicationContext, orderId.toInt(), orderDate, customerNAme, customerMobno, customerAddress, customerAddress,"$", subtotal,deliveryFee, total, arrProNAme,arrProQty,arrProPrice )
+            testSunmiPrintAcceptOrder(applicationContext, orderId.toInt(), orderDate, customerNAme, customerMobno, customerAddress, customerAddress,"", subtotal,deliveryFee, total, arrProNAme,arrProQty,arrProPrice ,arrProduct)
 
            // Toast.makeText(applicationContext,"Hello",Toast.LENGTH_LONG).show();
            // connectPrinter(applicationContext)
@@ -421,7 +422,7 @@ class OrderPreviewActivity : AppCompatActivity() {
             if (woyouService != null) {
                 setHeaderData(context, orderNumber, date, customerName, phoneNumber, address1, address2)
                 woyouService!!.printText("\n", null)
-                woyouService!!.setFontSize(24f, null)
+                woyouService!!.setFontSize(28f, null)
                 woyouService!!.sendRAWData(normalFont(), null)
                 woyouService!!.printText("================================\n", null)
                 woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_ItemName).toUpperCase(), 17) + " " + rightPadZeros(context.getString(R.string.lbl_Quantity).toUpperCase(), 5) + " " + leftPadZeros(context.getString(R.string.lbl_Price).toUpperCase(), 8) + "\n", null)
@@ -439,7 +440,7 @@ class OrderPreviewActivity : AppCompatActivity() {
                 woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_Delivery_free), 17) + "" + leftPadZeros("$currency $deliveryFee", 11) + "\n", null)
                 woyouService!!.printText("--------------------------------\n", null)
                 woyouService!!.sendRAWData(boldFont(), null)
-                woyouService!!.setFontSize(30f, null)
+                woyouService!!.setFontSize(34f, null)
                 woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_Total), 14) + "" + leftPadZeros("$total", 8) + "\n", null)
                 woyouService!!.printText("\n", null)
                 woyouService!!.cutPaper(null)
@@ -449,7 +450,7 @@ class OrderPreviewActivity : AppCompatActivity() {
         }
     }
 
-    fun testSunmiPrintAcceptOrder(context: Context, orderNumber: Int, date: String, customerName: String, phoneNumber: String, address1: String, address2: String, currency: String, subTotal: String, deliveryFee: String, total: String, proName : ArrayList<String>, proQty : ArrayList<String>, proPrice : ArrayList<String> ) {//, orderDetail: OrderDetail?
+    fun testSunmiPrintAcceptOrder(context: Context, orderNumber: Int, date: String, customerName: String, phoneNumber: String, address1: String, address2: String, currency: String, subTotal: String, deliveryFee: String, total: String, proName : ArrayList<String>, proQty : ArrayList<String>, proPrice : ArrayList<String> , productEntity: List<ProductEntity>) {//, orderDetail: OrderDetail?
         try {
             /*       if (woyouService != null) {
                        printerConfigure(context)
@@ -468,27 +469,60 @@ class OrderPreviewActivity : AppCompatActivity() {
 
             if (woyouService != null) {
                 setHeaderData(context, orderNumber, date, customerName, phoneNumber, address1, address2)
-                woyouService!!.printText("\n", null)
-                woyouService!!.setFontSize(24f, null)
+                woyouService!!.printText("\n\n", null)
+                woyouService!!.setFontSize(28f, null)
                 woyouService!!.sendRAWData(normalFont(), null)
+//                woyouService!!.printText("================================\n", null)
+//                woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_ItemName).toUpperCase(), 22) + leftPadZeros(context.getString(R.string.lbl_Price).toUpperCase(), 8) + "\n", null)
                 woyouService!!.printText("================================\n", null)
-                woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_ItemName).toUpperCase(), 22) + leftPadZeros(context.getString(R.string.lbl_Price).toUpperCase(), 8) + "\n", null)
-                woyouService!!.printText("================================\n", null)
-                for (i in arrProNAme.indices) {
-//                    val items = orderDetail.lstobjServiceOrderItem[i]
-                    //woyouService!!.printText(rightPadZeros(truncateString(arrProNAme.get(i), 15, true) + truncateString(" " + currency + " " + arrProPrice.get(i), 15, true), 43) + "\n", null)
-                    woyouService!!.printText(rightPadZeros(truncateString(arrProQty.get(i), 15, true)+"x"+truncateString(arrProNAme.get(i), 15, true),22) + leftPadZeros(truncateString(" " + currency + " " + arrProPrice.get(i), 15, true), 8) + "\n", null)
 
-//                    woyouService!!.printText(rightPadZeros(truncateString("", 15, true), 27) + rightPadZeros(if (items.status == Default.COMPLETED) items.itemQty.toString() else (items.itemQty - (items.itemQty * 2)).toString(), 6) + " " + leftPadZeros(String.format(Locale.getDefault(), Constants.StringFormat, currency, getTwoDecimalValue(if (items.status == Default.COMPLETED) (items.pricePerUnit * items.itemQty) else (if (items.status == Default.SINGLERETURN) ((items.pricePerUnit - (items.pricePerUnit * 2)) * items.itemQty) else (items.pricePerUnit - (items.pricePerUnit * 2)) * items.itemQty))), 10) + "\n", null)
-                }//example for set order Object
+
+                for (product in arrProduct){
+                    val addonsArray = JSONArray(product.options)
+                    woyouService!!.printText(rightPadZeros(truncateString(product.quantity.toString(), 15, true)+" x "+truncateString(product.name.toString(), 15, true),22) + leftPadZeros(truncateString(" " + currency + " " + product.price, 15, true), 8) + "\n", null)
+                    for (i in 0..addonsArray.length() - 1) {
+                        val addon = addonsArray.getJSONObject(i)
+                        val suboptionsArray = addon.getJSONArray("suboptions")
+                        for(j in 0..suboptionsArray.length()-1){
+                            val suboption = suboptionsArray.getJSONObject(j)
+                            var name = suboption.getString("name");
+                            var qty =  suboption.getInt("quantity").toString()+" x "
+                            var price = suboption.getString("price");
+                            if(price.toInt()>0){
+                                woyouService!!.printText(rightPadZeros(truncateString(qty, 15, true)+truncateString(name, 15, true),22) + leftPadZeros(truncateString(" " + currency + " " + price, 15, true), 8) + "\n", null)
+                            }
+                            else{
+                                woyouService!!.printText(rightPadZeros(truncateString("", 15, true)+" "+truncateString(name, 15, true),22) + leftPadZeros(truncateString(" " + " " + " " + " ", 15, true), 8) + "\n", null)
+                            }
+
+
+                        }
+
+                    }
+                    woyouService!!.printText("================================\n", null)
+
+
+                }
+//                for (i in arrProNAme.indices) {
+////                    val items = orderDetail.lstobjServiceOrderItem[i]
+//                    //woyouService!!.printText(rightPadZeros(truncateString(arrProNAme.get(i), 15, true) + truncateString(" " + currency + " " + arrProPrice.get(i), 15, true), 43) + "\n", null)
+//                    woyouService!!.printText(rightPadZeros(truncateString(arrProQty.get(i), 15, true)+"x"+truncateString(arrProNAme.get(i), 15, true),22) + leftPadZeros(truncateString(" " + currency + " " + arrProPrice.get(i), 15, true), 8) + "\n", null)
+//
+////                    woyouService!!.printText(rightPadZeros(truncateString("", 15, true), 27) + rightPadZeros(if (items.status == Default.COMPLETED) items.itemQty.toString() else (items.itemQty - (items.itemQty * 2)).toString(), 6) + " " + leftPadZeros(String.format(Locale.getDefault(), Constants.StringFormat, currency, getTwoDecimalValue(if (items.status == Default.COMPLETED) (items.pricePerUnit * items.itemQty) else (if (items.status == Default.SINGLERETURN) ((items.pricePerUnit - (items.pricePerUnit * 2)) * items.itemQty) else (items.pricePerUnit - (items.pricePerUnit * 2)) * items.itemQty))), 10) + "\n", null)
+//                }//example for set order Object
                 woyouService!!.sendRAWData(normalFont(), null)
-                woyouService!!.printText("--------------------------------\n", null)
                 woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_subTotal), 17) + "" + leftPadZeros("$currency $subTotal", 11) + "\n", null)
-                woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_Delivery_free), 17) + "" + leftPadZeros("$currency $deliveryFee", 11) + "\n", null)
+                woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_Delivery_free), 17) + "" + leftPadZeros("$currency "+if(deliveryFee.equals("0") || deliveryFee.equals("null")) "0" else deliveryFee, 11) + "\n", null)
                 woyouService!!.printText("--------------------------------\n", null)
                 woyouService!!.sendRAWData(boldFont(), null)
-                woyouService!!.setFontSize(30f, null)
+                woyouService!!.setFontSize(34f, null)
                 woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_Total), 14) + "" + leftPadZeros("$total", 8) + "\n", null)
+                woyouService!!.printText("\n", null)
+                woyouService!!.printText("\n", null)
+                woyouService!!.printText("\n", null)
+                woyouService!!.printText("\n", null)
+                woyouService!!.printText("\n", null)
+                woyouService!!.printText("\n", null)
                 woyouService!!.printText("\n", null)
                 woyouService!!.cutPaper(null)
                 startActivity(Intent(applicationContext, Expandablectivity::class.java).putExtra("businessID",businessID))
@@ -502,6 +536,9 @@ class OrderPreviewActivity : AppCompatActivity() {
 
 
     private fun setHeaderData(context: Context, orderNumber: Int, date: String, customerName: String, phoneNumber: String, address1: String, address2: String) {
+        val onlytime: String? = date.substringAfterLast(" ")
+        val onlydate: String? = date.substringBefore(" ")
+
         if (woyouService != null) {
             var deliveryType: String = orderDao!!.getDeliveryType(orderNumber.toString())
             var DeliveryText: String = ""
@@ -524,37 +561,43 @@ class OrderPreviewActivity : AppCompatActivity() {
             }
 
 
-            woyouService!!.setFontSize(40f, null)
+            woyouService!!.setFontSize(44f, null)
             woyouService!!.sendRAWData(boldFont(), null)
             woyouService!!.sendRAWData(alignCenter(), null)
-            woyouService!!.printText(truncateString(context.getString(R.string.lbl_Name), 30) + "\n", null)
-            woyouService!!.setFontSize(26f, null)
+            woyouService!!.printText(truncateString(context.getString(R.string.lbl_Name), 30) + "\n\n", null)
+            woyouService!!.setFontSize(30f, null)
+            woyouService!!.sendRAWData(normalFont(), null)
+            woyouService!!.printText("# " + "$orderNumber" + "\n\n", null)
             //woyouService!!.printBitmap(BitmapFactory.decodeResource(resources, R.drawable.ic_logo_name),)//callBack(Image)
             woyouService!!.sendRAWData(normalFont(), null)
             woyouService!!.printText("------------------------------\n", null)
-            woyouService!!.sendRAWData(normalFont(), null)
-            woyouService!!.printText("${context.getString(R.string.lbl_OrderNo)}" + " : $orderNumber" + "\n", null)
             woyouService!!.sendRAWData(boldFont(), null)
-            woyouService!!.printText(truncateString(DeliveryText.toUpperCase(), 30) + "\n", null)
-            woyouService!!.setFontSize(24f, null)
+            woyouService!!.printText(truncateString(DeliveryText.toUpperCase(), 30) + "\n\n", null)
+            woyouService!!.setFontSize(28f, null)
             woyouService!!.sendRAWData(normalFont(), null)
-            woyouService!!.printText("${context.getString(R.string.lbl_DATE)} " + date.toUpperCase() + "\n", null) // createdDate
-            woyouService!!.setFontSize(26f, null)
+            woyouService!!.printText( onlydate!!.toUpperCase() + "\n\n", null) // createdDate
+            woyouService!!.sendRAWData(normalFont(), null)
+            woyouService!!.printText( onlytime!!.dropLast(3)!!.toUpperCase() + "\n\n", null) // createdDate
+            woyouService!!.setFontSize(30f, null)
             woyouService!!.sendRAWData(boldFont(), null)
             woyouService!!.printText(truncateString(context.getString(R.string.lbl_Customer).toUpperCase(), 30) + "\n", null)
             woyouService!!.sendRAWData(normalFont(), null)
-            woyouService!!.setFontSize(24f, null)
-            woyouService!!.printText(truncateString("$customerName", 30) + "\n", null)
-            woyouService!!.printText(truncateString("$phoneNumber", 30) + "\n", null)
+            woyouService!!.setFontSize(28f, null)
+            woyouService!!.printText(truncateString("$customerName", 30) + "\n\n", null)
+            woyouService!!.printText(truncateString("$phoneNumber", 30) + "\n\n", null)
             woyouService!!.sendRAWData(alignCenter(), null)
-            woyouService!!.printText(truncateString("$address1", 32) + "\n", null)
-            woyouService!!.printText(truncateString("$address2", 30) + "\n", null)
-            woyouService!!.setFontSize(26f, null)
+            var a1 = address1.substringBefore(",")
+            var a2 = address1.substringAfter(",")
+            woyouService!!.printText(truncateString(a1, 32) + "\n\n", null)
+            woyouService!!.sendRAWData(alignCenter(), null)
+            woyouService!!.printText(truncateString(a2, 32) + "\n\n", null)
+            woyouService!!.printText(truncateString("$address2", 30) + "\n\n", null)
+            woyouService!!.setFontSize(30f, null)
             woyouService!!.sendRAWData(boldFont(), null)
-            woyouService!!.printText(truncateString(context.getString(R.string.lbl_notes).toUpperCase(), 30) + "\n", null)
-            woyouService!!.setFontSize(24f, null)
+            woyouService!!.printText(truncateString(context.getString(R.string.lbl_notes).toUpperCase(), 30) + "\n\n", null)
+            woyouService!!.setFontSize(28f, null)
             woyouService!!.sendRAWData(normalFont(), null)
-            woyouService!!.printText(truncateString(context.getString(R.string.lbl_notes_), 30) + "\n", null)
+            woyouService!!.printText(truncateString(context.getString(R.string.lbl_notes_), 30) + "\n\n", null)
 
         }
     }
@@ -752,7 +795,7 @@ class OrderPreviewActivity : AppCompatActivity() {
                     lottieProgressDialog!!.cancelDialog()
 //                    connectPrinter(applicationContext)
                     prefManager!!.setString(SharedPreferencesKeys.lastAcceptedOrder,orderId);
-                    testSunmiPrintAcceptOrder(applicationContext, orderId.toInt(), orderDate, customerNAme, customerMobno, customerAddress, customerAddress,"$", subtotal,deliveryFee, total, arrProNAme,arrProQty,arrProPrice )
+                    testSunmiPrintAcceptOrder(applicationContext, orderId.toInt(), orderDate, customerNAme, customerMobno, customerAddress, customerAddress,"", subtotal,deliveryFee, total, arrProNAme,arrProQty,arrProPrice,arrProduct )
 
                     /*val sweetAlertDialog = SweetAlertDialog(this@OrderPreviewActivity, SweetAlertDialog.WARNING_TYPE)
                     sweetAlertDialog.setCanceledOnTouchOutside(false)

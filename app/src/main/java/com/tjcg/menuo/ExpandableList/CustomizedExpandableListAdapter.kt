@@ -76,7 +76,7 @@ class CustomizedExpandableListAdapter(
             val pDialog = SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE)
             pDialog.progressHelper.barColor = Color.parseColor("#A5DC86")
             pDialog.titleText = "Orders App"
-            pDialog.contentText = "Do you confirm that this order is ready to pickup?"
+            pDialog.contentText = "Vill du verkligen slutföra ordern?"
             pDialog.cancelText = "Cancel"
             pDialog.confirmText = "Ok"
             pDialog.setCancelButton(
