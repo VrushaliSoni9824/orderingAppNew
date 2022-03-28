@@ -10,6 +10,7 @@ import com.tjcg.menuo.data.response.EntitiesModel.*
 import com.tjcg.menuo.data.response.Login.OutletsRS
 import com.tjcg.menuo.data.response.Login.UserDetails
 import com.tjcg.menuo.data.response.Login.UserPermissions
+import com.tjcg.menuo.data.response.newOrder.DialogQueue
 import com.tjcg.menuo.data.response.newOrder.Result
 import com.tjcg.menuo.data.response.order.*
 
@@ -20,7 +21,7 @@ import com.tjcg.menuo.data.response.order.*
     DriverData::class,BisinessEntity::class,CityEntity::class,CustomerEntity::class,
                      DriverEntity::class,HistoryEntity::class,LocationEntity::class,
                      MetafieldEntity::class,PaymethodEntity::class,ProductEntity::class,
-                     ReviewEntity::class,SummaryEntity::class], version = 7, exportSchema = false)
+                     ReviewEntity::class,SummaryEntity::class,DialogQueue::class], version = 7, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun adminItemDao(): AdminItemDao

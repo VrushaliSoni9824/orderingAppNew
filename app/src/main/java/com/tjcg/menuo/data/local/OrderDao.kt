@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.tjcg.menuo.data.response.DriverData
 import com.tjcg.menuo.data.response.EntitiesModel.*
+import com.tjcg.menuo.data.response.newOrder.DialogQueue
 import com.tjcg.menuo.data.response.newOrder.Result
 import com.tjcg.menuo.data.response.newOrder.Summary
 import com.tjcg.menuo.data.response.order.*
@@ -128,6 +129,9 @@ interface OrderDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertOngoingOrderData(onlineOrderData: List<OngoingOrderData>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertQueueData(dialogQueue: DialogQueue)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertKitchenOrderData(onlineOrderData: List<KitchenOrderData>)
@@ -274,6 +278,12 @@ interface OrderDao {
 
     @Query("select status from result where id=:id")
     fun getStatus(id: String): String
+
+    @Query("select max(OrderId) from DialogQueue")
+    fun getMaxOrderFromQueue(): String
+
+    @Query("DELETE FROM DialogQueue where OrderId=:id")
+    abstract fun deleteFromQueue(id: String)
 
     @Query("DELETE FROM Result")
     abstract fun deleteTblResult()

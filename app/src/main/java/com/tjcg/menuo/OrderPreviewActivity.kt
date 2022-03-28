@@ -422,7 +422,7 @@ class OrderPreviewActivity : AppCompatActivity() {
             if (woyouService != null) {
                 setHeaderData(context, orderNumber, date, customerName, phoneNumber, address1, address2)
                 woyouService!!.printText("\n", null)
-                woyouService!!.setFontSize(28f, null)
+                woyouService!!.setFontSize(24f, null)
                 woyouService!!.sendRAWData(normalFont(), null)
                 woyouService!!.printText("================================\n", null)
                 woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_ItemName).toUpperCase(), 17) + " " + rightPadZeros(context.getString(R.string.lbl_Quantity).toUpperCase(), 5) + " " + leftPadZeros(context.getString(R.string.lbl_Price).toUpperCase(), 8) + "\n", null)
@@ -440,7 +440,7 @@ class OrderPreviewActivity : AppCompatActivity() {
                 woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_Delivery_free), 17) + "" + leftPadZeros("$currency $deliveryFee", 11) + "\n", null)
                 woyouService!!.printText("--------------------------------\n", null)
                 woyouService!!.sendRAWData(boldFont(), null)
-                woyouService!!.setFontSize(34f, null)
+                woyouService!!.setFontSize(30f, null)
                 woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_Total), 14) + "" + leftPadZeros("$total", 8) + "\n", null)
                 woyouService!!.printText("\n", null)
                 woyouService!!.cutPaper(null)
@@ -469,12 +469,12 @@ class OrderPreviewActivity : AppCompatActivity() {
 
             if (woyouService != null) {
                 setHeaderData(context, orderNumber, date, customerName, phoneNumber, address1, address2)
-                woyouService!!.printText("\n\n", null)
-                woyouService!!.setFontSize(28f, null)
+                woyouService!!.printText("\n", null)
+                woyouService!!.setFontSize(24f, null)
                 woyouService!!.sendRAWData(normalFont(), null)
 //                woyouService!!.printText("================================\n", null)
 //                woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_ItemName).toUpperCase(), 22) + leftPadZeros(context.getString(R.string.lbl_Price).toUpperCase(), 8) + "\n", null)
-                woyouService!!.printText("================================\n", null)
+                woyouService!!.printText("-----------------------------\n", null)
 
 
                 for (product in arrProduct){
@@ -499,7 +499,7 @@ class OrderPreviewActivity : AppCompatActivity() {
                         }
 
                     }
-                    woyouService!!.printText("================================\n", null)
+                    woyouService!!.printText("-----------------------------\n", null)
 
 
                 }
@@ -512,10 +512,10 @@ class OrderPreviewActivity : AppCompatActivity() {
 //                }//example for set order Object
                 woyouService!!.sendRAWData(normalFont(), null)
                 woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_subTotal), 17) + "" + leftPadZeros("$currency $subTotal", 11) + "\n", null)
-                woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_Delivery_free), 17) + "" + leftPadZeros("$currency "+if(deliveryFee.equals("0") || deliveryFee.equals("null")) "0" else deliveryFee, 11) + "\n", null)
+                woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_Delivery_free), 17) + "" + leftPadZeros("$currency "+if(deliveryFee.equals("0") || deliveryFee.equals("null") || deliveryFee.equals("") || deliveryFee.equals(" ")) "0" else deliveryFee, 11) + "\n", null)
                 woyouService!!.printText("--------------------------------\n", null)
                 woyouService!!.sendRAWData(boldFont(), null)
-                woyouService!!.setFontSize(34f, null)
+                woyouService!!.setFontSize(30f, null)
                 woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_Total), 14) + "" + leftPadZeros("$total", 8) + "\n", null)
                 woyouService!!.printText("\n", null)
                 woyouService!!.printText("\n", null)
@@ -561,28 +561,30 @@ class OrderPreviewActivity : AppCompatActivity() {
             }
 
 
-            woyouService!!.setFontSize(44f, null)
+            woyouService!!.setFontSize(40f, null)
             woyouService!!.sendRAWData(boldFont(), null)
             woyouService!!.sendRAWData(alignCenter(), null)
             woyouService!!.printText(truncateString(context.getString(R.string.lbl_Name), 30) + "\n\n", null)
-            woyouService!!.setFontSize(30f, null)
+            woyouService!!.setFontSize(26f, null)
             woyouService!!.sendRAWData(normalFont(), null)
-            woyouService!!.printText("# " + "$orderNumber" + "\n\n", null)
+            woyouService!!.printText("# " + "$orderNumber" + "\n", null)
             //woyouService!!.printBitmap(BitmapFactory.decodeResource(resources, R.drawable.ic_logo_name),)//callBack(Image)
             woyouService!!.sendRAWData(normalFont(), null)
-            woyouService!!.printText("------------------------------\n", null)
+            woyouService!!.printText("-----------------------------\n", null)
             woyouService!!.sendRAWData(boldFont(), null)
             woyouService!!.printText(truncateString(DeliveryText.toUpperCase(), 30) + "\n\n", null)
-            woyouService!!.setFontSize(28f, null)
+            woyouService!!.setFontSize(24f, null)
+            woyouService!!.sendRAWData(normalFont(), null)
+            woyouService!!.printText( preparedIn.toString()+" min" + "\n\n", null)
             woyouService!!.sendRAWData(normalFont(), null)
             woyouService!!.printText( onlydate!!.toUpperCase() + "\n\n", null) // createdDate
             woyouService!!.sendRAWData(normalFont(), null)
             woyouService!!.printText( onlytime!!.dropLast(3)!!.toUpperCase() + "\n\n", null) // createdDate
-            woyouService!!.setFontSize(30f, null)
+            woyouService!!.setFontSize(26f, null)
             woyouService!!.sendRAWData(boldFont(), null)
             woyouService!!.printText(truncateString(context.getString(R.string.lbl_Customer).toUpperCase(), 30) + "\n", null)
             woyouService!!.sendRAWData(normalFont(), null)
-            woyouService!!.setFontSize(28f, null)
+            woyouService!!.setFontSize(24f, null)
             woyouService!!.printText(truncateString("$customerName", 30) + "\n\n", null)
             woyouService!!.printText(truncateString("$phoneNumber", 30) + "\n\n", null)
             woyouService!!.sendRAWData(alignCenter(), null)
@@ -592,12 +594,12 @@ class OrderPreviewActivity : AppCompatActivity() {
             woyouService!!.sendRAWData(alignCenter(), null)
             woyouService!!.printText(truncateString(a2, 32) + "\n\n", null)
             woyouService!!.printText(truncateString("$address2", 30) + "\n\n", null)
-            woyouService!!.setFontSize(30f, null)
+            woyouService!!.setFontSize(26f, null)
             woyouService!!.sendRAWData(boldFont(), null)
             woyouService!!.printText(truncateString(context.getString(R.string.lbl_notes).toUpperCase(), 30) + "\n\n", null)
-            woyouService!!.setFontSize(28f, null)
+            woyouService!!.setFontSize(24f, null)
             woyouService!!.sendRAWData(normalFont(), null)
-            woyouService!!.printText(truncateString(context.getString(R.string.lbl_notes_), 30) + "\n\n", null)
+            woyouService!!.printText(truncateString(context.getString(R.string.lbl_notes_), 30) + "\n", null)
 
         }
     }

@@ -26,6 +26,7 @@ import com.tjcg.menuo.data.local.AppDatabase
 import com.tjcg.menuo.data.local.OrderDao
 import com.tjcg.menuo.data.remote.ServiceGenerator
 import com.tjcg.menuo.data.response.EntitiesModel.*
+import com.tjcg.menuo.data.response.newOrder.DialogQueue
 import com.tjcg.menuo.data.response.newOrder.Result
 import com.tjcg.menuo.dialog.NewOrderDialog
 import com.tjcg.menuo.utils.*
@@ -43,6 +44,7 @@ import kotlin.system.exitProcess
 //import androidx.test.espresso.core.internal.deps.guava.collect.Lists
 
 class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
+    lateinit var dialog : Dialog
     var expandableListViewExample: ExpandableListView? = null
     var expandableListAdapter: ExpandableListAdapter? = null
     var expandableTitleList: List<String> = emptyList()
@@ -90,6 +92,7 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
         for (n in 4 downTo 1) {
             Log.e("aa12","aa"+n.toString())
         }
+        dialog = Dialog(this@Expandablectivity)
         lottieProgressDialog = LottieProgressDialog(this)
         prefManager = PrefManager(this)
         toolbar_title = findViewById<Toolbar>(R.id.toolbar_title)
@@ -108,6 +111,7 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
         lnavigation_online_order = findViewById(R.id.navigation_logout)
         lnavigation_done_order = findViewById(R.id.navigation_online_order)
 
+        manageQue()
         var i: Intent = intent
         businessId = i.getStringExtra("businessID").toString()
 
@@ -198,6 +202,7 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
                         Log.e("timer1","timer1")
 
                         getNewOrder()
+                        manageQue()
 
                     })
                 } catch (e: Exception) {
@@ -745,14 +750,18 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
 
                             var lastAcceptedOrder=prefManager!!.getString(SharedPreferencesKeys.lastAcceptedOrder);
                             if(!lastAcceptedOrder.equals(NewOrderId)){
-                                showDialog(orderData.id.toString(),orderData.delivery_datetime.toString(),summery.total.toString(),orderData.delivery_type.toString())
-                            if(!mplayer.isPlaying)
-                            {
-                                Log.e("newupor",NewOrderId.toString())
-                                mplayer.isLooping=true
-                                mplayer.start()
+//                                var displayQueue =
+                                val customerDetailsEntity = DialogQueue(orderData.id.toInt(),orderData.id.toString())
+                                orderDao!!.insertQueueData(customerDetailsEntity)
                                 NewOrderId =  null
-                            }
+//                                showDialog(orderData.id.toString(),orderData.delivery_datetime.toString(),summery.total.toString(),orderData.delivery_type.toString())
+//                            if(!mplayer.isPlaying)
+//                            {
+//                                Log.e("newupor",NewOrderId.toString())
+//                                mplayer.isLooping=true
+//                                mplayer.start()
+//                                NewOrderId =  null
+//                            }
 
                             }
 
@@ -1107,9 +1116,43 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
 //
 //    }
 
+    private fun manageQue(){
+        var orderId=orderDao!!.getMaxOrderFromQueue();
+        if(dialog.isShowing){
+            val textView9 = dialog.findViewById(R.id.textView9) as TextView
+            var dialogORderID = textView9.text.toString().substringAfter("#");
+            if(dialogORderID.equals(orderId)){
+
+            }else{
+                var orderData : Result = orderDao!!.getOrderById(orderId.toString())
+                var summery : SummaryEntity = orderDao!!.getSummaryById(orderId.toString())
+                showDialog(orderData.id.toString(),orderData.delivery_datetime.toString(),summery.total.toString(),orderData.delivery_type.toString())
+            }
+            Log.e("aaavv","dialog open")
+        }else{
+            if(orderId != null){
+                if(orderId.equals(" ") || orderId.equals("null") || orderId.equals("0")){
+
+                }else{
+                    var orderData : Result = orderDao!!.getOrderById(orderId.toString())
+                    var summery : SummaryEntity = orderDao!!.getSummaryById(orderId.toString())
+                    showDialog(orderData.id.toString(),orderData.delivery_datetime.toString(),summery.total.toString(),orderData.delivery_type.toString())
+                }
+            }
+            Log.e("aaavv","dialog close")
+        }
+    }
     private fun showDialog( orderId : String, date: String, amt : String, deliveryType : String) {
 //        val dialog = Dialog(application)
-        val dialog = Dialog(this@Expandablectivity)
+        dialog = Dialog(this@Expandablectivity)
+
+        if(!mplayer.isPlaying)
+        {
+            Log.e("newupor",NewOrderId.toString())
+            mplayer.isLooping=true
+            mplayer.start()
+//            NewOrderId =  null
+        }
 
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(false)
@@ -1143,6 +1186,7 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
         val btnclose = dialog.findViewById(R.id.btnclose) as ImageView
         val confirmOrderBtn = dialog.findViewById(R.id.confirm_order_btn) as TextView
         btnclose.setOnClickListener {
+            orderDao!!.deleteFromQueue(orderId)
             NewOrderId=null
             if(mplayer.isPlaying)
             {
@@ -1151,6 +1195,7 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
             dialog.dismiss()
         }
         confirmOrderBtn.setOnClickListener {
+            orderDao!!.deleteFromQueue(orderId)
             if(mplayer.isPlaying)
             {
                 mplayer.stop()
