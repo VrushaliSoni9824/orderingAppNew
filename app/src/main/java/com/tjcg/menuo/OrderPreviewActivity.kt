@@ -593,7 +593,7 @@ class OrderPreviewActivity : AppCompatActivity() {
             woyouService!!.printText(truncateString(a1, 32) + "\n\n", null)
             woyouService!!.sendRAWData(alignCenter(), null)
             woyouService!!.printText(truncateString(a2, 32) + "\n\n", null)
-            woyouService!!.printText(truncateString("$address2", 30) + "\n\n", null)
+//            woyouService!!.printText(truncateString("$address2", 30) + "\n\n", null)
             woyouService!!.setFontSize(26f, null)
             woyouService!!.sendRAWData(boldFont(), null)
             woyouService!!.printText(truncateString(context.getString(R.string.lbl_notes).toUpperCase(), 30) + "\n\n", null)

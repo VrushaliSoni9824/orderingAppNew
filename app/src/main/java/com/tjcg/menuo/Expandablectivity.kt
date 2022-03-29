@@ -1182,8 +1182,8 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
         val dateWithMinute = date.dropLast(3)
         val time: String? = dateWithMinute.substringAfterLast(" ")
         val date: String? = dateWithMinute.substringBefore(" ")
-        tvDate.setText(" Date: "+date.toString()+"  ")
-        tvTime.setText("   "+time.toString()+"  ")
+        tvDate.setText("    "+date.toString()+"    ")
+        tvTime.setText("   "+time.toString()+"   ")
 
         val btnclose = dialog.findViewById(R.id.btnclose) as ImageView
         val confirmOrderBtn = dialog.findViewById(R.id.confirm_order_btn) as TextView
