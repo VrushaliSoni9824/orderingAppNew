@@ -13,6 +13,7 @@ import androidx.lifecycle.LiveData
 import androidx.multidex.MultiDex
 import com.tjcg.menuo.data.local.AppDatabase
 import com.tjcg.menuo.data.local.OrderDao
+import com.tjcg.menuo.service.SocketController
 import com.tjcg.menuo.utils.Default
 
 private lateinit var INSTANCE: Application
@@ -88,9 +89,9 @@ class ConnectivityLiveData : LiveData<Boolean>() {
             INSTANCE.sendBroadcast(Intent(Default.WIFI).putExtra(Default.IS_CONNECTED, true))
 
             // call itemSync
-            /*if (!SocketController().getInstance()!!.isSockConn()) {
-                SocketController().getInstance()!!.init()
-            }*/
+//            if (!SocketController().getInstance()!!.isSockConn()) {
+
+//            }
         }
 
     }

@@ -29,6 +29,7 @@ import com.tjcg.menuo.data.response.EntitiesModel.*
 import com.tjcg.menuo.data.response.newOrder.DialogQueue
 import com.tjcg.menuo.data.response.newOrder.Result
 import com.tjcg.menuo.dialog.NewOrderDialog
+import com.tjcg.menuo.service.SocketController
 import com.tjcg.menuo.utils.*
 import io.sentry.Sentry
 import org.json.JSONArray
@@ -86,6 +87,7 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
         setContentView(R.layout.activity_expandablectivity)
         NewOrderId="null"
         Sentry.captureMessage("testing SDK setup");
+//        SocketController().getInstance()!!.init()
 //        for (n in 4..0) {
 //            Log.e("aa","aa"+n.toString())
 //        }
@@ -754,14 +756,14 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
                                 val customerDetailsEntity = DialogQueue(orderData.id.toInt(),orderData.id.toString())
                                 orderDao!!.insertQueueData(customerDetailsEntity)
                                 NewOrderId =  null
-//                                showDialog(orderData.id.toString(),orderData.delivery_datetime.toString(),summery.total.toString(),orderData.delivery_type.toString())
-//                            if(!mplayer.isPlaying)
-//                            {
-//                                Log.e("newupor",NewOrderId.toString())
-//                                mplayer.isLooping=true
-//                                mplayer.start()
-//                                NewOrderId =  null
-//                            }
+                                showDialog(orderData.id.toString(),orderData.delivery_datetime.toString(),summery.total.toString(),orderData.delivery_type.toString())
+                            if(!mplayer.isPlaying)
+                            {
+                                Log.e("newupor",NewOrderId.toString())
+                                mplayer.isLooping=true
+                                mplayer.start()
+                                NewOrderId =  null
+                            }
 
                             }
 

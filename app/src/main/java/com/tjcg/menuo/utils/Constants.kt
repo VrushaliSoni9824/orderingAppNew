@@ -7,6 +7,7 @@ object Constants {
     const val READ_TIMEOUT = 20 // 2 seconds
     const val WRITE_TIMEOUT = 20 // 2 seconds
     const val RECIPE_REFRESH_TIME = 60 * 60 * 24 * 30 // 30 days (in seconds)
+    const val SOCKET_URL = "https://socket.ordering.co/"
 
     @JvmField
     var authorization_key = "Authorization"
