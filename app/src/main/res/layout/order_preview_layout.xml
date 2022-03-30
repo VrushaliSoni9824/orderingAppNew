@@ -46,7 +46,7 @@
                 android:orientation="vertical"
                 android:weightSum="2">
 
-                <ScrollView
+                <androidx.core.widget.NestedScrollView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="2"
@@ -230,7 +230,7 @@
                                 <androidx.recyclerview.widget.RecyclerView
                                     android:id="@+id/rvProduct"
                                     android:layout_width="match_parent"
-                                    android:layout_height="match_parent" />
+                                    android:layout_height="wrap_content" />
 
                                 <include
                                     layout="@layout/item_print_preview"
@@ -342,7 +342,7 @@
                         </LinearLayout>
 
                     </LinearLayout>
-                </ScrollView>
+                </androidx.core.widget.NestedScrollView>
 
                 <LinearLayout
                     android:layout_width="match_parent"

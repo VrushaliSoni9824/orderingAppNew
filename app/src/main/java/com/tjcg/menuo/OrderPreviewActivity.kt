@@ -213,6 +213,7 @@ class OrderPreviewActivity : AppCompatActivity() {
         productAdapter = OrderPreviewProductAdapter(arrProduct,applicationContext)
         binding!!.rvProduct.layoutManager = LinearLayoutManager(applicationContext)
         binding!!.rvProduct.adapter = productAdapter
+        binding!!.rvProduct.isNestedScrollingEnabled=false
         for(i in 0..arrProduct.size-1){
             arrProNAme.add(arrProduct.get(i).name)
             arrProQty.add(arrProduct.get(i).quantity.toString())
