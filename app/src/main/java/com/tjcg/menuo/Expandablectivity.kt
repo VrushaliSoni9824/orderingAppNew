@@ -756,14 +756,14 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
                                 val customerDetailsEntity = DialogQueue(orderData.id.toInt(),orderData.id.toString())
                                 orderDao!!.insertQueueData(customerDetailsEntity)
                                 NewOrderId =  null
-                                showDialog(orderData.id.toString(),orderData.delivery_datetime.toString(),summery.total.toString(),orderData.delivery_type.toString())
-                            if(!mplayer.isPlaying)
-                            {
-                                Log.e("newupor",NewOrderId.toString())
-                                mplayer.isLooping=true
-                                mplayer.start()
-                                NewOrderId =  null
-                            }
+//                                showDialog(orderData.id.toString(),orderData.delivery_datetime.toString(),summery.total.toString(),orderData.delivery_type.toString())
+//                            if(!mplayer.isPlaying)
+//                            {
+//                                Log.e("newupor",NewOrderId.toString())
+//                                mplayer.isLooping=true
+//                                mplayer.start()
+//                                NewOrderId =  null
+//                            }
 
                             }
 
@@ -794,6 +794,7 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
                             expandableDetailList
                         )
                     expandableListViewExample!!.setAdapter(expandableListAdapter)
+                    expandableListViewExample!!.expandGroup(1)
                     lottieProgressDialog!!.cancelDialog()
                 }
 
@@ -1016,6 +1017,7 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
                     expandableDetailList
                 )
             expandableListViewExample!!.setAdapter(expandableListAdapter)
+            expandableListViewExample!!.expandGroup(1)
             if(!isFromNewOrder) lottieProgressDialog!!.cancelDialog()
         }
     }
@@ -1126,9 +1128,11 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
             if(dialogORderID.equals(orderId)){
 
             }else{
-                var orderData : Result = orderDao!!.getOrderById(orderId.toString())
-                var summery : SummaryEntity = orderDao!!.getSummaryById(orderId.toString())
-                showDialog(orderData.id.toString(),orderData.delivery_datetime.toString(),summery.total.toString(),orderData.delivery_type.toString())
+                if(orderId != null){
+                    var orderData : Result = orderDao!!.getOrderById(orderId.toString())
+                    var summery : SummaryEntity = orderDao!!.getSummaryById(orderId.toString())
+                    showDialog(orderData.id.toString(),orderData.delivery_datetime.toString(),summery.total.toString(),orderData.delivery_type.toString())
+                }
             }
             Log.e("aaavv","dialog open")
         }else{
