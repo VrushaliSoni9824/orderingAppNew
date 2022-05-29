@@ -21,6 +21,7 @@ import com.tjcg.menuo.utils.Constants
 import com.tjcg.menuo.utils.Constants.readyForPickUp
 import com.tjcg.menuo.utils.LottieProgressDialog
 import com.tjcg.menuo.utils.PrefManager
+import com.tjcg.menuo.utils.SharedPreferencesKeys
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -185,6 +186,7 @@ override fun getItemCount(): Int {
                     sweetAlertDialog.setConfirmClickListener {
                         val i = Intent(context, Expandablectivity::class.java)
                         i.putExtra("businessID", businessID)
+                        i.putExtra(SharedPreferencesKeys.isDBLoadRequired,false);
                         context.startActivity(i)
                     }
                     sweetAlertDialog.show()

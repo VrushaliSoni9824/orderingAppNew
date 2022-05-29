@@ -279,7 +279,7 @@ interface OrderDao {
     @Query("select status from result where id=:id")
     fun getStatus(id: String): String
 
-    @Query("select max(OrderId) from DialogQueue")
+    @Query("select min(OrderId) from DialogQueue")
     fun getMaxOrderFromQueue(): String
 
     @Query("DELETE FROM DialogQueue where OrderId=:id")

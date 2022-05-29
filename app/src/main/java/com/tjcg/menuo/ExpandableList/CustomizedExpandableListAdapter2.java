@@ -23,6 +23,7 @@ import com.tjcg.menuo.utils.Constants;
 import com.tjcg.menuo.utils.Default;
 import com.tjcg.menuo.utils.LottieProgressDialog;
 import com.tjcg.menuo.utils.PrefManager;
+import com.tjcg.menuo.utils.SharedPreferencesKeys;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -433,12 +434,14 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
                             sweetAlertDialog.cancel();
                             Intent i = new Intent(context, Expandablectivity.class);
                             i.putExtra("businessID",businessID);
+                            i.putExtra(SharedPreferencesKeys.isDBLoadRequired,false);
                             context.startActivity(i);
                         }
                     });
 //                    sweetAlertDialog.show();
 //                    sweetAlertDialog.setContentText(context.getResources().getString(R.string.lbl_pickUpReady));
                     Intent i = new Intent(context, Expandablectivity.class);
+                    i.putExtra(SharedPreferencesKeys.isDBLoadRequired,false);
                     i.putExtra("businessID",businessID);
                     context.startActivity(i);
                 }else{

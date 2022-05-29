@@ -6,7 +6,6 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import androidx.lifecycle.ViewModelProviders
 import butterknife.internal.Utils
-import com.tjcg.menuo.fragment.OnlineOrderFragment
 import com.tjcg.menuo.viewmodel.SyncViewModel
 import java.io.BufferedWriter
 
@@ -41,11 +40,7 @@ class Utils {
             return netInfo != null && netInfo.isConnectedOrConnecting
         }
     }
-    public fun callViewModel(context: Context) {
-        posViewModel = ViewModelProviders.of(OnlineOrderFragment.newInstance()).get(SyncViewModel::class.java)
-//        val outletsRS = getOutlets()
 
-    }
 //    public fun getOutlets() : List<OutletsRS>{
 //        val outletsRS = db!!.adminItemDao().outlets
 //        return outletsRS;

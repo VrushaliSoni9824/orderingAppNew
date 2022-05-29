@@ -1,6 +1,7 @@
 package com.tjcg.menuo
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.*
 import android.os.Bundle
 import android.os.IBinder
@@ -38,28 +39,21 @@ import android.graphics.drawable.Drawable
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.media.MediaPlayer
+import android.view.Window
+import android.widget.TextView
 import android.widget.Toast
 import com.tjcg.menuo.utils.*
 import org.json.JSONArray
 
 
 class OrderPreviewActivity : AppCompatActivity() {
+    lateinit var dialog : Dialog
+    var mIntentFilter: IntentFilter? = null
     var prefManager: PrefManager? = null
     private var woyouService: IWoyouService? = null
-
     var orderId: String = "0";
-    var orderData = "0";
-
     var orderDatte: String = ""
-    var PaymentMethod: String = ""
-    var BusinessName: String = ""
-    var BusinessMob1: String = ""
-    var BusinessMob2: String = ""
-    var BusinessLocation: String = ""
-    var CustomerEmail: String = ""
-    var CustomerLocation: String = ""
-    var CustomerNote: String = ""
-    var CustomerZip: String = ""
     var deliveryFee: String = ""
     var binding: OrderPreviewLayoutBinding? = null
     var arrProductList : ArrayList<Product> = arrayListOf()
@@ -88,36 +82,27 @@ class OrderPreviewActivity : AppCompatActivity() {
     var customerAddress : String = ""
     var total : String = ""
     var subtotal : String = ""
-//    var arrProNAm = java.util.ArrayList<String>()
-//     lateinit var sheetBehavior: BottomSheetBehavior<LinearLayout>
-     lateinit var bottomSheet: LinearLayout
+    lateinit var mplayer: MediaPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = OrderPreviewLayoutBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
-//        setContentView(R.layout.activity_order_detail)
-//        bottomSheet = findViewById(R.id.bottomSheet)
-//        sheetBehavior = BottomSheetBehavior.from(bottomSheet)
-
+        dialog = Dialog(this@OrderPreviewActivity)
+        mIntentFilter = IntentFilter()
+        mIntentFilter!!.addAction("new_order_pre")
+        registerReceiver(reMyreceive, mIntentFilter)
+        mplayer = MediaPlayer.create(applicationContext, R.raw.alarmtone);
         lottieProgressDialog = LottieProgressDialog(this)
         orderDao = AppDatabase.getDatabase(this)!!.orderDao()
         prefManager = PrefManager(applicationContext)
         businessID=prefManager!!.getString("businessID")
-
         connectPrinter(applicationContext)
-
-
         init()
-
-
-//        binding!!.bottomSheetOrderMinutes.
-
         binding!!.imageViewBack.setOnClickListener {
             if (!isFromDoneActivity){
-                startActivity(Intent(applicationContext, Expandablectivity::class.java).putExtra("businessID",businessID))
+                startActivity(Intent(applicationContext, Expandablectivity::class.java).putExtra("businessID",businessID).putExtra(SharedPreferencesKeys.isDBLoadRequired,false))
                 finish()
-
             }else{
                 val i = Intent(this, OrderCompleteActivity::class.java)
                 i.putExtra("businessID", businessID)
@@ -128,17 +113,8 @@ class OrderPreviewActivity : AppCompatActivity() {
 
         var i: Intent = intent
         orderId = i.getStringExtra("orderId")!!
-//        orderData = i.getStringExtra("orderData")!!
-
         binding!!.bottomSheetOrderMinutes.textViewPrit.setOnClickListener {
-
             testSunmiPrintAcceptOrder(applicationContext, orderId.toInt(), orderDate, customerNAme, customerMobno, customerAddress, customerAddress,"", subtotal,deliveryFee, total, arrProNAme,arrProQty,arrProPrice ,arrProduct)
-
-           // Toast.makeText(applicationContext,"Hello",Toast.LENGTH_LONG).show();
-           // connectPrinter(applicationContext)
-            //testSunmiPrint(applicationContext, orderId.toInt(), orderDate, customerNAme, customerMobno, customerAddress, customerAddress,"$", subtotal,deliveryFee, total, arrProNAme,arrProQty,arrProPrice )
-           // var bt : Bitmap = getBitmapFromView(binding!!.lvReciept)!!
-           // onClick(bt)
         }
 
 
@@ -188,7 +164,12 @@ class OrderPreviewActivity : AppCompatActivity() {
         binding!!.textviewCustomerName.text=customerNAme
         binding!!.customerMobno.text=if(customerMobno.equals("null") || customerMobno.equals("")) "" else customerMobno
         binding!!.textviewCustomerAddress.text=customerAddress
-        binding!!.textviewNotes.text=if(note.equals("null") || note.equals("")) "" else note
+        if(note.equals("null") || note.equals("")){
+            binding!!.tvNotesHeading.visibility=View.GONE
+        }else{
+            binding!!.tvNotesHeading.visibility=View.VISIBLE
+        }
+        binding!!.textviewNotes.text=if(note.equals("null") || note.equals("")) { "" } else { note }
         binding!!.textViewSubtotal.text=subtotal
         binding!!.textviewdeliveryfee.text=deliveryFee
         binding!!.textviewTotal.text=total
@@ -526,7 +507,7 @@ class OrderPreviewActivity : AppCompatActivity() {
                 woyouService!!.printText("\n", null)
                 woyouService!!.printText("\n", null)
                 woyouService!!.cutPaper(null)
-                startActivity(Intent(applicationContext, Expandablectivity::class.java).putExtra("businessID",businessID))
+                startActivity(Intent(applicationContext, Expandablectivity::class.java).putExtra("businessID",businessID).putExtra(SharedPreferencesKeys.isDBLoadRequired,false))
                 finish()
 
             }
@@ -685,7 +666,7 @@ class OrderPreviewActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        startActivity(Intent(applicationContext, Expandablectivity::class.java).putExtra("businessID",businessID))
+        startActivity(Intent(applicationContext, Expandablectivity::class.java).putExtra("businessID",businessID).putExtra(SharedPreferencesKeys.isDBLoadRequired,false))
         finish()
 
     }
@@ -969,5 +950,92 @@ class OrderPreviewActivity : AppCompatActivity() {
     }
 
 //    fun setColor()
+
+    private fun showDialog( orderId : String, date: String, amt : String, deliveryType : String) {
+        runOnUiThread {
+            dialog = Dialog(this@OrderPreviewActivity)
+
+            if(!mplayer.isPlaying)
+            {
+                mplayer.isLooping=true
+                mplayer.start()
+            }
+
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            dialog.setCancelable(false)
+            dialog.setContentView(R.layout.dialog_new_order)
+            val textView9 = dialog.findViewById(R.id.textView9) as TextView
+            val textView6 = dialog.findViewById(R.id.textView6) as TextView
+            val textView8 = dialog.findViewById(R.id.textView8) as TextView
+            val tvDate = dialog.findViewById(R.id.tvDate) as TextView
+            val tvTime = dialog.findViewById(R.id.tvTime) as TextView
+
+
+            var deliveryType1 : String = ""
+            when (deliveryType) {
+                "1" -> deliveryType1 = applicationContext.getString(R.string.Delivery)
+                "2" -> deliveryType1 = applicationContext.getString(R.string.Pick_Up)
+                "3" -> deliveryType1 = applicationContext.getString(R.string.Eat_In)
+                "4" -> deliveryType1 = applicationContext.getString(R.string.Curbside)
+                "5" -> deliveryType1 = applicationContext.getString(R.string.Driver_thru)
+            }
+            Log.e("logdel",deliveryType1.toString())
+            Log.e("logdel",deliveryType.toString())
+            textView9.setText("#"+orderId.toString())
+            textView6.setText(amt.toString()+" Kr")
+            textView8.setText(deliveryType1.toString())
+            val dateWithMinute = date.dropLast(3)
+            val time: String? = dateWithMinute.substringAfterLast(" ")
+            val date: String? = dateWithMinute.substringBefore(" ")
+            tvDate.setText("    "+date.toString()+"    ")
+            tvTime.setText("   "+time.toString()+"   ")
+
+            val btnclose = dialog.findViewById(R.id.btnclose) as ImageView
+            val confirmOrderBtn = dialog.findViewById(R.id.confirm_order_btn) as TextView
+            btnclose.setOnClickListener {
+                orderDao!!.deleteFromQueue(orderId)
+                if(mplayer.isPlaying)
+                {
+                    mplayer.stop()
+                }
+                dialog.dismiss()
+            }
+            confirmOrderBtn.setOnClickListener {
+                orderDao!!.deleteFromQueue(orderId)
+                if(mplayer.isPlaying)
+                {
+                    mplayer.stop()
+                }
+                dialog.dismiss()
+                val i = Intent(applicationContext, OrderPreviewActivity::class.java)
+                i.putExtra("orderId", orderId)
+                i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(i)
+//            finish()
+
+            }
+
+            dialog.show()
+        }
+    }
+
+    private val reMyreceive: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            try {
+                if (intent.action == "new_order_pre") {
+                    val orderId = intent.getStringExtra("id");
+                    var total=orderDao!!.getOrderTotal(orderId!!)
+                    var deliveryDateTime=intent.getStringExtra("deliveryDateTime");
+                    var deliverytype=intent.getStringExtra("deliverytype");
+                    Log.e("msggg", "inside broadcast rec")
+//                    Toast.makeText(applicationContext,"newOrder from broad",Toast.LENGTH_LONG).show()
+                    showDialog(orderId,deliveryDateTime!!,
+                        total.toString()!!,deliverytype!!)
+                }
+            } catch (e: Exception) {
+                Log.e("Error BR", e.message.toString())
+            }
+        }
+    }
 
 }

@@ -6,8 +6,12 @@ package com.tjcg.menuo
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.*
+import android.database.Cursor
 import android.media.MediaPlayer
+import android.net.ConnectivityManager
+import android.net.Uri
 import android.os.*
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.view.Window
@@ -18,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import cn.pedant.SweetAlert.SweetAlertDialog
+import com.google.firebase.messaging.FirebaseMessagingService
 import com.tjcg.MainApp
 import com.tjcg.menuo.ExpandableList.CustomizedExpandableListAdapter2
 import com.tjcg.menuo.ExpandableList.ExpandableListDataItems
@@ -26,10 +31,12 @@ import com.tjcg.menuo.data.local.AppDatabase
 import com.tjcg.menuo.data.local.OrderDao
 import com.tjcg.menuo.data.remote.ServiceGenerator
 import com.tjcg.menuo.data.response.EntitiesModel.*
+import com.tjcg.menuo.data.response.IntermediatorServerAPI.IntermediatorLogin
+import com.tjcg.menuo.data.response.IntermediatorServerAPI.IntermediatorLogout
 import com.tjcg.menuo.data.response.newOrder.DialogQueue
 import com.tjcg.menuo.data.response.newOrder.Result
 import com.tjcg.menuo.dialog.NewOrderDialog
-import com.tjcg.menuo.service.SocketController
+import com.tjcg.menuo.service.SocketIOController
 import com.tjcg.menuo.utils.*
 import io.sentry.Sentry
 import org.json.JSONArray
@@ -39,6 +46,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import woyou.aidlservice.jiuiv5.IWoyouService
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.system.exitProcess
 
@@ -71,6 +80,7 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
     val paginationLinkNewOrder = ArrayList<String>()
     val arrNewOrderId = ArrayList<Int>()
     var businessId: String = ""
+    var isDBLoadRequired: Boolean = false
 
 
     var linkCount: Int = 0
@@ -81,19 +91,23 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
     var NewOrderId : String? = null
     var arrlength : Int = 0
     lateinit var mplayer: MediaPlayer
+    var mIntentFilter: IntentFilter? = null
+    private val MyReceiver: BroadcastReceiver? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_expandablectivity)
+
+        try {
+            setContentView(R.layout.activity_expandablectivity)
+        } catch (e: OutOfMemoryError) {
+            setContentView(R.layout.activity_expandablectivity)
+            Toast.makeText(applicationContext,"OM testing error",Toast.LENGTH_LONG).show()
+        }
         NewOrderId="null"
         Sentry.captureMessage("testing SDK setup");
-//        SocketController().getInstance()!!.init()
-//        for (n in 4..0) {
-//            Log.e("aa","aa"+n.toString())
-//        }
-        for (n in 4 downTo 1) {
-            Log.e("aa12","aa"+n.toString())
-        }
+        mIntentFilter = IntentFilter()
+        mIntentFilter!!.addAction("new_order")
+        registerReceiver(reMyreceive, mIntentFilter)
         dialog = Dialog(this@Expandablectivity)
         lottieProgressDialog = LottieProgressDialog(this)
         prefManager = PrefManager(this)
@@ -104,18 +118,17 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
         supportActionBar!!.setDisplayShowTitleEnabled(false)
         textViewOwnerName = findViewById<TextView>(R.id.textViewOwnerName)
         textViewBusiness = findViewById<Switch>(R.id.switchBusiness)
-         imgRefresh = findViewById<ImageView>(R.id.imageViewRefresh)
+        imgRefresh = findViewById<ImageView>(R.id.imageViewRefresh)
         mplayer = MediaPlayer.create(applicationContext, R.raw.alarmtone);
         textViewOwnerName.text = if (!prefManager!!.getString(SharedPreferencesKeys.businessOwner).isNullOrEmpty()) prefManager!!.getString(SharedPreferencesKeys.businessOwner) else ""
         textViewBusiness.text = if (!prefManager!!.getString(SharedPreferencesKeys.businessName).isNullOrEmpty()) prefManager!!.getString(SharedPreferencesKeys.businessName) else ""
-
         orderDao = AppDatabase.getDatabase(this)!!.orderDao()
         lnavigation_online_order = findViewById(R.id.navigation_logout)
         lnavigation_done_order = findViewById(R.id.navigation_online_order)
-
         manageQue()
         var i: Intent = intent
         businessId = i.getStringExtra("businessID").toString()
+        isDBLoadRequired = i.getBooleanExtra(SharedPreferencesKeys.isDBLoadRequired,false)
 
         imgRefresh!!.setOnClickListener {
             prefManager!!.setBoolean(SharedPreferencesKeys.isFromLogin,false)
@@ -124,7 +137,6 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
 //            startActivity(Intent(applicationContext, Expandablectivity::class.java).putExtra("businessID",businessId))
 //            finish()
         }
-
 
         mDrawerToggle = object : ActionBarDrawerToggle(this, drawerLayout_Dashboard, toolbar_title, R.string.drawer_open, R.string.drawer_close) {
             override fun onDrawerOpened(drawerView: View) {
@@ -151,76 +163,34 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
         }
         expandableListViewExample =
                 findViewById<View>(R.id.expandableListViewSample) as ExpandableListView
-        lottieProgressDialog!!.showDialog()
+
 
         //fetch pagination info
-        getDataBase()
+        if(isDBLoadRequired) {
+            lottieProgressDialog!!.showDialog()
+            getDataBase()
+        }else{
+            refreshFromLocal()
+        }
 
         // This method is called when the group is expanded
         expandableListViewExample!!.setOnGroupExpandListener { groupPosition ->
-//            Toast.makeText(
-//                    applicationContext,
-//                    expandableTitleList!!.get(groupPosition) + " List Expanded.",
-//                    Toast.LENGTH_SHORT
-//            ).show()
 
         }
 
 //         This method is called when the group is collapsed
         expandableListViewExample!!.setOnGroupCollapseListener { groupPosition ->
-//            Toast.makeText(
-//                    applicationContext,
-//                    expandableTitleList!!.get(groupPosition) + " List Collapsed.",
-//                    Toast.LENGTH_SHORT
-//            ).show()
         }
 
-//         This method is called when the child in any group is clicked
-//         via a toast method, it is shown to display the selected child item as a sample
-//         we may need to add further steps according to the requirements
         expandableListViewExample!!.setOnChildClickListener { parent, v, groupPosition, childPosition, id ->
-//            Toast.makeText(
-//                    applicationContext,
-//                    expandableTitleList!![groupPosition] + " -> "
-//                            + expandableDetailList!![expandableTitleList!!.get(groupPosition)]!![childPosition],
-//                    Toast.LENGTH_SHORT
-//            ).show()
 
             var orderId: String = expandableDetailList!![expandableTitleList!!.get(groupPosition)]!![childPosition].toString()
 
             var singleOrderURL = "http://apiv4.ordering.co/v400/en/menuo/orders/" + orderId + "?mode=dashboard"
             getOrderDetail(singleOrderURL, Constants.apiKey, orderId)
 
-//            startActivity(Intent(this, OrderDetailActivity::class.java))
             false
         }
-        val mHandler = Handler()
-        Thread {
-
-            while (true) {
-                try {
-                    Thread.sleep(15000)
-                    mHandler.post(Runnable {
-                        Log.e("timer1","timer1")
-
-                        getNewOrder()
-                        manageQue()
-
-                    })
-                } catch (e: Exception) {
-                }
-            }
-        }.start()
-
-//        val timer = Timer()
-//        timer.schedule(object : TimerTask() {
-//            override fun run() {
-//                //what you want to do
-//                Log.e("timer1","timer1")
-//            }
-//        }, 0, 10000) //wait 0 ms before doing the action and do it evry 1000ms (1second)
-//        timer.cancel() //stop the timer
-
 
     }
 
@@ -267,7 +237,6 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
 
 
     fun getOrders(url: String, key: String, isFromNewOrder : Boolean = false) {
-//        lottieProgressDialog!!.showDialog()
         var responceString: String = ""
 
         ServiceGenerator.nentoApi.getUsers(url, key)!!.enqueue(object :
@@ -280,13 +249,6 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
                     responceString = response.body().toString()
 
                     if(isFromNewOrder) parseOrderDataJson(responceString, true) else parseOrderDataJson(responceString)
-
-//                    expandableDetailList = ExpandableListDataItems.getData(responceString)
-//                    expandableTitleList = ArrayList(expandableDetailList!!.keys)
-//                    expandableListAdapter =
-//                        CustomizedExpandableListAdapter(applicationContext, expandableTitleList, expandableDetailList)
-//                    expandableListViewExample!!.setAdapter(expandableListAdapter)
-
                 } else {
                     if(!isFromNewOrder) lottieProgressDialog!!.cancelDialog()
                     responceString = "error"
@@ -342,18 +304,8 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(call: Call<String?>, response: Response<String?>) {
                 if (response.isSuccessful) {
-//                    lottieProgressDialog!!.cancelDialog()
-//                    Toast.makeText(applicationContext, "Login Successfully", Toast.LENGTH_SHORT).show()
-                    orderResult = response.body()!!.toString()
+                 orderResult = response.body()!!.toString()
                     if(isFromNewOrder) parsePaginationInfoJson(orderResult, true, true) else parsePaginationInfoJson(orderResult, true)
-
-//                    responceString=orderResult
-//                    expandableDetailList = ExpandableListDataItems.getData(responceString)
-//                    expandableTitleList = ArrayList(expandableDetailList!!.keys)
-//                    expandableListAdapter =
-//                        CustomizedExpandableListAdapter(applicationContext, expandableTitleList, expandableDetailList)
-//                    expandableListViewExample!!.setAdapter(expandableListAdapter)
-
                 } else {
                     if(!isFromNewOrder) lottieProgressDialog!!.cancelDialog()
                     responceString = "error"
@@ -433,24 +385,10 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
             sDialog.confirmText = resources.getString(R.string.dialog_ok)
             sDialog.showCancelButton(false).setCancelClickListener { null }.setConfirmClickListener { sweetAlertDialog1 ->
                 sweetAlertDialog1.dismissWithAnimation() //val intent = Intent(this, LoginActivity::class.java)
-                prefManager!!.setString(Constants.authorization_key, "")
-                Constants.Authorization = ""
-                prefManager!!.setBoolean("isLogin", false)
-
-                startActivity(Intent(this, LoginActivity::class.java))
-                finish()
-                finishAffinity()
-                exitProcess(0)
+                removeTokenAtLogout(businessId)
             }.changeAlertType(SweetAlertDialog.SUCCESS_TYPE)
         }.show()
-
-
-
-
-
     }
-
-
 
     inner class DeleteDataDbAsyncTask : CoroutineAsyncTask<Void, Void, Void>() {
         override fun doInBackground(vararg params: Void?): Void? {
@@ -486,17 +424,7 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
         }
     }
 
-
-
-
-
     fun parseOrderDataJson(jsonData: String,isFromNewOrder : Boolean = false) {
-
-        // As we are populating List of fruits, vegetables and nuts, using them here
-        // We can modify them as per our choice.
-        // And also choice of fruits/vegetables/nuts can be changed
-        val arrOdate = ArrayList<String>()
-        val arrOId = ArrayList<String>()
 
         try {
             val jobj = JSONObject(jsonData)
@@ -640,7 +568,7 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
                     customerObj.getString("address"),
                     customerObj.getString("address_notes"),
                     customerObj.getString("zipcode"),
-                    customerObj.getInt("cellphone"),
+                    customerObj.getString("cellphone"),
                     customerObj.getString("phone"),
                     customerObj.getString("location"),
                     customerObj.getString("internal_number"),
@@ -752,30 +680,13 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
 
                             var lastAcceptedOrder=prefManager!!.getString(SharedPreferencesKeys.lastAcceptedOrder);
                             if(!lastAcceptedOrder.equals(NewOrderId)){
-//                                var displayQueue =
                                 val customerDetailsEntity = DialogQueue(orderData.id.toInt(),orderData.id.toString())
                                 orderDao!!.insertQueueData(customerDetailsEntity)
                                 NewOrderId =  null
-//                                showDialog(orderData.id.toString(),orderData.delivery_datetime.toString(),summery.total.toString(),orderData.delivery_type.toString())
-//                            if(!mplayer.isPlaying)
-//                            {
-//                                Log.e("newupor",NewOrderId.toString())
-//                                mplayer.isLooping=true
-//                                mplayer.start()
-//                                NewOrderId =  null
-//                            }
-
                             }
 
                         }
-//                        val acceptOrderDialog = NewOrderDialog(this,orderData.id.toString(),orderData.delivery_datetime.toString(),summery.total.toString())
-//                        acceptOrderDialog.show(supportFragmentManager, "")
-//                        acceptOrderDialog.show(supportFragmentManager,"")
-
-
-
                     }
-//                    lottieProgressDialog!!.cancelDialog()
                 }else{
                     var orderListPending : List<Int> = orderDao!!.getPendingOrder()
                     var orderListInprocess : List<Int> = orderDao!!.getInProgressOrder()
@@ -797,12 +708,7 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
                     expandableListViewExample!!.expandGroup(1)
                     lottieProgressDialog!!.cancelDialog()
                 }
-
-
-
             }
-
-//            parsePaginationInfoJson(jsonData,false)
 
         } catch (e: JSONException) {
             e.printStackTrace()
@@ -857,25 +763,6 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
                 if(isFromNewOrder) getOrders(link, Constants.apiKey,true) else getOrders(link, Constants.apiKey)
             }
 
-
-//           Log.e("nextpagev",next_page.toString())
-//            if(next_page != null){
-//                while (next_page!=null){
-//                    getOrders(next_page,Constants.apiKey)
-//                }
-//            }else{
-//                lottieProgressDialog!!.cancelDialog()
-//            }
-
-
-//            if(count<=3){
-//                if(isFirstTime){
-//                    getOrders(last_page,Constants.apiKey)
-//                }else{
-//                    getOrders(back_page,Constants.apiKey)
-//                }
-//            }
-
         } catch (e: JSONException) {
             e.printStackTrace()
         }
@@ -893,91 +780,16 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
                 var url: String = makeUrlNewOrder(i.toString(), businessId)
                 paginationLinkNewOrder!!.add(url)
             }
-//            paginationLinkNewOrder
-
             arrlength = paginationLinkNewOrder.size
-//            getOrdersNewOrder(paginationLinkNewOrder.get(arrlength-1),Constants.apiKey);
-//            for(int i =0)
-
-
-//            n=5
-//            for(n>=0){
-//
-//                n=n-1;
-//            }
-//            for (n in paginationLinkNewOrder.size-1 downTo 0) {
-//                getOrdersNewOrder(paginationLinkNewOrder.get(n), Constants.apiKey)
-//            }
-
             for (link in paginationLinkNewOrder) {
                 getOrdersNewOrder(link, Constants.apiKey)
             }
-
-
-//           Log.e("nextpagev",next_page.toString())
-//            if(next_page != null){
-//                while (next_page!=null){
-//                    getOrders(next_page,Constants.apiKey)
-//                }
-//            }else{
-//                lottieProgressDialog!!.cancelDialog()
-//            }
-
-
-//            if(count<=3){
-//                if(isFirstTime){
-//                    getOrders(last_page,Constants.apiKey)
-//                }else{
-//                    getOrders(back_page,Constants.apiKey)
-//                }
-//            }
-
         } catch (e: JSONException) {
             e.printStackTrace()
         }
 
     }
 
-    //        ServiceGenerator.nentoApi.getOnlineOrderListSync(
-//            outletID,
-//            unique_id,
-//            is_all_data,
-//            Constants.Authorization
-//        ).enqueue(object :
-//            Callback<OnlineOrderRS?> {
-//            @SuppressLint("NewApi", "ResourceAsColor")
-//            @RequiresApi(Build.VERSION_CODES.O)
-//            override fun onResponse(
-//                call: Call<OnlineOrderRS?>,
-//                response: Response<OnlineOrderRS?>
-//            ) {
-//                if (response.isSuccessful) {
-//                    if (response.body() != null && response.body()!!.status.equals("true")) {
-//                        if (response.body()!!.data!! != null) {
-//                            var data = response.body()!!.data!!
-//                            orderDao = AppDatabase.getDatabase(mainActivity!!)!!.orderDao()
-//                            orderDao!!.insertOnlineOrderData(data!!.new_order!!)
-//                            orderDao!!.insertOnlineOrderData(data!!.completed_order!!)
-//                            orderDao!!.insertOnlineOrderData(data!!.cancelled_order!!)
-//                            orderDao!!.insertOnlineOrderData(data!!.accepted_order!!)
-//
-//                            mainActivity!!.sendNotification(
-//                                context!!,
-//                                "Onlline Order's Data Loaded of outlet Id :" + outletID,
-//                                "Successfully"
-//                            )
-//                        }
-//                    }
-//                } else {
-//                    Log.e("tag", " =  = = =error = ==  " + response.message())
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<OnlineOrderRS?>, t: Throwable) {
-//                Log.e("tag", " =  = = =error = ==  " + t.message)
-//            }
-//        })
-//    }
     fun makeUrl(pageNo: String, businessId: String): String {
         var url: String = Constants.URL
         url = url + "page_size=" + "10" + "&mode=" + "dashboard" + "&page=" + pageNo + "&where=[{\"attribute\":\"business_id\",\"value\":[" + businessId + "]}]"
@@ -997,13 +809,11 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
             prefManager!!.setBoolean(SharedPreferencesKeys.isFromLogin, true)
             var url = Constants.URL
             url = url + "page_size=" + "10" + "&mode=" + "dashboard" + "&page=" + "1" + "&where=[{\"attribute\":\"business_id\",\"value\":[" + businessId + "]}]"
-
             if(isFromNewOrder) getPaginationInfor(url, Constants.apiKey, true) else getPaginationInfor(url, Constants.apiKey)
         }else{
             var orderListPending : List<Int> = orderDao!!.getPendingOrder()
             var orderListInprocess : List<Int> = orderDao!!.getInProgressOrder()
             var orderListDone : List<Int> = orderDao!!.getDoneOrder()
-
             var orderListPendingString : List<String> = convertIntToString(orderListPending)
             var orderListInprocessString : List<String> = convertIntToString(orderListInprocess)
             var orderListDoneString : List<String> = convertIntToString(orderListDone)
@@ -1021,9 +831,27 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
             if(!isFromNewOrder) lottieProgressDialog!!.cancelDialog()
         }
     }
+    fun refreshFromLocal(){
+        var orderListPending : List<Int> = orderDao!!.getPendingOrder()
+        var orderListInprocess : List<Int> = orderDao!!.getInProgressOrder()
+        var orderListDone : List<Int> = orderDao!!.getDoneOrder()
+        var orderListPendingString : List<String> = convertIntToString(orderListPending)
+        var orderListInprocessString : List<String> = convertIntToString(orderListInprocess)
+        var orderListDoneString : List<String> = convertIntToString(orderListDone)
+
+        expandableDetailList = ExpandableListDataItems.getData("", applicationContext,orderListPendingString,orderListInprocessString,orderListDoneString)
+        expandableTitleList = ArrayList(expandableDetailList!!.keys)
+        expandableListAdapter =
+            CustomizedExpandableListAdapter2(
+                this,
+                expandableTitleList.sortedDescending(),
+                expandableDetailList
+            )
+        expandableListViewExample!!.setAdapter(expandableListAdapter)
+        expandableListViewExample!!.expandGroup(1)
+    }
 
     fun convertIntToString(objInt: List<Int>) : List<String>{
-//        var stringObj : List<String> = arrayListOf()
         val stringObj: MutableList<String> = ArrayList()
         for(obj in objInt){
             stringObj.add(obj.toString())
@@ -1031,49 +859,7 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
         return stringObj
     }
 
-//    internal class Client : Thread() {
-//        override fun run() {
-//            try {
-//                val socket = Socket(address, PORT)
-//                val out = PrintWriter(socket.getOutputStream(), true)
-//                out.println(json)
-//                val `in` = BufferedReader(InputStreamReader(socket.getInputStream()))
-//                val response: String = `in`.readLine()
-//                Toast.makeText(c, response, Toast.LENGTH_SHORT).show()
-//                socket.close()
-//            } catch (e: java.lang.Exception) {
-//            }
-//        }
-//    }
-
-    fun getNewOrder(){
-        var url = Constants.URL
-        url = url + "page_size=" + "10" + "&mode=" + "dashboard" + "&page=" + "1" + "&where=[{\"attribute\":\"business_id\",\"value\":[" + businessId + "]},{\"attribute\":\"status\",\"value\":[0,13]}]"
-        getPaginationInfoNewORder(url,Constants.apiKey)
-        Log.e("arrnewor",arrNewOrderId.toString())
-        var maxNewOrderId=orderDao!!.getMaxNewORder()
-        for (newId in arrNewOrderId){
-            if(newId>maxNewOrderId){
-//                Toast.makeText(applicationContext,"newOrder",Toast.LENGTH_LONG).show()
-                Log.e("neworv","neworder")
-                prefManager!!.setBoolean(SharedPreferencesKeys.isFromLogin,false)
-                NewOrderId =  newId.toString()
-                getDataBase(true)
-//                var orderData : Result = orderDao!!.getOrderById(newId.toString())
-//                var summery : SummaryEntity = orderDao!!.getSummaryById(newId.toString())
-//                val acceptOrderDialog = NewOrderDialog(orderData.id.toString(),orderData.delivery_datetime.toString(),summery.total.toString())
-//                val acceptOrderDialog = NewOrderDialog("1","2022-01-02 17:46","11")
-//                acceptOrderDialog.show(supportFragmentManager, "")
-
-
-            }
-        }
-//        arrNewOrderId.clear()
-
-    }
-
     fun getPaginationInfoNewORder(url: String, key: String) {
-//        lottieProgressDialog!!.showDialog()
         ServiceGenerator.nentoApi.getUsers(url, key)!!.enqueue(object :
             Callback<String?> {
             @SuppressLint("NewApi", "ResourceAsColor")
@@ -1112,16 +898,9 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
         startActivity(i)
     }
 
-//    override fun onOKClick() {
-//        val i = Intent(context, OrderPreviewActivity::class.java)
-//        i.putExtra("orderId", orderId)
-//        i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-//        context!!.startActivity(i)
-//
-//    }
-
     private fun manageQue(){
         var orderId=orderDao!!.getMaxOrderFromQueue();
+
         if(dialog.isShowing){
             val textView9 = dialog.findViewById(R.id.textView9) as TextView
             var dialogORderID = textView9.text.toString().substringAfter("#");
@@ -1129,9 +908,15 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
 
             }else{
                 if(orderId != null){
+                    var status = orderDao!!.getStatus(orderId);
+                    var btnText = "New Order"
+                    if(status.equals("13")){
+                        btnText="Pre Order"
+                    }
                     var orderData : Result = orderDao!!.getOrderById(orderId.toString())
                     var summery : SummaryEntity = orderDao!!.getSummaryById(orderId.toString())
-                    showDialog(orderData.id.toString(),orderData.delivery_datetime.toString(),summery.total.toString(),orderData.delivery_type.toString())
+
+                    showDialog(orderData.id.toString(),orderData.delivery_datetime.toString(),summery.total.toString(),orderData.delivery_type.toString(),btnText)
                 }
             }
             Log.e("aaavv","dialog open")
@@ -1140,84 +925,155 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
                 if(orderId.equals(" ") || orderId.equals("null") || orderId.equals("0")){
 
                 }else{
+                    var status = orderDao!!.getStatus(orderId);
+                    var btnText = "New Order"
+                    if(status.equals("13")){
+                        btnText="Pre Order"
+                    }
                     var orderData : Result = orderDao!!.getOrderById(orderId.toString())
                     var summery : SummaryEntity = orderDao!!.getSummaryById(orderId.toString())
-                    showDialog(orderData.id.toString(),orderData.delivery_datetime.toString(),summery.total.toString(),orderData.delivery_type.toString())
+                    showDialog(orderData.id.toString(),orderData.delivery_datetime.toString(),summery.total.toString(),orderData.delivery_type.toString(),btnText)
                 }
             }
             Log.e("aaavv","dialog close")
         }
     }
-    private fun showDialog( orderId : String, date: String, amt : String, deliveryType : String) {
+    private fun showDialog( orderId : String, date: String, amt : String, deliveryType : String, buttonText: String) {
 //        val dialog = Dialog(application)
-        dialog = Dialog(this@Expandablectivity)
 
-        if(!mplayer.isPlaying)
-        {
-            Log.e("newupor",NewOrderId.toString())
-            mplayer.isLooping=true
-            mplayer.start()
+        runOnUiThread {
+            dialog = Dialog(this@Expandablectivity)
+
+            if(!mplayer.isPlaying)
+            {
+                Log.e("newupor",NewOrderId.toString())
+                mplayer.isLooping=true
+                mplayer.start()
 //            NewOrderId =  null
-        }
-
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setCancelable(false)
-        dialog.setContentView(R.layout.dialog_new_order)
-        val textView9 = dialog.findViewById(R.id.textView9) as TextView
-        val textView6 = dialog.findViewById(R.id.textView6) as TextView
-        val textView8 = dialog.findViewById(R.id.textView8) as TextView
-        val tvDate = dialog.findViewById(R.id.tvDate) as TextView
-        val tvTime = dialog.findViewById(R.id.tvTime) as TextView
-
-
-        var deliveryType1 : String = ""
-        when (deliveryType) {
-            "1" -> deliveryType1 = applicationContext.getString(R.string.Delivery)
-            "2" -> deliveryType1 = applicationContext.getString(R.string.Pick_Up)
-            "3" -> deliveryType1 = applicationContext.getString(R.string.Eat_In)
-            "4" -> deliveryType1 = applicationContext.getString(R.string.Curbside)
-            "5" -> deliveryType1 = applicationContext.getString(R.string.Driver_thru)
-        }
-        Log.e("logdel",deliveryType1.toString())
-        Log.e("logdel",deliveryType.toString())
-        textView9.setText("#"+orderId.toString())
-        textView6.setText(amt.toString()+" Kr")
-        textView8.setText(deliveryType1.toString())
-        val dateWithMinute = date.dropLast(3)
-        val time: String? = dateWithMinute.substringAfterLast(" ")
-        val date: String? = dateWithMinute.substringBefore(" ")
-        tvDate.setText("    "+date.toString()+"    ")
-        tvTime.setText("   "+time.toString()+"   ")
-
-        val btnclose = dialog.findViewById(R.id.btnclose) as ImageView
-        val confirmOrderBtn = dialog.findViewById(R.id.confirm_order_btn) as TextView
-        btnclose.setOnClickListener {
-            orderDao!!.deleteFromQueue(orderId)
-            NewOrderId=null
-            if(mplayer.isPlaying)
-            {
-                mplayer.stop()
             }
-            dialog.dismiss()
-        }
-        confirmOrderBtn.setOnClickListener {
-            orderDao!!.deleteFromQueue(orderId)
-            if(mplayer.isPlaying)
-            {
-                mplayer.stop()
+
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            dialog.setCancelable(false)
+            dialog.setContentView(R.layout.dialog_new_order)
+            val textView9 = dialog.findViewById(R.id.textView9) as TextView
+            val txtNewORderlbl = dialog.findViewById(R.id.txtNewORderlbl) as TextView
+            val textView6 = dialog.findViewById(R.id.textView6) as TextView
+            val textView8 = dialog.findViewById(R.id.textView8) as TextView
+            val tvDate = dialog.findViewById(R.id.tvDate) as TextView
+            val tvTime = dialog.findViewById(R.id.tvTime) as TextView
+
+            txtNewORderlbl.text= buttonText
+
+
+            var deliveryType1 : String = ""
+            when (deliveryType) {
+                "1" -> deliveryType1 = applicationContext.getString(R.string.Delivery)
+                "2" -> deliveryType1 = applicationContext.getString(R.string.Pick_Up)
+                "3" -> deliveryType1 = applicationContext.getString(R.string.Eat_In)
+                "4" -> deliveryType1 = applicationContext.getString(R.string.Curbside)
+                "5" -> deliveryType1 = applicationContext.getString(R.string.Driver_thru)
             }
-            dialog.dismiss()
-            NewOrderId=null
-            val i = Intent(applicationContext, OrderPreviewActivity::class.java)
-            i.putExtra("orderId", orderId)
-            i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(i)
+            Log.e("logdel",deliveryType1.toString())
+            Log.e("logdel",deliveryType.toString())
+            textView9.setText("#"+orderId.toString())
+            textView6.setText(amt.toString()+" Kr")
+            textView8.setText(deliveryType1.toString())
+            val dateWithMinute = date.dropLast(3)
+            val time: String? = dateWithMinute.substringAfterLast(" ")
+            val date: String? = dateWithMinute.substringBefore(" ")
+            tvDate.setText("    "+date.toString()+"    ")
+            tvTime.setText("   "+time.toString()+"   ")
+
+            val btnclose = dialog.findViewById(R.id.btnclose) as ImageView
+            val confirmOrderBtn = dialog.findViewById(R.id.confirm_order_btn) as TextView
+            btnclose.setOnClickListener {
+                orderDao!!.deleteFromQueue(orderId)
+                NewOrderId=null
+                if(mplayer.isPlaying)
+                {
+                    mplayer.stop()
+                }
+                dialog.dismiss()
+            }
+            confirmOrderBtn.setOnClickListener {
+                orderDao!!.deleteFromQueue(orderId)
+                if(mplayer.isPlaying)
+                {
+                    mplayer.stop()
+                }
+                dialog.dismiss()
+                NewOrderId=null
+                val i = Intent(applicationContext, OrderPreviewActivity::class.java)
+                i.putExtra("orderId", orderId)
+                i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(i)
 //            finish()
 
+            }
+
+            dialog.show()
         }
-
-        dialog.show()
-
     }
 
+    fun removeTokenAtLogout(businessId: String) {
+
+        val sharedPref = getSharedPreferences("com.tjcg.nentopos", FirebaseMessagingService.MODE_PRIVATE)
+        val push_token= sharedPref.getString(SharedPreferencesKeys.device_token,null)
+        lottieProgressDialog!!.showDialog()
+        ServiceGenerator.nentoApiIntermediator.logoutAtIntermediateServer(businessId,push_token).enqueue(object : Callback<IntermediatorLogout?> {
+            @SuppressLint("NewApi", "ResourceAsColor")
+            @RequiresApi(Build.VERSION_CODES.O)
+            override fun onResponse(call: Call<IntermediatorLogout?>, response: Response<IntermediatorLogout?>) {
+                if (response.isSuccessful) {
+                    if (response.body() != null && response.body()!!.status) {
+                        lottieProgressDialog!!.cancelDialog()
+                        prefManager!!.setString(Constants.authorization_key, "")
+                        Constants.Authorization = ""
+                        prefManager!!.setBoolean("isLogin", false)
+                        startActivity(Intent(this@Expandablectivity, LoginActivity::class.java).putExtra(SharedPreferencesKeys.isDBLoadRequired,true))
+                        finish()
+                        finishAffinity()
+                        exitProcess(0)
+                    }
+                } else {
+                    lottieProgressDialog!!.cancelDialog()
+                    Log.e("tag", " =  = = =error = ==  " + response.message())
+                }
+            }
+
+            override fun onFailure(call: Call<IntermediatorLogout?>, t: Throwable) {
+                lottieProgressDialog!!.cancelDialog()
+                Log.e("tag", " =  = = =error = ==  " + t.message)
+            }
+        })
+    }
+
+    private val reMyreceive: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            try {
+                if (intent.action == "new_order") {
+                    val orderId = intent.getStringExtra("id");
+                    var total=orderDao!!.getOrderTotal(orderId!!)
+                    var deliveryDateTime=intent.getStringExtra("deliveryDateTime");
+                    var deliverytype=intent.getStringExtra("deliverytype");
+                    var status=intent.getStringExtra("status");
+                    var newButtonText = "New Order";
+                    if(status.equals("13")){
+                        newButtonText= "Pre Order";
+                    }
+                    Log.e("msggg", "inside broadcast rec")
+//                    Toast.makeText(applicationContext,"newOrder from broad",Toast.LENGTH_LONG).show()
+                    showDialog(orderId,deliveryDateTime!!,
+                        total.toString()!!,deliverytype!!,newButtonText)
+                }
+            } catch (e: Exception) {
+               Log.e("Error BR", e.message.toString())
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+//        unregisterReceiver(reMyreceive)
+    }
 }

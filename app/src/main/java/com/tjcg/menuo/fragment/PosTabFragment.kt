@@ -114,9 +114,6 @@ class PosTabFragment : BaseFragment() {
     private fun initData() {
         val sharedPreferences: SharedPreferences = mainActivity.getSharedPreferences("com.tjcg.nentopos", Context.MODE_PRIVATE)
         binding!!.navigationOnlineOrder.setOnClickListener {
-            mainActivity.setFragment(
-                OnlineOrderFragment.newInstance()
-            )
         }
 //        val sharedPreferences: SharedPreferences = mainActivity.getSharedPreferences("com.tjcg.nentopos", Context.MODE_PRIVATE)
         val editor: SharedPreferences.Editor =  sharedPreferences.edit()

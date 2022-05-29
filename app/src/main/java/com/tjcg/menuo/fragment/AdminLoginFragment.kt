@@ -50,17 +50,14 @@ import android.text.method.PasswordTransformationMethod
 
 import android.text.method.HideReturnsTransformationMethod
 
-import android.R
-import android.graphics.drawable.Drawable
+import com.google.firebase.messaging.FirebaseMessagingService
+import com.tjcg.menuo.data.response.order.OnlineOrderRS
+import android.bluetooth.BluetoothAdapter
+import android.content.ContentResolver
+import com.tjcg.menuo.data.response.IntermediatorServerAPI.IntermediatorLogin
 
 
-
-
-
-
-
-
-class AdminLoginFragment : Fragment(), ResponseListener {
+class AdminLoginFragment : Fragment() {
 
     var binding: FragmentAdminLoginBinding? = null
     private lateinit var loginActivity: LoginActivity
@@ -76,7 +73,6 @@ class AdminLoginFragment : Fragment(), ResponseListener {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -84,212 +80,36 @@ class AdminLoginFragment : Fragment(), ResponseListener {
         lottieProgressDialog = LottieProgressDialog(loginActivity as Context)
         db = AppDatabase.getDatabase(loginActivity)
         prefManager = PrefManager(loginActivity)
-
         getTokenFirebase()
-
-        val sharedPreferences: SharedPreferences = loginActivity.getSharedPreferences("com.tjcg.nentopos", Context.MODE_PRIVATE)
-        var fisrtSyncDone : Boolean = sharedPreferences.getBoolean("fisrtSyncDone",false)
-        if(fisrtSyncDone){
-            binding!!.cashierLoginButton.visibility=View.VISIBLE
-        }
-
         binding!!.passwordEt.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-
                 when (event?.action) {
                     MotionEvent.ACTION_DOWN ->{
-//                        Toast.makeText(getContext(),"show",Toast.LENGTH_SHORT).show();
                         binding!!.passwordEt.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-                    } //Do Something
+                    }
                     MotionEvent.ACTION_UP->{
                         binding!!.passwordEt.setTransformationMethod(PasswordTransformationMethod.getInstance());
-//                        binding!!.passwordEt.setCompoundDrawablesWithIntrinsicBounds(img, null, null, null)
-//                        Toast.makeText(getContext(),"hide",Toast.LENGTH_SHORT).show();
                     }
                 }
-
                 return v?.onTouchEvent(event) ?: true
             }
         })
-
         binding!!.textView4.setOnClickListener {
             startActivity(Intent(loginActivity, ForgetPasswordActivity::class.java))
         }
-
         binding!!.adminLogin.setOnClickListener {
 
             email = binding!!.emailEt.text.toString()
             var password = binding!!.passwordEt.text.toString()
             Login(email,password)
-//            if(fisrtSyncDone){
-//                password= md5(password).toString();
-//                var loginstatus=db!!.adminItemDao().localLogin(email!!,password)
-//                if(loginstatus.toInt()> 0){
-////                    code for local login
-////                    startActivity(Intent(loginActivity, MainActivity::class.java))
-////                    loginActivity.finish()
-//
-//                    lottieProgressDialog!!.showDialog()
-//
-//                    getToken()
-//                    getDeviceID()
-//                    val sharedPreferences: SharedPreferences = loginActivity.getSharedPreferences("com.tjcg.nentopos", Context.MODE_PRIVATE)
-//                    var tokennn= sharedPreferences.getString("device_token","").toString()
-//                    LoginRepository.instance!!.loginAdminUser(email, password,tokennn, "android",this@AdminLoginFragment)
-//                }
-//            }else{
-//                lottieProgressDialog!!.showDialog()
-//
-//                getToken()
-//                getDeviceID()
-//                val sharedPreferences: SharedPreferences = loginActivity.getSharedPreferences("com.tjcg.nentopos", Context.MODE_PRIVATE)
-//                var tokennn= sharedPreferences.getString("device_token","").toString()
-//                LoginRepository.instance!!.loginAdminUser(email, password,tokennn, "android",this@AdminLoginFragment)
-//            }
-
         }
         return binding!!.root
     }
-
-    override fun onResponseReceived(responseObject: Any, requestType: Int) {
-        if (requestType == 1) {
-            val adminLoginRS = responseObject as AdminLoginRS
-            if (adminLoginRS.status == "true") {
-                val userPermissions = adminLoginRS.data.userPermissions
-                userPermissions!!.client_id = adminLoginRS.data.userDetails!!.client_id
-                val sharedPreferences: SharedPreferences = loginActivity.getSharedPreferences("com.tjcg.nentopos", Context.MODE_PRIVATE)
-                val editor:SharedPreferences.Editor =  sharedPreferences.edit()
-                editor.putString("userName", adminLoginRS.data.userDetails!!.first_name.toString())
-                editor.putString("outLetName", adminLoginRS.data.userDetails!!.company_name.toString())
-                editor.putString(SharedPreferencesKeys.Is_Pos, userPermissions.pos)
-                editor.putString(SharedPreferencesKeys.all_order,userPermissions.all_order)
-                editor.putString(SharedPreferencesKeys.dashboard_analytics, userPermissions.dashboard_analytics)
-                editor.putString(SharedPreferencesKeys.kitchen_display, userPermissions.kitchen_display)
-                editor.putString(SharedPreferencesKeys.counter_display, userPermissions.counter_display)
-                editor.putString(SharedPreferencesKeys.reservation_management, userPermissions.reservation_management)
-                editor.putString(SharedPreferencesKeys.customer_list, userPermissions.customer_list)
-                editor.putString(SharedPreferencesKeys.report_list, "0")
-                editor.putString(SharedPreferencesKeys.table_management, userPermissions.table_management)
-                editor.putString(SharedPreferencesKeys.menu_management, "0")
-                editor.apply()
-                editor.commit()
-                db!!.adminItemDao().insertOutlets(adminLoginRS.data.outletsRS!!)
-                db!!.adminItemDao().insertUserDetails(adminLoginRS.data.userDetails)
-
-                db!!.adminItemDao().insertUserPermission(userPermissions)
-                prefManager!!.setString(Constants.authorization_key, adminLoginRS.data.authorization)
-                Authorization = adminLoginRS.data.authorization!!
-                prefManager!!.setString("auth_token", adminLoginRS.data.authorization)
-                prefManager!!.setBoolean("isLogin", true)
-
-//                md5("12345")
-                startActivity(Intent(loginActivity, MainActivity::class.java))
-                loginActivity.finish()
-            } else {
-                Toast.makeText(loginActivity, adminLoginRS.message, Toast.LENGTH_SHORT).show()
-            }
-        } else {
-            Log.e("tag", " = = =  data =  ==  $responseObject")
-        }
-        lottieProgressDialog!!.cancelDialog()
-    }
-
     companion object {
-//        private var woyouService: IWoyouService? = null
-
         @JvmStatic
         fun newInstance(): AdminLoginFragment {
             return AdminLoginFragment()
         }
-    }
-
-
-
-    fun getToken() {
-//        var token : String="";
-//        FirebaseInstallations.getInstance().getToken(true).addOnCompleteListener {
-//            var fbToken = it.result
-//            Log.e("tokennewwwww", fbToken!!.token.toString())
-//            val sharedPreferences: SharedPreferences = loginActivity.getSharedPreferences("com.tjcg.nentopos", Context.MODE_PRIVATE)
-//            val editor: SharedPreferences.Editor =  sharedPreferences.edit()
-//            editor.putString("device_token", fbToken!!.token.toString())
-//            editor.apply()
-//            editor.commit()
-//
-//            // DO your thing with your firebase token
-//        }
-
-        FirebaseMessaging.getInstance().token.addOnSuccessListener { token: String ->
-            if (!TextUtils.isEmpty(token)) {
-
-                val sharedPreferences: SharedPreferences = loginActivity.getSharedPreferences("com.tjcg.nentopos", Context.MODE_PRIVATE)
-                val editor: SharedPreferences.Editor =  sharedPreferences.edit()
-                editor.putString("device_token", token)
-                editor.apply()
-                editor.commit()
-
-                Log.d("QQQToken", "retrieve token successful : $token")
-            } else {
-                Log.w("QQQ", "token should not be null...")
-            }
-        }.addOnFailureListener { e: Exception? -> }.addOnCanceledListener {}
-            .addOnCompleteListener { task: Task<String> ->
-                Log.v(
-                    "QQQ",
-                    "This is the token : " + task.result
-                )
-            }
-
-//        val sharedPreferences: SharedPreferences = loginActivity.getSharedPreferences("com.tjcg.nentopos", Context.MODE_PRIVATE)
-//        token= sharedPreferences.getString("device_token","").toString()
-//        Log.e("tokennento",token)
-
-
-//        return token;
-    }
-
-    fun getDeviceID(){
-        val deviceId = Settings.Secure.getString(requireActivity().contentResolver, Settings.Secure.ANDROID_ID)
-        val sharedPreferences: SharedPreferences = loginActivity.getSharedPreferences("com.tjcg.nentopos", Context.MODE_PRIVATE)
-        val editor: SharedPreferences.Editor =  sharedPreferences.edit()
-        editor.putString("device_ID", deviceId)
-        editor.apply()
-        editor.commit()
-        Log.e("deviceIDV",deviceId.toString());
-    }
-
-    public fun getOutlets() : List<OutletsRS>{
-        val outletsRS = db!!.adminItemDao().outlets
-        return outletsRS;
-    }
-
-    fun getSomeText(): String? {
-        var text: String? = "827ccb0eea8a706c4c34a16891f84e7b"
-        text = String(Base64.decode(text, Base64.DEFAULT))
-        return text
-    }
-
-    fun md5(s: String): String? {
-        val MD5 = "MD5"
-        try {
-            // Create MD5 Hash
-            val digest: MessageDigest = MessageDigest
-                .getInstance(MD5)
-            digest.update(s.toByteArray())
-            val messageDigest: ByteArray = digest.digest()
-
-            // Create Hex String
-            val hexString = StringBuilder()
-            for (aMessageDigest in messageDigest) {
-                var h = Integer.toHexString(0xFF and aMessageDigest.toInt())
-                while (h.length < 2) h = "0$h"
-                hexString.append(h)
-            }
-            return hexString.toString()
-        } catch (e: NoSuchAlgorithmException) {
-            e.printStackTrace()
-        }
-        return ""
     }
 
     fun Login(email: String, password: String) {
@@ -300,7 +120,7 @@ class AdminLoginFragment : Fragment(), ResponseListener {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(call: Call<LoginRs?>, response: Response<LoginRs?>) {
                 if (response.isSuccessful) {
-//                    Toast.makeText(activity,"siccess",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity,"siccess",Toast.LENGTH_SHORT).show()
                     var accessToken=response.body()!!.result.session.access_token
                     Constants.bearrToken=accessToken
                     prefManager!!.setString("auth_token", accessToken)
@@ -314,35 +134,6 @@ class AdminLoginFragment : Fragment(), ResponseListener {
 
             override fun onFailure(call: Call<LoginRs?>, t: Throwable) {
                 lottieProgressDialog!!.cancelDialog()
-                Toast.makeText(activity,"Error",Toast.LENGTH_SHORT).show()
-                Log.e("tag", " =  = = =error = ==  " + t.message)
-            }
-        })
-    }
-
-    fun getKey(email: String) {
-//        lottieProgressDialog!!.showDialog()
-        ServiceGenerator.nentoApi2.getkeys().enqueue(object :
-            Callback<KeyResponce?> {
-            @SuppressLint("NewApi", "ResourceAsColor")
-            @RequiresApi(Build.VERSION_CODES.O)
-            override fun onResponse(call: Call<KeyResponce?>, response: Response<KeyResponce?>) {
-                if (response.isSuccessful) {
-//                    lottieProgressDialog!!.cancelDialog()
-//                    Toast.makeText(activity,"siccess",Toast.LENGTH_SHORT).show()
-                    var key =response.body()!!.result[0].key
-                    getOrders(key)
-
-                } else {
-//                    lottieProgressDialog!!.cancelDialog()
-                    Toast.makeText(activity,"Wrong detail",Toast.LENGTH_SHORT).show()
-//                    Toast.makeText(mainActivity,"Error while fetching invoice detail..",Toast.LENGTH_SHORT).show()
-                    Log.e("tag", " =  = = =error = ==  " + response.message())
-                }
-            }
-
-            override fun onFailure(call: Call<KeyResponce?>, t: Throwable) {
-//                lottieProgressDialog!!.cancelDialog()
                 Toast.makeText(activity,"Error",Toast.LENGTH_SHORT).show()
                 Log.e("tag", " =  = = =error = ==  " + t.message)
             }
@@ -368,6 +159,7 @@ class AdminLoginFragment : Fragment(), ResponseListener {
                     prefManager!!.setBoolean(SharedPreferencesKeys.isFromLogin, true)
                     var i = Intent(context,Expandablectivity::class.java)
                     i.putExtra("odata",orderResult)
+                    i.putExtra(SharedPreferencesKeys.isDBLoadRequired,true)
                     startActivity(i)
 
 
@@ -411,56 +203,20 @@ class AdminLoginFragment : Fragment(), ResponseListener {
                                         var businessOwnerNAme = jsonUser.getString("name");
                                         var businessNAme = businessobj.getString("name");
                                         businessId = businessobj.getString("id")
-                                        businessOwnerNAme
-                                        businessNAme
-
                                         prefManager!!.setString(SharedPreferencesKeys.businessName, businessNAme)
                                         prefManager!!.setString(SharedPreferencesKeys.businessOwner, businessOwnerNAme)
                                     }
                                 }
                             }
-
                         }
-
                     }
-                    lottieProgressDialog!!.cancelDialog()
+                    //lottieProgressDialog!!.cancelDialog()
                     prefManager!!.setBoolean("isLogin", true)
                     prefManager!!.setString("businessID", businessId.toString())
 
                     //PASS TOKEN
                     var getTokenURl : String = Constants.BUSINESS_URL+businessId+ Constants.NOTIFICATION_ENDPOINTS
-                    getTokenURl
-                    var i = Intent(context,Expandablectivity::class.java)
-                    i.putExtra("businessID",businessId)
-                    startActivity(i)
-                } else {
-                    lottieProgressDialog!!.cancelDialog()
-                    Toast.makeText(activity,"Wrong detail",Toast.LENGTH_SHORT).show()
-                    Log.e("tag", " =  = = =error = ==  " + response.message())
-                }
-            }
-
-            override fun onFailure(call: Call<String?>, t: Throwable) {
-                lottieProgressDialog!!.cancelDialog()
-                Toast.makeText(activity,"Error",Toast.LENGTH_SHORT).show()
-                Log.e("tag", " =  = = =error = ==  " + t.message)
-            }
-        })
-    }
-
-    fun getToken(url : String){
-        ServiceGenerator.nentoApi.getNotificationToken(url,Constants.apiKey)!!.enqueue(object :
-            Callback<String?> {
-            @SuppressLint("NewApi", "ResourceAsColor")
-            @RequiresApi(Build.VERSION_CODES.O)
-            override fun onResponse(call: Call<String?>, response: Response<String?>) {
-                if (response.isSuccessful) {
-                    val jobj = JSONObject(response.body())
-                    val jsonArray = jobj.getJSONArray("result")
-                    val tokenObj : JSONObject = jsonArray.getJSONObject(0)
-                    val token : String = tokenObj.getString("token")
-                    val app : String = tokenObj.getString("app")
-                    val user_token : String = tokenObj.getString("user_token")
+                    sendTokenAtLogin(businessId);
 
                 } else {
                     lottieProgressDialog!!.cancelDialog()
@@ -480,17 +236,47 @@ class AdminLoginFragment : Fragment(), ResponseListener {
     private fun getTokenFirebase() {
         FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
             Log.d("AdminLogin", "token : $token")
-//            firebaseToken = token
-//            MainActivity.sharedPreferences.edit().apply {
-//                putString(SharedPreferencesKeys.firebase_token, token)
-//            }.apply()
         }
     }
 
+    fun sendTokenAtLogin(businessId: String) {
 
+        val sharedPref = requireContext().getSharedPreferences("com.tjcg.nentopos", FirebaseMessagingService.MODE_PRIVATE)
+        val push_token= sharedPref.getString(SharedPreferencesKeys.device_token,null)
+        val device_name=getPhoneName()
+        val platform = "android"
+        val deviceID = Settings.Secure.getString(requireContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
+        ServiceGenerator.nentoApiIntermediator.loginAtIntermediateServer(businessId,device_name,platform,deviceID,push_token).enqueue(object : Callback<IntermediatorLogin?> {
+            @SuppressLint("NewApi", "ResourceAsColor")
+            @RequiresApi(Build.VERSION_CODES.O)
+            override fun onResponse(call: Call<IntermediatorLogin?>, response: Response<IntermediatorLogin?>) {
+                if (response.isSuccessful) {
+                    if (response.body() != null && response.body()!!.status) {
+                        Toast.makeText(activity,"token sent",Toast.LENGTH_LONG).show()
+                        lottieProgressDialog!!.cancelDialog()
+                        var i = Intent(context,Expandablectivity::class.java)
+                        i.putExtra("businessID",businessId)
+                        i.putExtra(SharedPreferencesKeys.isDBLoadRequired,true)
+                        startActivity(i)
 
+                    }
+                } else {
+                    lottieProgressDialog!!.cancelDialog()
+                    Log.e("tag", " =  = = =error12 = ==  " + response.message())
+                }
+            }
 
+            override fun onFailure(call: Call<IntermediatorLogin?>, t: Throwable) {
+                lottieProgressDialog!!.cancelDialog()
 
+                Log.e("tag", " =  = = =error 3= ==  " + t.message)
+            }
+        })
+    }
 
+    fun getPhoneName(): String? {
+        val deviceModel = Build.MODEL
+        return deviceModel
+    }
 }

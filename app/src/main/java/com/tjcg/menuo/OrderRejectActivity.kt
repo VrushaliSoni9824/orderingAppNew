@@ -16,6 +16,7 @@ import com.tjcg.menuo.data.remote.ServiceGenerator
 import com.tjcg.menuo.utils.Constants
 import com.tjcg.menuo.utils.LottieProgressDialog
 import com.tjcg.menuo.utils.PrefManager
+import com.tjcg.menuo.utils.SharedPreferencesKeys
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -53,7 +54,7 @@ class OrderRejectActivity : AppCompatActivity() {
         textViewPhoneNumber.text = phoneNumber
 
         linearLayoutBack.setOnClickListener {
-            startActivity(Intent(this, Expandablectivity::class.java).putExtra("businessID",businessID))
+            startActivity(Intent(this, Expandablectivity::class.java).putExtra(SharedPreferencesKeys.isDBLoadRequired,false).putExtra("businessID",businessID))
 
             finish()
         }
@@ -98,7 +99,7 @@ class OrderRejectActivity : AppCompatActivity() {
                         sDialog.cancel()
                     }
                     sweetAlertDialog.setConfirmClickListener { sDialog ->
-                        startActivity(Intent(applicationContext, Expandablectivity::class.java).putExtra("businessID",businessID))
+                        startActivity(Intent(applicationContext, Expandablectivity::class.java).putExtra(SharedPreferencesKeys.isDBLoadRequired,false).putExtra("businessID",businessID))
 
                         finish()
                     }.show()

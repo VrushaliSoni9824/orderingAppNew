@@ -21,6 +21,7 @@ import android.os.IBinder
 import android.text.Html
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -51,6 +52,7 @@ class OrderPreviewProductAdapter(var productDataList: List<ProductEntity>, var c
     public var pos:String="";
     public var customerPaidAmount: String = ""
     var productaddonAdapter: OrderPreviewProductAddonAdapter? = null
+    var productIngAdapter: OrderPreviewProductIngrediantsAdapter? = null
 
 //    var param: List<NameValuePair>? = nullg
 
@@ -82,8 +84,10 @@ class OrderPreviewProductAdapter(var productDataList: List<ProductEntity>, var c
         holder.binding.textviewProductName.text=product.quantity.toString()+" x "+product.name
         var addonText : String =""
         val addonsArray = JSONArray(product.options)
+        val ingrediants = JSONArray(product.ingredients)
         val addonName = ArrayList<String>()
         val addonPrice = ArrayList<String>()
+        val arrIngre = ArrayList<String>()
 
         for (i in 0..addonsArray.length() - 1) {
             val addon = addonsArray.getJSONObject(i)
@@ -100,9 +104,26 @@ class OrderPreviewProductAdapter(var productDataList: List<ProductEntity>, var c
             addonText=addonText+"<br/>"
         }
 
+        for(i in 0..ingrediants.length()-1){
+            var ingreItem = ingrediants.getJSONObject(i)
+            arrIngre.add(ingreItem.getString("name"))
+        }
+
+        if(!product.comment.equals("null")){
+            holder.binding!!.textViewComments.visibility=View.VISIBLE
+            holder.binding!!.textViewComments.text=product.comment.toString()
+        }else{
+            holder.binding!!.textViewComments.visibility=View.GONE
+        }
+
+
         productaddonAdapter = OrderPreviewProductAddonAdapter(addonName!!,addonPrice!!,context)
         holder.binding!!.rvAddon.layoutManager = LinearLayoutManager(context)
         holder.binding!!.rvAddon.adapter = productaddonAdapter
+
+        productIngAdapter = OrderPreviewProductIngrediantsAdapter(arrIngre,context)
+        holder.binding!!.rvIngrediants.layoutManager = LinearLayoutManager(context)
+        holder.binding!!.rvIngrediants.adapter = productIngAdapter
 
         holder.binding.textviewProductAddons.text=Html.fromHtml(addonText)
         holder.binding.textViewItemPrice.text=product.price.toString()

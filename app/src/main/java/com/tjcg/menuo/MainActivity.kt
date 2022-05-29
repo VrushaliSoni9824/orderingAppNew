@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             val manager = applicationContext.getSystemService(TELEPHONY_SERVICE) as TelephonyManager
             prefManager!!.setBoolean("is_phone", manager.phoneType != TelephonyManager.PHONE_TYPE_NONE)
         }
-        fragment = OnlineOrderFragment.newInstance()
+        fragment = PosTabFragment.newInstance()
 //        setSelectedPOS()
         setFragment(fragment)
         binding!!.mainLayout.drawerBtn.setOnClickListener(this)
@@ -138,10 +138,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                 setFragment(PosTabFragment.newInstance())
                 binding!!.drawerLayout.closeDrawers()
             }
-            R.id.navigation_online_order -> {
-                setFragment(OnlineOrderFragment.newInstance())
-                binding!!.drawerLayout.closeDrawers()
-            }
+
 
         }
     }

@@ -11,6 +11,7 @@ import com.tjcg.menuo.adapter.OrderComepleteAdapter
 import com.tjcg.menuo.data.local.AppDatabase
 import com.tjcg.menuo.data.local.OrderDao
 import com.tjcg.menuo.utils.Default
+import com.tjcg.menuo.utils.SharedPreferencesKeys
 import java.util.ArrayList
 
 class OrderCompleteActivity : AppCompatActivity(), OrderComepleteAdapter.orderClickListener {
@@ -41,7 +42,7 @@ class OrderCompleteActivity : AppCompatActivity(), OrderComepleteAdapter.orderCl
         recyclerViewOrderComplete.adapter = orderComepleteAdapter
 
         imageViewBack.setOnClickListener {
-            startActivity(Intent(this, Expandablectivity::class.java))
+            startActivity(Intent(this, Expandablectivity::class.java).putExtra(SharedPreferencesKeys.isDBLoadRequired,false))
             finish()
         }
 

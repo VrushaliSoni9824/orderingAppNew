@@ -15,4 +15,6 @@ object SharedPreferencesKeys {
     const val lastAcceptedOrder = "lastAcceptedOrder"
     const val businessName = "BusinessName"
     const val businessOwner = "businessOwner"
+    const val device_token = "device_token"
+    const val isDBLoadRequired = "isDBLoadRequired"
 }

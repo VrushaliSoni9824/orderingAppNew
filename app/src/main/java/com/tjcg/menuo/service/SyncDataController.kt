@@ -355,7 +355,7 @@ class SyncDataController(context: Context) {
                         customerObj.getString("address"),
                         customerObj.getString("address_notes"),
                         customerObj.getString("zipcode"),
-                        customerObj.getInt("cellphone"),
+                        customerObj.getString("cellphone"),
                         customerObj.getString("phone"),
                         customerObj.getString("location"),
                         customerObj.getString("internal_number"),

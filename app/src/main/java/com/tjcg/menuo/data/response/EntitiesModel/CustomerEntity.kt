@@ -16,7 +16,7 @@ class CustomerEntity(
         var address: String,
         var address_notes: String,
         var zipcode: String,
-        var cellphone: Int,
+        var cellphone: String,
         var phone: String,
         var location : String,
         //var location : Location,

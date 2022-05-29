@@ -24,6 +24,7 @@ import com.tjcg.menuo.data.local.OrderDao
 import com.tjcg.menuo.data.remote.ServiceGenerator
 import com.tjcg.menuo.utils.Constants
 import com.tjcg.menuo.utils.PrefManager
+import com.tjcg.menuo.utils.SharedPreferencesKeys
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -221,7 +222,7 @@ class CustomizedExpandableListAdapter(
                         sDialog.cancel()
                     }
                     sweetAlertDialog.setConfirmClickListener { sDialog ->
-                        context.startActivity(Intent(context, Expandablectivity::class.java).putExtra("businessID",businessID))
+                        context.startActivity(Intent(context, Expandablectivity::class.java).putExtra(SharedPreferencesKeys.isDBLoadRequired,false).putExtra("businessID",businessID))
                     }.show()
 
 //                    Toast.makeText(applicationContext,"order accepted", Toast.LENGTH_SHORT).show()
