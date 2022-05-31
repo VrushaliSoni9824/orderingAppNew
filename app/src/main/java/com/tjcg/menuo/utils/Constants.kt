@@ -23,7 +23,9 @@ object Constants {
 
     const val URL = "http://apiv4.ordering.co/v400/en/menuo/orders?"
     const val NOTIFY_API_URL = "https://menuo.area81-ns.se/menuo-notify/public/api/v1/"
-    const val BUSINESS_URL = "https://apiv4.ordering.co/v400/en/menuo/users/"
+//    const val BUSINESS_URL = "https://apiv4.ordering.co/v400/en/menuo/users/"
+//    const val BUSINESS_URL = "https://apiv4.ordering.co/v400/en/menuo/business?mode=dashboard&params=email,name"
+    const val BUSINESS_URL = "https://apiv4.ordering.co/v400/en/menuo/business?mode=dashboard&params=name,email,owner_id"
     const val NOTIFICATION_ENDPOINTS = "/notification_tokens"
 
 //    const val GET_NOTI_URL = "https://apiv4.ordering.co/v400/en/menuo/users/52/notification_tokens"

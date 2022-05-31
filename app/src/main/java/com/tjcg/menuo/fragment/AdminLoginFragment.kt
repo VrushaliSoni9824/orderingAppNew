@@ -122,8 +122,10 @@ class AdminLoginFragment : Fragment() {
                 if (response.isSuccessful) {
                     Toast.makeText(activity,"siccess",Toast.LENGTH_SHORT).show()
                     var accessToken=response.body()!!.result.session.access_token
+                    var owner_id =response.body()!!.result.id
                     Constants.bearrToken=accessToken
                     prefManager!!.setString("auth_token", accessToken)
+                    prefManager!!.setString("owner_id", owner_id.toString())
                     getUsers(Constants.apiKey)
                 } else {
                     lottieProgressDialog!!.cancelDialog()
@@ -187,35 +189,31 @@ class AdminLoginFragment : Fragment() {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(call: Call<String?>, response: Response<String?>) {
                 if (response.isSuccessful) {
-//                    Toast.makeText(activity,"success",Toast.LENGTH_SHORT).show()
+                    var owner_id_pref : String = prefManager!!.getString("owner_id").toString()
                     var orderResult : String =response.body()!!.toString()
                     val jobj = JSONObject(orderResult)
                     val jsnResult : JSONArray = jobj.getJSONArray("result")!!
                     for (result in 0..jsnResult.length()-1) {
                         var jsonUser : JSONObject = jsnResult.getJSONObject(result)
                         var emailNew =  jsonUser.getString("email")
-                        if(emailNew.equals(email)){
-                            var businessDetail : JSONArray = jsonUser.getJSONArray("businesses")
-                            if(businessDetail.length()>0){
-                                for(i in 0..businessDetail.length()-1){
-                                    var businessobj : JSONObject = businessDetail.getJSONObject(i)
-                                    if(businessobj!=null){
-                                        var businessOwnerNAme = jsonUser.getString("name");
-                                        var businessNAme = businessobj.getString("name");
-                                        businessId = businessobj.getString("id")
-                                        prefManager!!.setString(SharedPreferencesKeys.businessName, businessNAme)
-                                        prefManager!!.setString(SharedPreferencesKeys.businessOwner, businessOwnerNAme)
-                                    }
-                                }
-                            }
+                        var owner_id_api =  jsonUser.getString("owner_id")
+                        if(emailNew.equals(email) && owner_id_pref.equals(owner_id_api)){
+                            var businessOwnerNAme = jsonUser.getString("name");
+                            var businessNAme = jsonUser.getString("name");
+                            businessId = jsonUser.getString("id")
+                            prefManager!!.setString(SharedPreferencesKeys.businessName, businessNAme)
+                            prefManager!!.setString(SharedPreferencesKeys.businessOwner, businessOwnerNAme)
                         }
                     }
+
+
                     //lottieProgressDialog!!.cancelDialog()
                     prefManager!!.setBoolean("isLogin", true)
                     prefManager!!.setString("businessID", businessId.toString())
 
                     //PASS TOKEN
                     var getTokenURl : String = Constants.BUSINESS_URL+businessId+ Constants.NOTIFICATION_ENDPOINTS
+                    Toast.makeText(context,"sending tocken",Toast.LENGTH_LONG).show()
                     sendTokenAtLogin(businessId);
 
                 } else {
