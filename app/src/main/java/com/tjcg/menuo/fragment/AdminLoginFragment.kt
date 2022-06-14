@@ -1,40 +1,25 @@
 package com.tjcg.menuo.fragment
 
 import android.annotation.SuppressLint
-import com.tjcg.menuo.data.ResponseListener
 import com.tjcg.menuo.activity.LoginActivity
 import com.tjcg.menuo.data.local.AppDatabase
 import com.tjcg.menuo.utils.PrefManager
 import android.content.Context
-import android.view.LayoutInflater
-import android.view.ViewGroup
 import android.os.Bundle
-import com.tjcg.menuo.data.response.Login.AdminLoginRS
 import android.content.Intent
 import android.util.Log
-import android.view.View
-import com.tjcg.menuo.MainActivity
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.tjcg.menuo.databinding.FragmentAdminLoginBinding
 import com.tjcg.menuo.utils.Constants
-import com.tjcg.menuo.utils.Constants.Authorization
 import com.tjcg.menuo.utils.LottieProgressDialog
-import android.content.SharedPreferences
 
 import android.os.Build
 import android.provider.Settings
 import com.google.firebase.messaging.FirebaseMessaging
-import android.text.TextUtils
-import android.util.Base64
-import android.view.MotionEvent
 import androidx.annotation.RequiresApi
-import com.google.android.gms.tasks.*
 import com.tjcg.menuo.Expandablectivity
 import com.tjcg.menuo.ForgetPasswordActivity
 import com.tjcg.menuo.data.remote.ServiceGenerator
-import com.tjcg.menuo.data.response.Keys.KeyResponce
-import com.tjcg.menuo.data.response.Login.OutletsRS
 import com.tjcg.menuo.data.response.LoginNew.LoginRs
 import com.tjcg.menuo.utils.SharedPreferencesKeys
 import org.json.JSONArray
@@ -42,19 +27,26 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.lang.Exception
-import java.lang.StringBuilder
-import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
 import android.text.method.PasswordTransformationMethod
 
 import android.text.method.HideReturnsTransformationMethod
+import cn.pedant.SweetAlert.SweetAlertDialog
 
 import com.google.firebase.messaging.FirebaseMessagingService
-import com.tjcg.menuo.data.response.order.OnlineOrderRS
-import android.bluetooth.BluetoothAdapter
-import android.content.ContentResolver
+import com.tjcg.menuo.R
 import com.tjcg.menuo.data.response.IntermediatorServerAPI.IntermediatorLogin
+import java.util.ArrayList
+//import android.R
+import android.app.Dialog
+import android.content.BroadcastReceiver
+import android.content.IntentFilter
+import android.view.*
+import android.widget.*
+import com.tjcg.menuo.OrderPreviewActivity
+import com.tjcg.menuo.adapter.chooseBusinessKt
+//import com.tjcg.menuo.adapter.ChooseBusinessListAdapter
+import com.tjcg.menuo.data.response.BusinessList.BusinessItem
+import java.lang.Exception
 
 
 class AdminLoginFragment : Fragment() {
@@ -65,7 +57,9 @@ class AdminLoginFragment : Fragment() {
     var prefManager: PrefManager? = null
     private var lottieProgressDialog: LottieProgressDialog? = null
     var email : String = ""
+    lateinit var dialog : Dialog
     var businessId : String = ""
+    var mIntentFilter: IntentFilter? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -80,6 +74,10 @@ class AdminLoginFragment : Fragment() {
         lottieProgressDialog = LottieProgressDialog(loginActivity as Context)
         db = AppDatabase.getDatabase(loginActivity)
         prefManager = PrefManager(loginActivity)
+        dialog = Dialog(requireActivity().applicationContext)
+        mIntentFilter = IntentFilter()
+        mIntentFilter!!.addAction("businessChoosed")
+        requireContext().registerReceiver(reMyreceive, mIntentFilter)
         getTokenFirebase()
         binding!!.passwordEt.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
@@ -123,9 +121,11 @@ class AdminLoginFragment : Fragment() {
                     Toast.makeText(activity,"siccess",Toast.LENGTH_SHORT).show()
                     var accessToken=response.body()!!.result.session.access_token
                     var owner_id =response.body()!!.result.id
+                    var owner_name =response.body()!!.result.name
                     Constants.bearrToken=accessToken
                     prefManager!!.setString("auth_token", accessToken)
                     prefManager!!.setString("owner_id", owner_id.toString())
+                    prefManager!!.setString(SharedPreferencesKeys.businessOwner, owner_name.toString())
                     getUsers(Constants.apiKey)
                 } else {
                     lottieProgressDialog!!.cancelDialog()
@@ -183,6 +183,12 @@ class AdminLoginFragment : Fragment() {
 
     fun getUsers(key: String) {
         var url =Constants.BUSINESS_URL
+//        val arrId = ArrayList<String>()
+//        val arrName = ArrayList<String>()
+//        val arrEmail = ArrayList<String>()
+//        val arrOwner_id = ArrayList<String>()
+        val arrBusinessItem = ArrayList<BusinessItem>()
+
         ServiceGenerator.nentoApi.getBusinessUsers(url,key)!!.enqueue(object :
             Callback<String?> {
             @SuppressLint("NewApi", "ResourceAsColor")
@@ -195,26 +201,60 @@ class AdminLoginFragment : Fragment() {
                     val jsnResult : JSONArray = jobj.getJSONArray("result")!!
                     for (result in 0..jsnResult.length()-1) {
                         var jsonUser : JSONObject = jsnResult.getJSONObject(result)
+                        var id =  jsonUser.getString("id")
                         var emailNew =  jsonUser.getString("email")
                         var owner_id_api =  jsonUser.getString("owner_id")
+                        var businessName =  jsonUser.getString("name")
+//                        if(emailNew.equals(email) && businessName.equals("Menuo Demo") && owner_id_pref.equals(owner_id_api)){
                         if(emailNew.equals(email) && owner_id_pref.equals(owner_id_api)){
-                            var businessOwnerNAme = jsonUser.getString("name");
-                            var businessNAme = jsonUser.getString("name");
-                            businessId = jsonUser.getString("id")
-                            prefManager!!.setString(SharedPreferencesKeys.businessName, businessNAme)
-                            prefManager!!.setString(SharedPreferencesKeys.businessOwner, businessOwnerNAme)
+                            var bItem = BusinessItem(id,businessName,owner_id_api,email)
+                            arrBusinessItem.add(bItem)
                         }
                     }
+                    if(arrBusinessItem.size>1){
+                        dialog = Dialog(requireContext())
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+                        dialog.setCancelable(false)
+                        dialog.setContentView(com.tjcg.menuo.R.layout.choose_business_dialog)
+                        val rvBusinessList = dialog.findViewById(com.tjcg.menuo.R.id.rvBusiness) as ListView
+                        val ChooseBusinessListAdapter = chooseBusinessKt(arrBusinessItem,requireContext())
+                        rvBusinessList.adapter = ChooseBusinessListAdapter
+                        rvBusinessList.setOnItemClickListener(){adapterView, view, position, id ->
+                            prefManager!!.setString(SharedPreferencesKeys.businessName, arrBusinessItem.get(position).itemName)
+//                            prefManager!!.setString(SharedPreferencesKeys.businessOwner, arrBusinessItem.get(position).owner_id)
+                            prefManager!!.setBoolean("isLogin", true)
+                            prefManager!!.setString("businessID", arrBusinessItem.get(position).id)
+                            var businessID=prefManager!!.getString("businessID")!!
+                            sendTokenAtLogin(businessID);
+                        }
+                        dialog.show()
 
+                    }else if(arrBusinessItem.size==1){
 
-                    //lottieProgressDialog!!.cancelDialog()
-                    prefManager!!.setBoolean("isLogin", true)
-                    prefManager!!.setString("businessID", businessId.toString())
+                        var businessOwnerNAme = arrBusinessItem.get(0).owner_id
 
-                    //PASS TOKEN
-                    var getTokenURl : String = Constants.BUSINESS_URL+businessId+ Constants.NOTIFICATION_ENDPOINTS
-                    Toast.makeText(context,"sending tocken",Toast.LENGTH_LONG).show()
-                    sendTokenAtLogin(businessId);
+                        var businessNAme = arrBusinessItem.get(0).itemName
+                        businessId = arrBusinessItem.get(0).id
+                        prefManager!!.setString("businessID", businessId.toString())
+                        prefManager!!.setBoolean("isLogin", true)
+                        prefManager!!.setString(SharedPreferencesKeys.businessName, businessNAme)
+//                        prefManager!!.setString(SharedPreferencesKeys.businessOwner, businessOwnerNAme)
+                        sendTokenAtLogin(prefManager!!.getString("businessID")!!);
+
+                    }else{
+                        val sweetAlertDialog = SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
+                        sweetAlertDialog.setCanceledOnTouchOutside(false)
+                        sweetAlertDialog.setCancelable(false)
+                        sweetAlertDialog.contentText = resources.getString(R.string.lbl_noBusinessFound) //sweetAlertDialog.contentTextSize = resources.getDimension(R.dimen._7ssp).roundToInt(
+                        sweetAlertDialog.confirmText = resources.getString(R.string.lbl_OK)
+                        sweetAlertDialog.confirmButtonBackgroundColor = resources.getColor(R.color.green)
+                        sweetAlertDialog.showCancelButton(false)
+                        sweetAlertDialog.setConfirmClickListener { sDialog ->
+                            sDialog.cancel()
+                        }.show()
+
+                    }
+
 
                 } else {
                     lottieProgressDialog!!.cancelDialog()
@@ -276,5 +316,18 @@ class AdminLoginFragment : Fragment() {
     fun getPhoneName(): String? {
         val deviceModel = Build.MODEL
         return deviceModel
+    }
+
+    private val reMyreceive: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            try {
+                if (intent.action == "businessChoosed") {
+                    var businessId = prefManager!!.getString("businessID")!!
+                    sendTokenAtLogin(businessId);
+                }
+            } catch (e: Exception) {
+                Log.e("Error BR", e.message.toString())
+            }
+        }
     }
 }

@@ -147,6 +147,8 @@
     <string name="lbl_reject_done"> Order rejected !</string>
     <string name="lbl_accept_done"> Order Accepted !</string>
     <string name="lbl_pickUpReady"> Order Ready !</string>
+    <string name="lbl_noBusinessFound"> Business not found with this login</string>
+    <string name="lbl_chooseBusiness"> Select your business</string>
     <string name="lbl_error"> Something went wrong ! Try again</string>
     <string name="lbl_NO">No</string>
     <string name="lbl_YES">Yes</string>
