@@ -13,12 +13,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.tjcg.menuo.Expandablectivity;
 import com.tjcg.menuo.OrderPreviewActivity;
 import com.tjcg.menuo.R;
 import com.tjcg.menuo.data.local.AppDatabase;
 import com.tjcg.menuo.data.local.OrderDao;
 import com.tjcg.menuo.data.remote.ServiceGenerator;
+import com.tjcg.menuo.dialog.NewOrderDialog;
 import com.tjcg.menuo.utils.Constants;
 import com.tjcg.menuo.utils.Default;
 import com.tjcg.menuo.utils.LottieProgressDialog;
@@ -34,7 +37,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter {
+public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter implements NewOrderDialog.ClickListener {
 
     private Context context;
     private List<String> expandableTitleList;
@@ -43,12 +46,13 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
     PrefManager prefManager;
     String businessID;
     LottieProgressDialog lottieProgressDialog;
+    Expandablectivity expandablectivity;
 
     // constructor
-    public CustomizedExpandableListAdapter2(Context context, List<String> expandableListTitle,
+    public CustomizedExpandableListAdapter2(Expandablectivity expandablectivity, Context context, List<String> expandableListTitle,
                                             HashMap<String, List<String>> expandableListDetail) {
 
-
+        this.expandablectivity = expandablectivity;
         this.context = context;
         this.expandableTitleList = expandableListTitle;
         this.expandableDetailList = expandableListDetail;
@@ -340,11 +344,16 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                context.sendBroadcast(new Intent(Default.IS_FROM_DONE).putExtra(Default.IS_ORDER_DONE_ACTIVITY, true));
-                Intent i = new Intent(context, OrderPreviewActivity.class);
-                i.putExtra("orderId",expandedListText);
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(i);
+//                context.sendBroadcast(new Intent(Default.IS_FROM_DONE).putExtra(Default.IS_ORDER_DONE_ACTIVITY, true));
+//                Intent i = new Intent(context, OrderPreviewActivity.class);
+//                i.putExtra("orderId",expandedListText);
+//                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                context.startActivity(i);
+                NewOrderDialog newOrderDialog = new NewOrderDialog(expandedListText);
+                newOrderDialog.show(expandablectivity.getSupportFragmentManager(),"");
+
+//                val orderStatusDialog = CalculatorDialog(this, cartAmount.toString())
+//                orderStatusDialog.show(childFragmentManager, "Order Status")
             }
         });
 
@@ -478,5 +487,14 @@ public class CustomizedExpandableListAdapter2 extends BaseExpandableListAdapter 
         });
     }
 
+    @Override
+    public void onClose() {
+
+    }
+
+//    @Override
+//    public void onOKClick(@NonNull String orderId) {
+//z
+//    }
 }
 

@@ -3,15 +3,12 @@ package com.tjcg.menuo.fragment
 import android.annotation.SuppressLint
 import com.tjcg.menuo.activity.LoginActivity
 import com.tjcg.menuo.data.local.AppDatabase
-import com.tjcg.menuo.utils.PrefManager
 import android.content.Context
 import android.os.Bundle
 import android.content.Intent
 import android.util.Log
 import androidx.fragment.app.Fragment
 import com.tjcg.menuo.databinding.FragmentAdminLoginBinding
-import com.tjcg.menuo.utils.Constants
-import com.tjcg.menuo.utils.LottieProgressDialog
 
 import android.os.Build
 import android.provider.Settings
@@ -21,7 +18,6 @@ import com.tjcg.menuo.Expandablectivity
 import com.tjcg.menuo.ForgetPasswordActivity
 import com.tjcg.menuo.data.remote.ServiceGenerator
 import com.tjcg.menuo.data.response.LoginNew.LoginRs
-import com.tjcg.menuo.utils.SharedPreferencesKeys
 import org.json.JSONArray
 import org.json.JSONObject
 import retrofit2.Call
@@ -40,12 +36,15 @@ import java.util.ArrayList
 import android.app.Dialog
 import android.content.BroadcastReceiver
 import android.content.IntentFilter
+import android.graphics.Color
 import android.view.*
 import android.widget.*
+import androidx.core.content.ContextCompat
 import com.tjcg.menuo.OrderPreviewActivity
 import com.tjcg.menuo.adapter.chooseBusinessKt
 //import com.tjcg.menuo.adapter.ChooseBusinessListAdapter
 import com.tjcg.menuo.data.response.BusinessList.BusinessItem
+import com.tjcg.menuo.utils.*
 import java.lang.Exception
 
 
@@ -111,6 +110,7 @@ class AdminLoginFragment : Fragment() {
     }
 
     fun Login(email: String, password: String) {
+
         lottieProgressDialog!!.showDialog()
         ServiceGenerator.nentoApi.loginAdminUser(email,password).enqueue(object :
             Callback<LoginRs?> {
@@ -217,15 +217,33 @@ class AdminLoginFragment : Fragment() {
                         dialog.setCancelable(false)
                         dialog.setContentView(com.tjcg.menuo.R.layout.choose_business_dialog)
                         val rvBusinessList = dialog.findViewById(com.tjcg.menuo.R.id.rvBusiness) as ListView
+                        val imageViewCancel = dialog.findViewById(com.tjcg.menuo.R.id.imageViewCancel) as ImageView
                         val ChooseBusinessListAdapter = chooseBusinessKt(arrBusinessItem,requireContext())
                         rvBusinessList.adapter = ChooseBusinessListAdapter
                         rvBusinessList.setOnItemClickListener(){adapterView, view, position, id ->
+                            rvBusinessList.isEnabled= false
+                            for (i in 0 until rvBusinessList.getChildCount()) {
+                                if (position === i) {
+                                    rvBusinessList.getChildAt(i).setBackgroundColor(getResources().getColor(R.color.orange))
+                                    var textViewBusinessName = view!!.findViewById<View>(R.id.textViewBusinessName) as TextView
+                                    textViewBusinessName.setTextColor(Color.WHITE)
+                                } else {
+                                    rvBusinessList.getChildAt(i).setBackgroundColor(Color.TRANSPARENT)
+                                    var textViewBusinessName = view!!.findViewById<View>(R.id.textViewBusinessName) as TextView
+//                                    textViewBusinessName.setTextColor(ContextCompat.getColor(requireContext(), R.color.orange))
+                                }
+                            }
                             prefManager!!.setString(SharedPreferencesKeys.businessName, arrBusinessItem.get(position).itemName)
-//                            prefManager!!.setString(SharedPreferencesKeys.businessOwner, arrBusinessItem.get(position).owner_id)
                             prefManager!!.setBoolean("isLogin", true)
                             prefManager!!.setString("businessID", arrBusinessItem.get(position).id)
                             var businessID=prefManager!!.getString("businessID")!!
+                            lottieProgressDialog!!.showDialog()
+
                             sendTokenAtLogin(businessID);
+                        }
+                        imageViewCancel.setOnClickListener {
+                            lottieProgressDialog!!.cancelDialog()
+                            dialog.cancel()
                         }
                         dialog.show()
 

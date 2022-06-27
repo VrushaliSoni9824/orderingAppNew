@@ -56,6 +56,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     var deliverytype = "";
     var status = "";
     var summery = "";
+    var changedStatus = "";
     override fun onNewToken(s: String) {
         Log.e("mtoken", s)
         val sharedPref = getSharedPreferences("com.tjcg.nentopos", MODE_PRIVATE)
@@ -79,21 +80,85 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val data = remoteMessage.data
         var notiValues : MutableCollection<String> = data.values
         var i : Int = 0;
-        for (value in notiValues)
-        {
-            if(i==0){
-                summery=value
-            }else if(i==1){
-                deliverytype=value
-            }else if(i==2){
-                deliveryDateTime=value
-            }else if(i==3){
-                orderId=value
+        if(notiValues.contains("orders_register")){
+            for (value in notiValues)
+            {
+                if(i==0){
+                    summery=value
+                }else if(i==1){
+                    deliverytype=value
+                }else if(i==2){
+                    deliveryDateTime=value
+                }else if(i==4){
+                    orderId=value
+                }
+                i++
             }
-            i++
+            var urlForFindOrder : String ="https://apiv4.ordering.co/v400/en/menuo/orders/"+orderId+"?mode=dashboard"
+            findOrder(urlForFindOrder,Constants.apiKey);
         }
-        var urlForFindOrder : String ="https://apiv4.ordering.co/v400/en/menuo/orders/"+orderId+"?mode=dashboard"
-        findOrder(urlForFindOrder,Constants.apiKey);
+        if(notiValues.contains("orders_status_updated")){
+            for (value in notiValues)
+            {
+                if(i==0){
+                    changedStatus=value
+                }else if(i==2){
+                    orderId=value
+                }
+                i++
+            }
+            if(changedStatus.equals("0")){
+
+                if(orderDao!!.getOrderByIdCount(orderId)>0){
+                    orderDao!!.changeOrderStatus(orderId,changedStatus)
+                    var orderLocal = orderDao!!.getOrderById(orderId)
+                    deliverytype= orderLocal!!.delivery_type!!;
+                    deliveryDateTime= orderLocal!!.delivery_datetime!!;
+                    val dialogEntity = DialogQueue(orderId.toInt(), orderId.toInt().toString())
+                    orderDao!!.insertQueueData(dialogEntity)
+                    if(applicationInForeground()){
+                        val am = this.getSystemService(ACTIVITY_SERVICE) as ActivityManager
+                        val taskInfo = am.getRunningTasks(1)
+                        Log.d("topActivity", "CURRENT Activity ::" + taskInfo[0].topActivity!!.className)
+                        val componentInfo = taskInfo[0].topActivity
+                        componentInfo!!.packageName
+                        componentInfo.className
+                        if(componentInfo.className.equals("com.tjcg.menuo.Expandablectivity")){
+                            val inten = Intent()
+                            inten.action = "new_order"
+                            inten.putExtra("id",orderId)
+                            inten.putExtra("deliverytype",deliverytype)
+                            inten.putExtra("deliveryDateTime",deliveryDateTime)
+                            inten.putExtra("status",status)
+                            sendBroadcast(inten)
+                        }else{
+                            Log.d("topActivity", "CURRENT Activity ::" + taskInfo[0].topActivity!!.className)
+                            val inten = Intent()
+                            inten.action = "new_order_pre"
+                            inten.putExtra("id",orderId)
+                            inten.putExtra("deliverytype",deliverytype)
+                            inten.putExtra("deliveryDateTime",deliveryDateTime)
+                            inten.putExtra("status",status)
+                            sendBroadcast(inten)
+                        }
+
+                       }else{
+                        sendNotification("New Orderrrr #"+orderId,"New order")
+                    }
+                }else{
+                    // when admin trying to change order from cancle to pending again but its not available on local database
+                    Log.e("aaa","aaaa");
+
+                    var urlForFindOrder : String ="https://apiv4.ordering.co/v400/en/menuo/orders/"+orderId+"?mode=dashboard"
+                    findOrder(urlForFindOrder,Constants.apiKey);
+
+                }
+
+            }else{
+                updateStatus(orderId,changedStatus)
+            }
+
+        }
     }
 
     /**
@@ -147,6 +212,35 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         return isActivityFound
     }
 
+    fun updateStatus(order_id: String, status : String){
+        orderDao!!.changeOrderStatus(order_id,status)
+        if(applicationInForeground()){
+
+            val am = this.getSystemService(ACTIVITY_SERVICE) as ActivityManager
+            val taskInfo = am.getRunningTasks(1)
+            Log.d("topActivity", "CURRENT Activity ::" + taskInfo[0].topActivity!!.className)
+            val componentInfo = taskInfo[0].topActivity
+            componentInfo!!.packageName
+            componentInfo.className
+            if(componentInfo.className.equals("com.tjcg.menuo.Expandablectivity")){
+                val inten = Intent()
+                inten.action = "status_changed"
+                inten.putExtra("from","com.tjcg.menuo.Expandablectivity")
+                sendBroadcast(inten)
+            }else{
+                Log.d("topActivity", "CURRENT Activity ::" + taskInfo[0].topActivity!!.className)
+                val inten = Intent()
+                inten.action = "status_changed"
+                inten.putExtra("from",taskInfo[0].topActivity!!.className)
+                sendBroadcast(inten)
+            }
+
+        }else{
+            sendNotification("New Orderrr #"+orderId,"New order")
+        }
+
+
+    }
     fun findOrder(url: String, key: String) {
         var responceString: String = null.toString()
         ServiceGenerator.nentoApi.findOrder(url, key)!!.enqueue(object :
@@ -155,6 +249,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(call: Call<String?>, response: Response<String?>) {
                 if (response.isSuccessful) {
+                    Log.e("application","get order from web api")
                     responceString = response.body().toString()
                     fetchAndInsetOrder(responceString)
                 } else {
@@ -191,6 +286,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 var orderId = order.getString("id");
 
                 status = order.getString("status")
+                deliverytype = order.getString("delivery_type")
+                deliveryDateTime = order.getString("delivery_datetime")
 
                 resObj!!.id = order.getString("id").toInt()
                 resObj!!.app_id = order.getString("app_id")
@@ -407,6 +504,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             orderDao!!.insertSummaryData(summaryTblList!!)
             val dialogEntity = DialogQueue(orderId.toInt(), orderId.toInt().toString())
             orderDao!!.insertQueueData(dialogEntity)
+            Log.e("application","get order from web api 2")
+
             if(applicationInForeground()){
 
                 val am = this.getSystemService(ACTIVITY_SERVICE) as ActivityManager
@@ -435,7 +534,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 }
 
             }else{
-                sendNotification("New Order #"+orderId,"New order")
+                sendNotification("New Orderrrrrr #"+orderId,"New order")
             }
 
         } catch (e: JSONException) {

@@ -71,31 +71,44 @@
                 android:weightSum="1">
 
 
-                    <EditText
-                        android:id="@+id/editTextSearchVendor"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.9"
-                        android:gravity="center|left"
-                        android:hint="Search"
-                        android:paddingStart="@dimen/_4sdp"
-                        android:imeOptions="actionSend"
-                        android:textColor="@color/black"
-                        android:background="@drawable/edit_bg2"
-                        android:textColorHint="@color/light_grey"
-                        android:textSize="@dimen/_10ssp"
-                        android:focusable="false"
-                        app:startIconDrawable="@drawable/ic_search" />
+                <EditText
+                    android:id="@+id/editTextSearchVendor"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.9"
+                    android:background="@drawable/edit_bg2"
+                    android:focusable="false"
+                    android:gravity="center|left"
+                    android:hint="Search"
+                    android:imeOptions="actionSend"
+                    android:paddingStart="@dimen/_4sdp"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/light_grey"
+                    android:textSize="@dimen/_10ssp"
+                    android:visibility="invisible"
+                    app:startIconDrawable="@drawable/ic_search" />
 
                 <ImageView
                     android:id="@+id/imageViewSearch"
+                    android:layout_width="@dimen/_25sdp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/_2sdp"
+                    android:layout_marginRight="@dimen/_5sdp"
+                    android:background="@drawable/bg_white_corner"
+                    android:padding="@dimen/dimen_5dp"
+                    android:src="@drawable/ic_baseline_search_24"
+                    android:visibility="invisible"
+                    tools:ignore="UseAppTint" />
+
+                <ImageView
+                    android:id="@+id/imageViewSync"
                     android:layout_width="@dimen/_25sdp"
                     android:layout_height="match_parent"
                     android:layout_marginRight="@dimen/_5sdp"
                     android:background="@drawable/bg_white_corner"
                     android:padding="@dimen/dimen_5dp"
                     android:layout_marginStart="@dimen/_2sdp"
-                    android:src="@drawable/ic_baseline_search_24"
+                    android:src="@drawable/ic_baseline_sync_24"
                     android:visibility="visible"
                     tools:ignore="UseAppTint" />
 

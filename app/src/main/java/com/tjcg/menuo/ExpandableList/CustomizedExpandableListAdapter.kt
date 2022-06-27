@@ -22,6 +22,7 @@ import com.tjcg.menuo.R
 import com.tjcg.menuo.data.local.AppDatabase.Companion.getDatabase
 import com.tjcg.menuo.data.local.OrderDao
 import com.tjcg.menuo.data.remote.ServiceGenerator
+import com.tjcg.menuo.dialog.NewOrderDialog
 import com.tjcg.menuo.utils.Constants
 import com.tjcg.menuo.utils.PrefManager
 import com.tjcg.menuo.utils.SharedPreferencesKeys
@@ -123,10 +124,19 @@ class CustomizedExpandableListAdapter(
         tvOrderTime.text = orderDao.getOrderDateTime(expandedListText)
         tvCustomer.text = orderDao.getCustomerName(expandedListText)
         convertView.setOnClickListener {
-            val i = Intent(context, OrderPreviewActivity::class.java)
-            i.putExtra("orderId", expandedListText)
-            i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            context.startActivity(i)
+//            val i = Intent(context, OrderPreviewActivity::class.java)
+//            i.putExtra("orderId", expandedListText)
+//            i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//            context.startActivity(i)
+
+//                context.sendBroadcast(new Intent(Default.IS_FROM_DONE).putExtra(Default.IS_ORDER_DONE_ACTIVITY, true));
+//                Intent i = new Intent(context, OrderPreviewActivity.class);
+//                i.putExtra("orderId",expandedListText);
+//                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                context.startActivity(i);
+//            val newOrderDialog = NewOrderDialog(expandedListText, "", "")
+//            newOrderDialog.show(expandablectivity.getSupportFragmentManager(), "")
+
         }
         return convertView
     }

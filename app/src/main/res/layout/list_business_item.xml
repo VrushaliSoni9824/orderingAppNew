@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-
     android:layout_height="wrap_content"
     android:orientation="vertical">
+<!--    android:background="@drawable/item_press_design"-->
 
     <TextView
         android:id="@+id/textViewBusinessName"
@@ -14,7 +14,7 @@
         android:layout_weight="1"
         android:padding="4dp"
         android:text="TextView"
-        android:textColor="@color/appOrange"
+        android:textColor="@color/orange"
         android:textSize="20sp" />
 
     <View

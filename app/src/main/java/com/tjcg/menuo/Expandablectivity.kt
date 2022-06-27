@@ -1,8 +1,5 @@
 
 package com.tjcg.menuo
-
-//import com.tjcg.nentopos.ExpandableList.CustomizedExpandableListAdapter2
-//import woyou.aidlservice.jiuiv5.IWoyouService
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.*
@@ -50,26 +47,29 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.system.exitProcess
+import android.content.BroadcastReceiver
+import com.tjcg.menuo.service.NetworkChangeReceiver
+import android.content.IntentFilter
 
-//import androidx.test.espresso.core.internal.deps.guava.collect.Lists
+import android.os.Build
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import java.lang.IllegalArgumentException
 
 class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
     lateinit var dialog : Dialog
+    lateinit var dialogOrderPreview : Dialog
     var expandableListViewExample: ExpandableListView? = null
     var expandableListAdapter: ExpandableListAdapter? = null
     var expandableTitleList: List<String> = emptyList()
     var expandableDetailList: HashMap<String, List<String>>? = null
-
-
+    private var mNetworkReceiver: BroadcastReceiver? = null
     private var woyouService: IWoyouService? = null
-
     private var lottieProgressDialog: LottieProgressDialog? = null
-
     private var prefManager: PrefManager? = null
     lateinit var orderResult: String
-    var totalPage: Int = 0
     var orderDao: OrderDao? = null
-
     var count: Int = 0
     private var mDrawerToggle: ActionBarDrawerToggle? = null
     private var toolbar_title: Toolbar? = null
@@ -81,34 +81,33 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
     val arrNewOrderId = ArrayList<Int>()
     var businessId: String = ""
     var isDBLoadRequired: Boolean = false
-
-
     var linkCount: Int = 0
     var linkCountNewORder: Int = 0
     lateinit var textViewOwnerName : TextView
     lateinit var textViewBusiness : Switch
     lateinit var imgRefresh : ImageView
+    lateinit var imgSync : ImageView
     var NewOrderId : String? = null
     var arrlength : Int = 0
     lateinit var mplayer: MediaPlayer
     var mIntentFilter: IntentFilter? = null
-    private val MyReceiver: BroadcastReceiver? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         try {
+            System.gc();
             setContentView(R.layout.activity_expandablectivity)
-        } catch (e: OutOfMemoryError) {
-            setContentView(R.layout.activity_expandablectivity)
+        } catch (e: Exception) {
             Toast.makeText(applicationContext,"OM testing error",Toast.LENGTH_LONG).show()
         }
+        mNetworkReceiver = NetworkChangeReceiver()
+        registerNetworkBroadcastForNougat()
         NewOrderId="null"
-        Sentry.captureMessage("testing SDK setup");
         mIntentFilter = IntentFilter()
         mIntentFilter!!.addAction("new_order")
+        mIntentFilter!!.addAction("status_changed")
         registerReceiver(reMyreceive, mIntentFilter)
         dialog = Dialog(this@Expandablectivity)
+        dialogOrderPreview  = Dialog(this@Expandablectivity)
         lottieProgressDialog = LottieProgressDialog(this)
         prefManager = PrefManager(this)
         toolbar_title = findViewById<Toolbar>(R.id.toolbar_title)
@@ -119,6 +118,7 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
         textViewOwnerName = findViewById<TextView>(R.id.textViewOwnerName)
         textViewBusiness = findViewById<Switch>(R.id.switchBusiness)
         imgRefresh = findViewById<ImageView>(R.id.imageViewRefresh)
+        imgSync = findViewById<ImageView>(R.id.imageViewSync)
         mplayer = MediaPlayer.create(applicationContext, R.raw.alarmtone);
         textViewOwnerName.text = if (!prefManager!!.getString(SharedPreferencesKeys.businessOwner).isNullOrEmpty()) prefManager!!.getString(SharedPreferencesKeys.businessOwner) else ""
         textViewBusiness.text = if (!prefManager!!.getString(SharedPreferencesKeys.businessName).isNullOrEmpty()) prefManager!!.getString(SharedPreferencesKeys.businessName) else ""
@@ -129,13 +129,12 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
         var i: Intent = intent
         businessId = i.getStringExtra("businessID").toString()
         isDBLoadRequired = i.getBooleanExtra(SharedPreferencesKeys.isDBLoadRequired,false)
-
+        imgSync.setOnClickListener {
+            syncDatabase()
+        }
         imgRefresh!!.setOnClickListener {
             prefManager!!.setBoolean(SharedPreferencesKeys.isFromLogin,false)
             getDataBase()
-//            prefManager!!.setBoolean(SharedPreferencesKeys.isFromLogin,true)
-//            startActivity(Intent(applicationContext, Expandablectivity::class.java).putExtra("businessID",businessId))
-//            finish()
         }
 
         mDrawerToggle = object : ActionBarDrawerToggle(this, drawerLayout_Dashboard, toolbar_title, R.string.drawer_open, R.string.drawer_close) {
@@ -152,9 +151,6 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
         drawerLayout_Dashboard!!.post(Runnable { (mDrawerToggle as ActionBarDrawerToggle).syncState() })
 
         lnavigation_online_order!!.setOnClickListener {
-           /* prefManager!!.setBoolean("isLogin", false)
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()*/
             logout()
         }
         lnavigation_done_order!!.setOnClickListener {
@@ -164,12 +160,12 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
         expandableListViewExample =
                 findViewById<View>(R.id.expandableListViewSample) as ExpandableListView
 
-
-        //fetch pagination info
         if(isDBLoadRequired) {
             lottieProgressDialog!!.showDialog()
+            Sentry.captureMessage("GetDatabase() load")
             getDataBase()
         }else{
+            Sentry.captureMessage("refreshFromLocalrefreshFromLocal() load")
             refreshFromLocal()
         }
 
@@ -194,6 +190,12 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        refreshFromLocal()
+        manageQue()
+
+    }
     private val connService: ServiceConnection = object : ServiceConnection {
         override fun onServiceDisconnected(name: ComponentName) {
             woyouService = null
@@ -700,6 +702,7 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
                     expandableTitleList = ArrayList(expandableDetailList!!.keys)
                     expandableListAdapter =
                         CustomizedExpandableListAdapter2(
+                            this@Expandablectivity,
                             this,
                             expandableTitleList.sortedDescending(),
                             expandableDetailList
@@ -803,6 +806,13 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
         return url
     }
 
+    fun syncDatabase(){
+        DeleteDataDbAsyncTask().execute()
+        var url = Constants.URL
+        url = url + "page_size=" + "10" + "&mode=" + "dashboard" + "&page=" + "1" + "&where=[{\"attribute\":\"business_id\",\"value\":[" + businessId + "]}]"
+        getPaginationInfor(url, Constants.apiKey)
+    }
+
 
     fun getDataBase(isFromNewOrder: Boolean= false) {
         if (!prefManager!!.getBoolean(SharedPreferencesKeys.isFromLogin)) {
@@ -821,7 +831,7 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
             expandableDetailList = ExpandableListDataItems.getData("", applicationContext,orderListPendingString,orderListInprocessString,orderListDoneString)
             expandableTitleList = ArrayList(expandableDetailList!!.keys)
             expandableListAdapter =
-                CustomizedExpandableListAdapter2(
+                CustomizedExpandableListAdapter2(this@Expandablectivity,
                     this,
                     expandableTitleList.sortedDescending(),
                     expandableDetailList
@@ -842,7 +852,7 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
         expandableDetailList = ExpandableListDataItems.getData("", applicationContext,orderListPendingString,orderListInprocessString,orderListDoneString)
         expandableTitleList = ArrayList(expandableDetailList!!.keys)
         expandableListAdapter =
-            CustomizedExpandableListAdapter2(
+            CustomizedExpandableListAdapter2(this@Expandablectivity,
                 this,
                 expandableTitleList.sortedDescending(),
                 expandableDetailList
@@ -891,12 +901,12 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
 
     }
 
-    override fun onOKClick(orderId: String) {
-        val i = Intent(applicationContext, OrderPreviewActivity::class.java)
-        i.putExtra("orderId", orderId)
-        i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        startActivity(i)
-    }
+//    override fun onOKClick(orderId: String) {
+//        val i = Intent(applicationContext, OrderPreviewActivity::class.java)
+//        i.putExtra("orderId", orderId)
+//        i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//        startActivity(i)
+//    }
 
     private fun manageQue(){
         var orderId=orderDao!!.getMaxOrderFromQueue();
@@ -938,10 +948,16 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
             Log.e("aaavv","dialog close")
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterNetworkChanges()
+    }
     private fun showDialog( orderId : String, date: String, amt : String, deliveryType : String, buttonText: String) {
 //        val dialog = Dialog(application)
 
         runOnUiThread {
+            dismissAllDialogs(supportFragmentManager)
             dialog = Dialog(this@Expandablectivity)
 
             if(!mplayer.isPlaying)
@@ -1003,10 +1019,19 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
                 }
                 dialog.dismiss()
                 NewOrderId=null
-                val i = Intent(applicationContext, OrderPreviewActivity::class.java)
-                i.putExtra("orderId", orderId)
-                i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                startActivity(i)
+
+//                context.sendBroadcast(new Intent(Default.IS_FROM_DONE).putExtra(Default.IS_ORDER_DONE_ACTIVITY, true));
+//                Intent i = new Intent(context, OrderPreviewActivity.class);
+//                i.putExtra("orderId",expandedListText);
+//                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                context.startActivity(i);
+                val newOrderDialog = NewOrderDialog(orderId)
+                newOrderDialog.show(getSupportFragmentManager(), "")
+
+//                val i = Intent(applicationContext, OrderPreviewActivity::class.java)
+//                i.putExtra("orderId", orderId)
+//                i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//                startActivity(i)
 //            finish()
 
             }
@@ -1066,6 +1091,15 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
                     showDialog(orderId,deliveryDateTime!!,
                         total.toString()!!,deliverytype!!,newButtonText)
                 }
+                if(intent.action == "status_changed"){
+                    val from = intent.getStringExtra("from")
+                    if(from.equals("com.tjcg.menuo.Expandablectivity")){
+//                        expandableListViewExample.setAdapter()
+//                        startActivity(Intent(applicationContext, Expandablectivity::class.java))
+//                        finish()
+                        refreshFromLocal()
+                    }
+                }
             } catch (e: Exception) {
                Log.e("Error BR", e.message.toString())
             }
@@ -1076,4 +1110,52 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
         super.onPause()
 //        unregisterReceiver(reMyreceive)
     }
+
+    private fun registerNetworkBroadcastForNougat() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            registerReceiver(
+                mNetworkReceiver,
+                IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+            )
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            registerReceiver(
+                mNetworkReceiver,
+                IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+            )
+        }
+    }
+
+    protected fun unregisterNetworkChanges() {
+        try {
+            unregisterReceiver(mNetworkReceiver)
+        } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun showOrderPreviewDialog( orderId : String, date: String, amt : String, deliveryType : String, buttonText: String) {
+
+        runOnUiThread {
+            dialogOrderPreview = Dialog(this@Expandablectivity)
+            dialogOrderPreview.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            dialogOrderPreview.setCancelable(false)
+            dialogOrderPreview.setContentView(R.layout.order_preview_layout)
+            dialogOrderPreview.show()
+        }
+    }
+
+    fun dismissAllDialogs(manager: FragmentManager?) {
+        val fragments: List<Fragment> = manager!!.getFragments() ?: return
+        for (fragment in fragments) {
+            if (fragment is DialogFragment) {
+                val dialogFragment: DialogFragment = fragment as DialogFragment
+                dialogFragment.dismissAllowingStateLoss()
+            }
+            val childFragmentManager: FragmentManager = fragment.getChildFragmentManager()
+            if (childFragmentManager != null) dismissAllDialogs(childFragmentManager)
+        }
+    }
+
+
 }

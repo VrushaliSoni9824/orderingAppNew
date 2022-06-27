@@ -273,6 +273,9 @@ interface OrderDao {
     @Query("select * from Result where id=:id")
     fun getOrderById(id : String):Result
 
+    @Query("select count(*) as orderCount from Result where id=:id")
+    fun getOrderByIdCount(id : String):Int
+
 //    @Query("select total from summary where order_id=:id")
 //    fun getSummaryById(id : String) : String
 
@@ -356,6 +359,9 @@ interface OrderDao {
 
     @Query("update result set prepared_in=:prepared_in where id=:id")
     abstract fun setPreparedTime(id: String,prepared_in: String)
+
+    @Query("delete from result where id=:id")
+    abstract fun deleteOrder(id: String)
 
 
 

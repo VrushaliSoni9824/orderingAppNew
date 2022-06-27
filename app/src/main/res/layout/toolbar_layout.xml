@@ -99,6 +99,19 @@
                     tools:ignore="UseAppTint" />
 
                 <ImageView
+                    android:id="@+id/imageViewSync"
+                    android:layout_width="@dimen/_25sdp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="@dimen/_5sdp"
+                    android:background="@drawable/bg_white_corner"
+                    android:padding="@dimen/dimen_5dp"
+                    android:layout_marginStart="@dimen/_2sdp"
+                    android:src="@drawable/ic_baseline_sync_24"
+                    android:visibility="visible"
+                    tools:ignore="UseAppTint" />
+
+
+                <ImageView
                     android:id="@+id/imageViewRefresh"
                     android:layout_width="@dimen/_25sdp"
                     android:layout_height="match_parent"

@@ -123,6 +123,7 @@ android {
 //    implementation 'com.sunmi:printerlibrary:1.0.14'
         //Socket Client
         implementation "org.java-websocket:Java-WebSocket:1.5.1"
+        implementation "pl.droidsonroids.gif:android-gif-drawable:1.2.22"
 
 
         implementation ('io.socket:socket.io-client:1.0.0') {

@@ -5,13 +5,27 @@
     android:layout_height="wrap_content"
     android:gravity="center">
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/animationView"
+<!--    <com.airbnb.lottie.LottieAnimationView-->
+<!--        android:id="@+id/animationView"-->
+<!--        android:layout_width="200dp"-->
+<!--        android:layout_height="200dp"-->
+<!--        android:layout_gravity="center"-->
+<!--        app:lottie_autoPlay="true"-->
+<!--        app:lottie_loop="true"-->
+<!--        app:lottie_rawRes="@raw/menuo_loading_new"-->
+<!--        />-->
+
+    <ImageView
+        android:id="@+id/imageView4"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_gravity="center"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        app:lottie_rawRes="@raw/progress_animation" />
+        android:layout_weight="1"
+        app:srcCompat="@drawable/menuo_loading" />
+
+<!--    <pl.droidsonroids.gif.GifImageView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:background="#fff"-->
+<!--        android:src="@drawable/menuo_loading" />-->
 
 </LinearLayout>

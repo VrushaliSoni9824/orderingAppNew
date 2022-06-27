@@ -142,13 +142,14 @@
     <string name="dialog_ok">Ok</string>
     <string name="lbl_LoggedOut">LoggedOut</string>
     <string name="lbl_WantToLogOut"> You want to logout</string>
+    <string name="lbl_NoInternet"> No Internet ! Check your internet connectivity</string>
     <string name="lbl_reject"> Are you sure you want to reject?</string>
     <string name="lbl_accept"> Are you sure you want to accept?</string>
     <string name="lbl_reject_done"> Order rejected !</string>
     <string name="lbl_accept_done"> Order Accepted !</string>
     <string name="lbl_pickUpReady"> Order Ready !</string>
     <string name="lbl_noBusinessFound"> Business not found with this login</string>
-    <string name="lbl_chooseBusiness"> Select your business</string>
+    <string name="lbl_chooseBusiness"> Välj företag</string>
     <string name="lbl_error"> Something went wrong ! Try again</string>
     <string name="lbl_NO">No</string>
     <string name="lbl_YES">Yes</string>

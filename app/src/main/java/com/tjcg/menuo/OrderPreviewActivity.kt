@@ -8,15 +8,12 @@ import android.os.IBinder
 import android.os.RemoteException
 import androidx.appcompat.app.AppCompatActivity
 import woyou.aidlservice.jiuiv5.IWoyouService
-
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
 
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
-import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.pedant.SweetAlert.SweetAlertDialog
@@ -25,30 +22,25 @@ import com.tjcg.menuo.data.local.AppDatabase
 import com.tjcg.menuo.data.local.OrderDao
 import com.tjcg.menuo.data.remote.ServiceGenerator
 import com.tjcg.menuo.data.response.EntitiesModel.*
-import com.tjcg.menuo.data.response.newOrder.Product
 import com.tjcg.menuo.data.response.newOrder.Result
 import com.tjcg.menuo.databinding.OrderPreviewLayoutBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.lang.Exception
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
-import android.graphics.drawable.Drawable
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.media.MediaPlayer
 import android.view.Window
 import android.widget.TextView
-import android.widget.Toast
 import com.tjcg.menuo.utils.*
 import org.json.JSONArray
+import java.lang.StringBuilder
 
 
 class OrderPreviewActivity : AppCompatActivity() {
-    lateinit var dialog : Dialog
+    lateinit var custom_dialog : Dialog
     var mIntentFilter: IntentFilter? = null
     var prefManager: PrefManager? = null
     private var woyouService: IWoyouService? = null
@@ -56,7 +48,6 @@ class OrderPreviewActivity : AppCompatActivity() {
     var orderDatte: String = ""
     var deliveryFee: String = ""
     var binding: OrderPreviewLayoutBinding? = null
-    var arrProductList : ArrayList<Product> = arrayListOf()
     var arrProNAme = java.util.ArrayList<String>()
     var arrProQty = java.util.ArrayList<String>()
     var arrProPrice = java.util.ArrayList<String>()
@@ -83,12 +74,13 @@ class OrderPreviewActivity : AppCompatActivity() {
     var total : String = ""
     var subtotal : String = ""
     lateinit var mplayer: MediaPlayer
+    lateinit var note : String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = OrderPreviewLayoutBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
-        dialog = Dialog(this@OrderPreviewActivity)
+        custom_dialog = Dialog(this@OrderPreviewActivity)
         mIntentFilter = IntentFilter()
         mIntentFilter!!.addAction("new_order_pre")
         registerReceiver(reMyreceive, mIntentFilter)
@@ -99,24 +91,8 @@ class OrderPreviewActivity : AppCompatActivity() {
         businessID=prefManager!!.getString("businessID")
         connectPrinter(applicationContext)
         init()
-        binding!!.imageViewBack.setOnClickListener {
-            if (!isFromDoneActivity){
-                startActivity(Intent(applicationContext, Expandablectivity::class.java).putExtra("businessID",businessID).putExtra(SharedPreferencesKeys.isDBLoadRequired,false))
-                finish()
-            }else{
-                val i = Intent(this, OrderCompleteActivity::class.java)
-                i.putExtra("businessID", businessID)
-                startActivity(i)
-                finish()
-            }
-        }
-
         var i: Intent = intent
         orderId = i.getStringExtra("orderId")!!
-        binding!!.bottomSheetOrderMinutes.textViewPrit.setOnClickListener {
-            testSunmiPrintAcceptOrder(applicationContext, orderId.toInt(), orderDate, customerNAme, customerMobno, customerAddress, customerAddress,"", subtotal,deliveryFee, total, arrProNAme,arrProQty,arrProPrice ,arrProduct)
-        }
-
 
         arrResult= orderDao!!.getOrderDataByID(orderId);
         arrBusiness= orderDao!!.getBusinessById(orderId);
@@ -125,21 +101,15 @@ class OrderPreviewActivity : AppCompatActivity() {
         arrHistory= orderDao!!.getHistoryById(orderId);
         arrProduct= orderDao!!.getProductById(orderId);
         arrSummery= orderDao!!.getSummaryById(orderId);
-
         var orderId : String = arrResult.id.toString()
         orderDate = arrResult.delivery_datetime.toString()
         customerNAme = arrCustomer.name
         customerMobno = arrCustomer.phone
         customerAddress =arrCustomer.address
-        var note : String = arrCustomer.address_notes
-//        subtotal = arrSummery.total.toString()
+        note = arrCustomer.address_notes
         subtotal= orderDao!!.getSubTotal(orderId.toString()).toString();
         var deliveryFee : String =arrSummery.delivery_price.toString()
         total= arrSummery.total.toString()
-
-        //var preparedIn = arrResult.prepared_in.toString()
-
-
         val pendingStatus = java.util.ArrayList<String>()
         pendingStatus.add("1")
         pendingStatus.add("2")
@@ -157,7 +127,6 @@ class OrderPreviewActivity : AppCompatActivity() {
         }else{
             binding!!.textViewPreparedIn.visibility=View.VISIBLE
             binding!!.textViewPreparedIn.text = preparedIn+" min"
-
         }
         binding!!.textOrderID.text="#"+orderId.toString()
         binding!!.textviewOrderDate.text=orderDate.dropLast(3).toString()
@@ -173,7 +142,6 @@ class OrderPreviewActivity : AppCompatActivity() {
         binding!!.textViewSubtotal.text=subtotal
         binding!!.textviewdeliveryfee.text=deliveryFee
         binding!!.textviewTotal.text=total
-
         val deliveryType = orderDao!!.getDeliveryType(orderId)
         var DeliveryText = ""
         when (deliveryType) {
@@ -184,13 +152,6 @@ class OrderPreviewActivity : AppCompatActivity() {
             "5" -> DeliveryText = getString(R.string.Driver_thru)
         }
         binding!!.tvStatus.setText(DeliveryText)
-
-       /* binding!!.textViewPreparedIn.text=if(preparedIn.toString().equals("null") || preparedIn.toString().equals(""))
-            ""
-        else
-                preparedIn.toString()+" min"
-
-        */
         productAdapter = OrderPreviewProductAdapter(arrProduct,applicationContext)
         binding!!.rvProduct.layoutManager = LinearLayoutManager(applicationContext)
         binding!!.rvProduct.adapter = productAdapter
@@ -200,7 +161,6 @@ class OrderPreviewActivity : AppCompatActivity() {
             arrProQty.add(arrProduct.get(i).quantity.toString())
             arrProPrice.add(arrProduct.get(i).price.toString())
         }
-
         if(status.equals("13") || status.equals("0")){
             binding!!.bottomSheetOrderMinutes.textViewPrit.visibility=View.GONE
             if(status.equals("13")) {
@@ -208,7 +168,6 @@ class OrderPreviewActivity : AppCompatActivity() {
                 binding!!.bottomSheetOrderMinutes.linearLayout4.visibility=View.GONE
             }
             else{
-//            binding!!.bottomSheetOrderMinutes.linearMainView.visibility=View.VISIBLE
                 binding!!.bottomSheetOrderMinutes.linearLayout4.visibility=View.VISIBLE
                 binding!!.bottomSheetOrderMinutes.textViewAccept.visibility=View.VISIBLE
                 binding!!.bottomSheetOrderMinutes.imageArrowUp.visibility=View.VISIBLE
@@ -232,24 +191,23 @@ class OrderPreviewActivity : AppCompatActivity() {
         binding!!.bottomSheetOrderMinutes.tv70.setOnClickListener { preparedIn = "70";setButtonColor(tv70 = true)}
         binding!!.bottomSheetOrderMinutes.tv80.setOnClickListener { preparedIn = "80";setButtonColor(tv80 = true)}
         binding!!.bottomSheetOrderMinutes.tv90.setOnClickListener { preparedIn = "90";setButtonColor(tv90 = true)}
-
+        binding!!.imageViewBack.setOnClickListener {
+            if (!isFromDoneActivity){
+                startActivity(Intent(applicationContext, Expandablectivity::class.java).putExtra("businessID",businessID).putExtra(SharedPreferencesKeys.isDBLoadRequired,false))
+                finish()
+            }else{
+                val i = Intent(this, OrderCompleteActivity::class.java)
+                i.putExtra("businessID", businessID)
+                startActivity(i)
+                finish()
+            }
+        }
+        binding!!.bottomSheetOrderMinutes.textViewPrit.setOnClickListener {
+            testSunmiPrintAcceptOrder(applicationContext, orderId.toInt(), orderDate, customerNAme, customerMobno, customerAddress, customerAddress,"", subtotal,deliveryFee, total, arrProNAme,arrProQty,arrProPrice ,arrProduct,note)
+        }
 
         binding!!.bottomSheetOrderMinutes.imageArrowUp.setOnClickListener {
             if(!status.equals("13")) binding!!.bottomSheetOrderMinutes.linearMainView.visibility=if(binding!!.bottomSheetOrderMinutes.linearMainView.visibility.equals(View.VISIBLE)) View.GONE else View.VISIBLE
-//            if(sheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED){
-//                sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED)
-//                linearLayout1.visibility = View.GONE
-//                linearLayout2.visibility = View.GONE
-//                linearLayout3.visibility = View.GONE
-//                linearMainView.visibility=View.GONE
-//
-//            } else {
-//                sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED)
-//                linearLayout1.visibility = View.VISIBLE
-//                linearLayout2.visibility = View.VISIBLE
-//                linearLayout3.visibility = View.VISIBLE
-//                linearMainView.visibility=View.VISIBLE
-//            }
         }
 
         binding!!.bottomSheetOrderMinutes.textViewAccept.visibility= if(status.equals("0") || status.equals("13")) View.VISIBLE else View.GONE
@@ -260,108 +218,13 @@ class OrderPreviewActivity : AppCompatActivity() {
             myIntent.putExtra("orderId", orderId)
             startActivity(myIntent)
         }
-
         binding!!.bottomSheetOrderMinutes.textViewAccept.setOnClickListener {
             if(preparedIn.equals("0") || preparedIn.equals("null") || preparedIn.equals(" ")){
                 preparedIn="30"
             }
             if(status.equals("13")) preparedIn= "0"
-
             setAcceptOrder(preparedIn)
-            //showBottomSheetDialog()
         }
-
-
-
-        /*
-        try {
-                    val jobj = JSONObject(orderData)
-//                  val jarrResult: JSONArray = jobj.getJSONArray("result")
-                    val order: JSONObject = jobj.getJSONObject("result")
-                    orderDatte = order.getString("delivery_datetime")
-                    //get paymentmenthod
-                    var paymentMethod = order.getJSONObject("paymethod")
-                    PaymentMethod = paymentMethod.getString("name")
-
-//                    ??buisness detail
-                    var buisnessJsonObj = order.getJSONObject("business")
-                    BusinessName = buisnessJsonObj.getString("name")
-                    BusinessMob1 = buisnessJsonObj.getString("cellphone")
-                    BusinessMob2 = buisnessJsonObj.getString("phone")
-                    BusinessLocation = buisnessJsonObj.getString("address")
-
-//                    Customer
-                    var customerJsonObj = order.getJSONObject("customer")
-                    CustomerNAme = customerJsonObj.getString("name")
-                    CustomerEmail = customerJsonObj.getString("email")
-                    CustomerMobno = customerJsonObj.getString("cellphone")
-                    CustomerLocation = customerJsonObj.getString("address")
-                    CustomerNote = customerJsonObj.getString("address_notes")
-                    CustomerZip = customerJsonObj.getString("zipcode")
-
-                    //product detail
-
-                    var productArr : JSONArray = order.getJSONArray("products")
-            var proNAmeString : String = ""
-                    for (i in 0..productArr.length()-1){
-                        var product : JSONObject? = productArr.getJSONObject(i)
-                        var name=product!!.getString("name")
-                        var price=product!!.getString("price")
-                        var quantity=product!!.getString("quantity")
-                        arrProNAme.add(name)
-                        arrProPrice.add(price)
-                        arrProQty.add(quantity)
-                        proNAmeString = proNAmeString + ""+quantity+" "+name +" : "+price+" </br>"
-
-                    }
-            arrProNAme
-            arrProPrice
-            arrProQty
-
-                    //payment detail
-                    var summeryJsonObj = order.getJSONObject("summary")
-                    Subtotal = summeryJsonObj.getString("subtotal")
-                    deliveryFee = summeryJsonObj.getString("delivery_price")
-                    Total = summeryJsonObj.getString("total")
-
-
-//                }
-                binding!!.textViewOrderRecyclerPlace.text=Html.fromHtml(proNAmeString)
-                binding!!.textViewDate.text = orderDatte
-                binding!!.textViewPmethod.text = PaymentMethod
-                binding!!.textViewHome.text = BusinessName
-                binding!!.textViewCall.text = BusinessMob1
-                binding!!.textViewCall2.text = BusinessMob2
-                binding!!.textViewLocation.text = BusinessLocation
-                binding!!.textViewCustName.text = CustomerNAme
-                binding!!.textViewEmail.text = CustomerEmail
-                binding!!.textViewCustomerPhone.text = CustomerMobno
-                binding!!.textViewCustomerLocation.text = CustomerLocation
-                binding!!.textViewDetail.text = CustomerNote
-                binding!!.textViewZipCode.text = CustomerZip
-//                binding!!.textViewOrderRecyclerPlace.text=orderDatte
-                binding!!.textviewSubtotal.text = "Subtotal: " + Subtotal
-                binding!!.textViewDeliveryFee.text = "Delivery charge: " + deliveryFee
-                binding!!.total.text = "Total: " + Total
-                binding!!.textView10.setOnClickListener {
-
-
-                }
-                binding!!.textViewPrit.setOnClickListener {
-                    connectPrinter(applicationContext)
-                    testSunmiPrint(applicationContext, orderId.toInt(), orderDatte, CustomerNAme, CustomerMobno, CustomerLocation, CustomerLocation,"$", Subtotal,deliveryFee, Total, arrProNAme,arrProQty,arrProPrice )
-                }
-
-//                arrOdate.add(order.getString("delivery_datetime"))
-//                arrOId.add(order.getString("id"))
-
-        } catch (e: JSONException) {
-            e.printStackTrace()
-        }
-         */
-
-
-
     }
 
     override fun onResume() {
@@ -384,84 +247,30 @@ class OrderPreviewActivity : AppCompatActivity() {
         }
     }
 
-    //
-    fun testSunmiPrint(context: Context, orderNumber: Int, date: String, customerName: String, phoneNumber: String, address1: String, address2: String, currency: String, subTotal: String, deliveryFee: String, total: String, proName : ArrayList<String>, proQty : ArrayList<String>, proPrice : ArrayList<String> ) {//, orderDetail: OrderDetail?
+    fun testSunmiPrintAcceptOrder(context: Context, orderNumber: Int, date: String, customerName: String, phoneNumber: String, address1: String, address2: String, currency: String, subTotal: String, deliveryFee: String, total: String, proName : ArrayList<String>, proQty : ArrayList<String>, proPrice : ArrayList<String> , productEntity: List<ProductEntity>, address_note : String) {//, orderDetail: OrderDetail?
         try {
-            /*       if (woyouService != null) {
-                       printerConfigure(context)
-                       woyouService!!.printText("=====================================\n\n", null)
-                       woyouService!!.printText("Date: "+orderDatte, null)
-                       woyouService!!.printText("\n", null)
-                       woyouService!!.printText("Business Detail: "+BusinessName, null)
-                       woyouService!!.printText("\n", null)
-                       woyouService!!.printText("Business phno: "+BusinessMob1, null)
-                       woyouService!!.printText("\n", null)
-                       woyouService!!.printText("Business phno 2: "+BusinessMob2, null)
-                       woyouService!!.printText("\n", null)
-
-                       woyouService!!.cutPaper(null)
-            */
             if (woyouService != null) {
-                setHeaderData(context, orderNumber, date, customerName, phoneNumber, address1, address2)
+                setHeaderData(context, orderNumber, date, customerName, phoneNumber, address1, address2, address_note)
                 woyouService!!.printText("\n", null)
                 woyouService!!.setFontSize(24f, null)
                 woyouService!!.sendRAWData(normalFont(), null)
-                woyouService!!.printText("================================\n", null)
-                woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_ItemName).toUpperCase(), 17) + " " + rightPadZeros(context.getString(R.string.lbl_Quantity).toUpperCase(), 5) + " " + leftPadZeros(context.getString(R.string.lbl_Price).toUpperCase(), 8) + "\n", null)
-                woyouService!!.printText("================================\n", null)
-                for (i in arrProNAme.indices) {
-//                    val items = orderDetail.lstobjServiceOrderItem[i]
-                    //woyouService!!.printText(rightPadZeros(truncateString(arrProNAme.get(i), 15, true) + truncateString(" " + currency + " " + arrProPrice.get(i), 15, true), 43) + "\n", null)
-                    woyouService!!.printText(rightPadZeros(truncateString(arrProNAme.get(i), 15, true),17) + rightPadZeros(truncateString(arrProQty.get(i), 15, true),5) + leftPadZeros(truncateString(" " + currency + " " + arrProPrice.get(i), 15, true), 8) + "\n", null)
-
-//                    woyouService!!.printText(rightPadZeros(truncateString("", 15, true), 27) + rightPadZeros(if (items.status == Default.COMPLETED) items.itemQty.toString() else (items.itemQty - (items.itemQty * 2)).toString(), 6) + " " + leftPadZeros(String.format(Locale.getDefault(), Constants.StringFormat, currency, getTwoDecimalValue(if (items.status == Default.COMPLETED) (items.pricePerUnit * items.itemQty) else (if (items.status == Default.SINGLERETURN) ((items.pricePerUnit - (items.pricePerUnit * 2)) * items.itemQty) else (items.pricePerUnit - (items.pricePerUnit * 2)) * items.itemQty))), 10) + "\n", null)
-                }//example for set order Object
-                woyouService!!.sendRAWData(normalFont(), null)
-                woyouService!!.printText("--------------------------------\n", null)
-                woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_subTotal), 17) + "" + leftPadZeros("$currency $subTotal", 11) + "\n", null)
-                woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_Delivery_free), 17) + "" + leftPadZeros("$currency $deliveryFee", 11) + "\n", null)
-                woyouService!!.printText("--------------------------------\n", null)
-                woyouService!!.sendRAWData(boldFont(), null)
-                woyouService!!.setFontSize(30f, null)
-                woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_Total), 14) + "" + leftPadZeros("$total", 8) + "\n", null)
-                woyouService!!.printText("\n", null)
-                woyouService!!.cutPaper(null)
-            }
-        } catch (ex: RemoteException) {
-
-        }
-    }
-
-    fun testSunmiPrintAcceptOrder(context: Context, orderNumber: Int, date: String, customerName: String, phoneNumber: String, address1: String, address2: String, currency: String, subTotal: String, deliveryFee: String, total: String, proName : ArrayList<String>, proQty : ArrayList<String>, proPrice : ArrayList<String> , productEntity: List<ProductEntity>) {//, orderDetail: OrderDetail?
-        try {
-            /*       if (woyouService != null) {
-                       printerConfigure(context)
-                       woyouService!!.printText("=====================================\n\n", null)
-                       woyouService!!.printText("Date: "+orderDatte, null)
-                       woyouService!!.printText("\n", null)
-                       woyouService!!.printText("Business Detail: "+BusinessName, null)
-                       woyouService!!.printText("\n", null)
-                       woyouService!!.printText("Business phno: "+BusinessMob1, null)
-                       woyouService!!.printText("\n", null)
-                       woyouService!!.printText("Business phno 2: "+BusinessMob2, null)
-                       woyouService!!.printText("\n", null)
-
-                       woyouService!!.cutPaper(null)
-            */
-
-            if (woyouService != null) {
-                setHeaderData(context, orderNumber, date, customerName, phoneNumber, address1, address2)
-                woyouService!!.printText("\n", null)
-                woyouService!!.setFontSize(24f, null)
-                woyouService!!.sendRAWData(normalFont(), null)
-//                woyouService!!.printText("================================\n", null)
-//                woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_ItemName).toUpperCase(), 22) + leftPadZeros(context.getString(R.string.lbl_Price).toUpperCase(), 8) + "\n", null)
                 woyouService!!.printText("-----------------------------\n", null)
-
-
                 for (product in arrProduct){
                     val addonsArray = JSONArray(product.options)
-                    woyouService!!.printText(rightPadZeros(truncateString(product.quantity.toString(), 15, true)+" x "+truncateString(product.name.toString(), 15, true),22) + leftPadZeros(truncateString(" " + currency + " " + product.price, 15, true), 8) + "\n", null)
+                    val arrIngridiants = JSONArray(product.ingredients)
+                    val fmt1 = Formatter()
+                    var splittedString : List<String?>? = splitIntoLine(product.name,18)
+                    var linecount =0
+                    for(item in splittedString!!){
+                        if(linecount==0){
+                            fmt1.format("%-2s X %-18s %5s\n", product.quantity.toString(),item.toString(), product.price)
+                        }else{
+                            fmt1.format("%-2s   %-18s %5s\n", "",item.toString(),"")
+                        }
+                        linecount++
+                    }
+                    woyouService!!.printText(fmt1.toString()+"\n", null)
+
                     for (i in 0..addonsArray.length() - 1) {
                         val addon = addonsArray.getJSONObject(i)
                         val suboptionsArray = addon.getJSONArray("suboptions")
@@ -470,28 +279,58 @@ class OrderPreviewActivity : AppCompatActivity() {
                             var name = suboption.getString("name");
                             var qty =  suboption.getInt("quantity").toString()+" x "
                             var price = suboption.getString("price");
+                            val fmtSubPoints = Formatter()
                             if(price.toInt()>0){
-                                woyouService!!.printText(rightPadZeros(truncateString(qty, 15, true)+truncateString(name, 15, true),22) + leftPadZeros(truncateString(" " + currency + " " + price, 15, true), 8) + "\n", null)
+                                var splittedString : List<String?>? = splitIntoLine(name,18)
+                                var linecount =0
+                                for(item in splittedString!!){
+                                    if(linecount==0){
+                                        fmtSubPoints.format("%-2s X %-18s %5s\n", qty.toString(),item.toString(), price)
+                                    }else{
+                                        fmtSubPoints.format("%-2s   %-18s %5s\n", "",item.toString(),"")
+                                    }
+                                    linecount++
+                                }
+                                woyouService!!.printText( fmtSubPoints.toString(), null)
                             }
                             else{
-                                woyouService!!.printText(rightPadZeros(truncateString("", 15, true)+" "+truncateString(name, 15, true),22) + leftPadZeros(truncateString(" " + " " + " " + " ", 15, true), 8) + "\n", null)
+                                var splittedString : List<String?>? = splitIntoLine(name,18)
+                                var linecount =0
+                                for(item in splittedString!!){
+                                    if(linecount==0){
+                                        fmtSubPoints.format("%-2s X %-18s %5s\n", qty.toString(),item.toString(), "")
+                                    }else{
+                                        fmtSubPoints.format("%-2s   %-18s %5s\n", "",item.toString(),"")
+                                    }
+                                    linecount++
+                                }
+                                woyouService!!.printText( fmtSubPoints.toString(), null)
+
                             }
-
-
                         }
 
                     }
+
+                    for(i in 0..arrIngridiants.length()-1){
+                        var ingreItem = arrIngridiants.getJSONObject(i)
+                        var IngridiantsName = ingreItem.getString("name")
+                        val fmtIngridiants = Formatter()
+                        var splittedString : List<String?>? = splitIntoLine(IngridiantsName,18)
+                        var linecount =0
+                        for(item in splittedString!!){
+                            if(linecount==0){
+                                fmtIngridiants.format("%-8s %-18s\n","Ta bort:",item.toString())
+                            }else{
+                                fmtIngridiants.format("%-8s %-18s\n","",item.toString())
+                            }
+                            linecount++
+                        }
+                        woyouService!!.printText(fmtIngridiants.toString(), null)
+
+                    }
+
                     woyouService!!.printText("-----------------------------\n", null)
-
-
                 }
-//                for (i in arrProNAme.indices) {
-////                    val items = orderDetail.lstobjServiceOrderItem[i]
-//                    //woyouService!!.printText(rightPadZeros(truncateString(arrProNAme.get(i), 15, true) + truncateString(" " + currency + " " + arrProPrice.get(i), 15, true), 43) + "\n", null)
-//                    woyouService!!.printText(rightPadZeros(truncateString(arrProQty.get(i), 15, true)+"x"+truncateString(arrProNAme.get(i), 15, true),22) + leftPadZeros(truncateString(" " + currency + " " + arrProPrice.get(i), 15, true), 8) + "\n", null)
-//
-////                    woyouService!!.printText(rightPadZeros(truncateString("", 15, true), 27) + rightPadZeros(if (items.status == Default.COMPLETED) items.itemQty.toString() else (items.itemQty - (items.itemQty * 2)).toString(), 6) + " " + leftPadZeros(String.format(Locale.getDefault(), Constants.StringFormat, currency, getTwoDecimalValue(if (items.status == Default.COMPLETED) (items.pricePerUnit * items.itemQty) else (if (items.status == Default.SINGLERETURN) ((items.pricePerUnit - (items.pricePerUnit * 2)) * items.itemQty) else (items.pricePerUnit - (items.pricePerUnit * 2)) * items.itemQty))), 10) + "\n", null)
-//                }//example for set order Object
                 woyouService!!.sendRAWData(normalFont(), null)
                 woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_subTotal), 17) + "" + leftPadZeros("$currency $subTotal", 11) + "\n", null)
                 woyouService!!.printText(rightPadZeros(context.getString(R.string.lbl_Delivery_free), 17) + "" + leftPadZeros("$currency "+if(deliveryFee.equals("0") || deliveryFee.equals("null") || deliveryFee.equals("") || deliveryFee.equals(" ")) "0" else deliveryFee, 11) + "\n", null)
@@ -509,15 +348,13 @@ class OrderPreviewActivity : AppCompatActivity() {
                 woyouService!!.cutPaper(null)
                 startActivity(Intent(applicationContext, Expandablectivity::class.java).putExtra("businessID",businessID).putExtra(SharedPreferencesKeys.isDBLoadRequired,false))
                 finish()
-
             }
         } catch (ex: RemoteException) {
 
         }
     }
 
-
-    private fun setHeaderData(context: Context, orderNumber: Int, date: String, customerName: String, phoneNumber: String, address1: String, address2: String) {
+    private fun setHeaderData(context: Context, orderNumber: Int, date: String, customerName: String, phoneNumber: String, address1: String, address2: String, address_note: String) {
         val onlytime: String? = date.substringAfterLast(" ")
         val onlydate: String? = date.substringBefore(" ")
 
@@ -546,7 +383,7 @@ class OrderPreviewActivity : AppCompatActivity() {
             woyouService!!.setFontSize(40f, null)
             woyouService!!.sendRAWData(boldFont(), null)
             woyouService!!.sendRAWData(alignCenter(), null)
-            woyouService!!.printText(truncateString(context.getString(R.string.lbl_Name), 30) + "\n\n", null)
+            woyouService!!.printText(truncateString(context.getString(R.string.lbl_Name), 30) + "\n", null)
             woyouService!!.setFontSize(26f, null)
             woyouService!!.sendRAWData(normalFont(), null)
             woyouService!!.printText("# " + "$orderNumber" + "\n", null)
@@ -554,12 +391,12 @@ class OrderPreviewActivity : AppCompatActivity() {
             woyouService!!.sendRAWData(normalFont(), null)
             woyouService!!.printText("-----------------------------\n", null)
             woyouService!!.sendRAWData(boldFont(), null)
-            woyouService!!.printText(truncateString(DeliveryText.toUpperCase(), 30) + "\n\n", null)
+            woyouService!!.printText(truncateString(DeliveryText.toUpperCase(), 30) + "\n", null)
             woyouService!!.setFontSize(24f, null)
             woyouService!!.sendRAWData(normalFont(), null)
-            woyouService!!.printText( preparedIn.toString()+" min" + "\n\n", null)
+            woyouService!!.printText( preparedIn.toString()+" min" + "\n", null)
             woyouService!!.sendRAWData(normalFont(), null)
-            woyouService!!.printText( onlydate!!.toUpperCase() + "\n\n", null) // createdDate
+            woyouService!!.printText( onlydate!!.toUpperCase() + "\n", null) // createdDate
             woyouService!!.sendRAWData(normalFont(), null)
             woyouService!!.printText( onlytime!!.dropLast(3)!!.toUpperCase() + "\n\n", null) // createdDate
             woyouService!!.setFontSize(26f, null)
@@ -567,31 +404,30 @@ class OrderPreviewActivity : AppCompatActivity() {
             woyouService!!.printText(truncateString(context.getString(R.string.lbl_Customer).toUpperCase(), 30) + "\n", null)
             woyouService!!.sendRAWData(normalFont(), null)
             woyouService!!.setFontSize(24f, null)
-            woyouService!!.printText(truncateString("$customerName", 30) + "\n\n", null)
-            woyouService!!.printText(truncateString("$phoneNumber", 30) + "\n\n", null)
+            woyouService!!.printText(truncateString("$customerName", 30) + "\n", null)
+            if(phoneNumber!=null) {
+                woyouService!!.printText(truncateString("$phoneNumber", 30) + "\n\n", null)
+            }
             woyouService!!.sendRAWData(alignCenter(), null)
             var a1 = address1.substringBefore(",")
             var a2 = address1.substringAfter(",")
-            woyouService!!.printText(truncateString(a1, 32) + "\n\n", null)
+            woyouService!!.printText(truncateString(a1, 32) + "\n", null)
             woyouService!!.sendRAWData(alignCenter(), null)
             woyouService!!.printText(truncateString(a2, 32) + "\n\n", null)
 //            woyouService!!.printText(truncateString("$address2", 30) + "\n\n", null)
             woyouService!!.setFontSize(26f, null)
             woyouService!!.sendRAWData(boldFont(), null)
-            woyouService!!.printText(truncateString(context.getString(R.string.lbl_notes).toUpperCase(), 30) + "\n\n", null)
-            woyouService!!.setFontSize(24f, null)
-            woyouService!!.sendRAWData(normalFont(), null)
-            woyouService!!.printText(truncateString(context.getString(R.string.lbl_notes_), 30) + "\n", null)
+            if(address_note.equals("null") || address_note.equals("")) {
 
-        }
-    }
+            } else {
+                woyouService!!.printText(truncateString(context.getString(R.string.lbl_notes).toUpperCase(), 30) + "\n\n", null)
+                woyouService!!.setFontSize(24f, null)
+                woyouService!!.sendRAWData(normalFont(), null)
+                woyouService!!.printText(truncateString(address_note, 30) + "\n", null)
+            }
 
-    fun printPhoto() {
-        try {
-            val icon = BitmapFactory.decodeResource(resources, R.drawable.ic_logo_name)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Log.e("PrintTools", "the file isn't exists")
+
+
         }
     }
 
@@ -608,12 +444,6 @@ class OrderPreviewActivity : AppCompatActivity() {
 
     fun leftPadZeros(str: String, num: Int): String {
         return String.format("%1$" + num + "s", str).replace(' ', ' ')
-    }
-
-    fun getDate(format: String): String {
-        val c = Calendar.getInstance()
-        val simpleDateFormat = SimpleDateFormat(format)
-        return simpleDateFormat.format(c.time)
     }
 
     private fun boldFont(): ByteArray? {
@@ -640,22 +470,6 @@ class OrderPreviewActivity : AppCompatActivity() {
         return result
     }
 
-    fun alignLeft(): ByteArray? {
-        val result = ByteArray(3)
-        result[0] = Default.ESC
-        result[1] = 97
-        result[2] = 0
-        return result
-    }
-
-    //
-    private fun printerConfigure(context: Context) {
-        if (woyouService != null) {
-            woyouService!!.setFontSize(30f, null)
-            woyouService!!.printText("Hello", null)
-        }
-    }
-
     fun connectPrinter(context: Context) {
         val intent = Intent()
         intent.setPackage(Constants.SERVICE_PACKAGE)
@@ -670,14 +484,6 @@ class OrderPreviewActivity : AppCompatActivity() {
         finish()
 
     }
-    fun connectPrinterAcceptOrder(context: Context) {
-        val intent = Intent()
-        intent.setPackage(Constants.SERVICE_PACKAGE)
-        intent.action = Constants.SERVICE_ACTION
-        context.applicationContext.startService(intent)
-        context.applicationContext.bindService(intent, connService, Context.BIND_AUTO_CREATE)
-    }
-
 
     fun showBottomSheetDialog(){
 //        var  bottomSheetDialog: BottomSheetDialog =  BottomSheetDialog(this)
@@ -777,35 +583,8 @@ class OrderPreviewActivity : AppCompatActivity() {
                     orderDao!!.changeOrderStatus(orderId,Constants.acceptStatus)
                     orderDao!!.setPreparedTime(orderId,preparedTime)
                     lottieProgressDialog!!.cancelDialog()
-//                    connectPrinter(applicationContext)
                     prefManager!!.setString(SharedPreferencesKeys.lastAcceptedOrder,orderId);
-                    testSunmiPrintAcceptOrder(applicationContext, orderId.toInt(), orderDate, customerNAme, customerMobno, customerAddress, customerAddress,"", subtotal,deliveryFee, total, arrProNAme,arrProQty,arrProPrice,arrProduct )
-
-                    /*val sweetAlertDialog = SweetAlertDialog(this@OrderPreviewActivity, SweetAlertDialog.WARNING_TYPE)
-                    sweetAlertDialog.setCanceledOnTouchOutside(false)
-                    sweetAlertDialog.setCancelable(false)
-                    sweetAlertDialog.contentText = resources.getString(R.string.lbl_accept_done) //sweetAlertDialog.contentTextSize = resources.getDimension(R.dimen._7ssp).roundToInt(
-                    sweetAlertDialog.confirmText = resources.getString(R.string.lbl_OK)
-                    sweetAlertDialog.confirmButtonBackgroundColor = resources.getColor(R.color.green)
-                    sweetAlertDialog.showCancelButton(true)
-                    sweetAlertDialog.setCancelClickListener { sDialog ->
-                        sDialog.cancel()
-                    }
-                    sweetAlertDialog.setConfirmClickListener { sDialog ->
-                        connectPrinter(applicationContext)
-                        testSunmiPrintAcceptOrder(applicationContext, orderId.toInt(), orderDate, customerNAme, customerMobno, customerAddress, customerAddress,"$", subtotal,deliveryFee, total, arrProNAme,arrProQty,arrProPrice )
-
-
-//                        startActivity(Intent(applicationContext, Expandablectivity::class.java).putExtra("businessID",businessID))
-//
-//                        finish()
-                    }
-//                        .show()
-
-
-                     */
-//                    Toast.makeText(applicationContext,"order accepted", Toast.LENGTH_SHORT).show()
-
+                    testSunmiPrintAcceptOrder(applicationContext, orderId.toInt(), orderDate, customerNAme, customerMobno, customerAddress, customerAddress,"", subtotal,deliveryFee, total, arrProNAme,arrProQty,arrProPrice,arrProduct,note )
                 } else {
                     lottieProgressDialog!!.cancelDialog()
                     val sweetAlertDialog = SweetAlertDialog(this@OrderPreviewActivity, SweetAlertDialog.WARNING_TYPE)
@@ -845,7 +624,6 @@ class OrderPreviewActivity : AppCompatActivity() {
         })
     }
 
-
     fun init() {
         intentBroadcast = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
@@ -858,6 +636,7 @@ class OrderPreviewActivity : AppCompatActivity() {
             }
         }
     }
+
     fun setButtonColor(tv11: Boolean=false,tv15: Boolean=false,tv20: Boolean=false,tv25: Boolean=false,tv30: Boolean=false,tv40: Boolean=false,tv45: Boolean = false,tv50: Boolean=false,tv60: Boolean=false,tv70: Boolean=false,tv80: Boolean=false,tv90: Boolean=false){
         binding!!.bottomSheetOrderMinutes.tv11.setBackgroundResource(if(tv11) R.color.appOrange else R.color.white)
         binding!!.bottomSheetOrderMinutes.tv11.setTextColor(if(tv11) Color.WHITE else Color.BLACK)
@@ -900,60 +679,9 @@ class OrderPreviewActivity : AppCompatActivity() {
 
     }
 
-    private fun getBitmapFromView(view: View): Bitmap? {
-        //Define a bitmap with the same size as the view
-        val returnedBitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
-        //Bind a canvas to it
-        val canvas = Canvas(returnedBitmap)
-        //Get the view's background
-        val bgDrawable = view.background
-        if (bgDrawable != null) {
-            //has background drawable, then draw it on the canvas
-            bgDrawable.draw(canvas)
-        } else {
-            //does not have background drawable, then draw white background on the canvas
-            canvas.drawColor(Color.WHITE)
-        }
-        // draw the view on the canvas
-        view.draw(canvas)
-        //return the bitmap
-        return returnedBitmap
-    }
-    fun onClick(bitmap : Bitmap) {
-        var mytype : Int = 0;
-        if (!BluetoothUtil.isBlueToothPrinter) {
-//            SunmiPrintHelper.getInstance().printBitmap(bitmap,1)
-//            SunmiPrintHelper.getInstance().feedPaper()
-        } else {
-//            if (mytype == 0) {
-//                if (mCheckBox1.isChecked() && mCheckBox2.isChecked()) {
-//                    BluetoothUtil.sendData(ESCUtil.printBitmap(bitmap1, 3))
-//                } else if (mCheckBox1.isChecked()) {
-//                    BluetoothUtil.sendData(ESCUtil.printBitmap(bitmap1, 1))
-//                } else if (mCheckBox2.isChecked()) {
-//                    BluetoothUtil.sendData(ESCUtil.printBitmap(bitmap1, 2))
-//                } else {
-//                    BluetoothUtil.sendData(ESCUtil.printBitmap(bitmap1, 0))
-//                }
-//            } else if (mytype == 1) {
-//                BluetoothUtil.sendData(ESCUtil.selectBitmap(bitmap1, 0))
-//            } else if (mytype == 2) {
-//                BluetoothUtil.sendData(ESCUtil.selectBitmap(bitmap1, 1))
-//            } else if (mytype == 3) {
-//                BluetoothUtil.sendData(ESCUtil.selectBitmap(bitmap1, 32))
-//            } else if (mytype == 4) {
-//                BluetoothUtil.sendData(ESCUtil.selectBitmap(bitmap1, 33))
-//            }
-//            BluetoothUtil.sendData(ESCUtil.printBitmap(bitmap, 3))
-//            BluetoothUtil.sendData(ESCUtil.nextLine(3))
-        }
-    }
-
-//    fun setColor()
-
     private fun showDialog( orderId : String, date: String, amt : String, deliveryType : String) {
         runOnUiThread {
-            dialog = Dialog(this@OrderPreviewActivity)
+            custom_dialog = Dialog(this@OrderPreviewActivity)
 
             if(!mplayer.isPlaying)
             {
@@ -961,14 +689,14 @@ class OrderPreviewActivity : AppCompatActivity() {
                 mplayer.start()
             }
 
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-            dialog.setCancelable(false)
-            dialog.setContentView(R.layout.dialog_new_order)
-            val textView9 = dialog.findViewById(R.id.textView9) as TextView
-            val textView6 = dialog.findViewById(R.id.textView6) as TextView
-            val textView8 = dialog.findViewById(R.id.textView8) as TextView
-            val tvDate = dialog.findViewById(R.id.tvDate) as TextView
-            val tvTime = dialog.findViewById(R.id.tvTime) as TextView
+            custom_dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            custom_dialog.setCancelable(false)
+            custom_dialog.setContentView(R.layout.dialog_new_order)
+            val textView9 = custom_dialog.findViewById(R.id.textView9) as TextView
+            val textView6 = custom_dialog.findViewById(R.id.textView6) as TextView
+            val textView8 = custom_dialog.findViewById(R.id.textView8) as TextView
+            val tvDate = custom_dialog.findViewById(R.id.tvDate) as TextView
+            val tvTime = custom_dialog.findViewById(R.id.tvTime) as TextView
 
 
             var deliveryType1 : String = ""
@@ -990,15 +718,15 @@ class OrderPreviewActivity : AppCompatActivity() {
             tvDate.setText("    "+date.toString()+"    ")
             tvTime.setText("   "+time.toString()+"   ")
 
-            val btnclose = dialog.findViewById(R.id.btnclose) as ImageView
-            val confirmOrderBtn = dialog.findViewById(R.id.confirm_order_btn) as TextView
+            val btnclose = custom_dialog.findViewById(R.id.btnclose) as ImageView
+            val confirmOrderBtn = custom_dialog.findViewById(R.id.confirm_order_btn) as TextView
             btnclose.setOnClickListener {
                 orderDao!!.deleteFromQueue(orderId)
                 if(mplayer.isPlaying)
                 {
                     mplayer.stop()
                 }
-                dialog.dismiss()
+                custom_dialog.dismiss()
             }
             confirmOrderBtn.setOnClickListener {
                 orderDao!!.deleteFromQueue(orderId)
@@ -1006,7 +734,7 @@ class OrderPreviewActivity : AppCompatActivity() {
                 {
                     mplayer.stop()
                 }
-                dialog.dismiss()
+                custom_dialog.dismiss()
                 val i = Intent(applicationContext, OrderPreviewActivity::class.java)
                 i.putExtra("orderId", orderId)
                 i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -1015,7 +743,7 @@ class OrderPreviewActivity : AppCompatActivity() {
 
             }
 
-            dialog.show()
+            custom_dialog.show()
         }
     }
 
@@ -1038,4 +766,36 @@ class OrderPreviewActivity : AppCompatActivity() {
         }
     }
 
+    fun splitIntoLine(input: String, maxCharInLine: Int): List<String?>? {
+        val tok = StringTokenizer(input, " ")
+        val output = StringBuilder(input.length)
+        var lineLen = 0
+        var lineNumber =0
+        while (tok.hasMoreTokens()) {
+
+            var word = tok.nextToken()
+            while (word.length > maxCharInLine) {
+                output.append(
+                    """
+                    ${word.substring(0, maxCharInLine - lineLen)}
+                    
+                    """.trimIndent()
+                )
+                word = word.substring(maxCharInLine - lineLen)
+                lineLen = 0
+            }
+            if (lineLen + word.length > maxCharInLine) {
+                output.append("\n")
+
+                lineLen = 0
+                lineNumber=lineNumber+1
+
+            }
+            output.append("$word ")
+
+            lineLen += word.length + 1
+
+        }
+        return output.toString().split("\n")
+    }
 }

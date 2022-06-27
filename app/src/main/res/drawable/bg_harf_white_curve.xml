@@ -3,6 +3,8 @@
     <corners
         android:topRightRadius="@dimen/_16sdp"
         android:topLeftRadius="@dimen/_16sdp"
+        android:bottomRightRadius="@dimen/_16sdp"
+        android:bottomLeftRadius="@dimen/_16sdp"
         />
     <gradient android:angle="180"
         android:startColor="#A6EAEAEC"

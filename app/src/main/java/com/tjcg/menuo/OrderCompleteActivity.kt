@@ -10,6 +10,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.tjcg.menuo.adapter.OrderComepleteAdapter
 import com.tjcg.menuo.data.local.AppDatabase
 import com.tjcg.menuo.data.local.OrderDao
+import com.tjcg.menuo.dialog.NewOrderDialog
 import com.tjcg.menuo.utils.Default
 import com.tjcg.menuo.utils.SharedPreferencesKeys
 import java.util.ArrayList
@@ -50,11 +51,14 @@ class OrderCompleteActivity : AppCompatActivity(), OrderComepleteAdapter.orderCl
 
     override fun onItemClick(orderId: String, position: Int) {
         this.sendBroadcast(Intent(Default.IS_FROM_DONE).putExtra(Default.IS_ORDER_DONE_ACTIVITY, true))
-        val i = Intent(this@OrderCompleteActivity, OrderPreviewActivity::class.java)
-        i.putExtra("orderId", orderId)
-        i.putExtra("OrderDone", true)
-        i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        startActivity(i)
+//        val i = Intent(this@OrderCompleteActivity, OrderPreviewActivity::class.java)
+//        i.putExtra("orderId", orderId)
+//        i.putExtra("OrderDone", true)
+//        i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//        startActivity(i)
+
+        val newOrderDialog = NewOrderDialog(orderId)
+        newOrderDialog.show(getSupportFragmentManager(), "")
     }
 
     fun convertIntToString(objInt: List<Int>) : List<String>{

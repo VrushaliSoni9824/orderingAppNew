@@ -31,11 +31,6 @@ class chooseBusinessKt(rList: MutableList<BusinessItem>, context: Context) :
     var prefManager: PrefManager? = null
     private var itemList: MutableList<BusinessItem> = ArrayList()
 
-//    override fun add(`object`: BusinessItem?) {
-//        itemList.add(`object`)
-//        super.add(`object`)
-//    }
-
     private inner class ViewHolder {
         var textViewBusinessName: TextView? = null
     }
@@ -62,21 +57,8 @@ class chooseBusinessKt(rList: MutableList<BusinessItem>, context: Context) :
         } else holder = convertView.tag as ViewHolder
         val item = getItem(position)
         holder.textViewBusinessName!!.text = item.itemName
-//        convertView!!.seton{
-//            Toast.makeText(context,"Itemclicked", Toast.LENGTH_LONG).show()
-//            val item = getItem()
-//            var businessOwnerNAme = item.owner_id
-//            var businessNAme = item.itemName
-//            prefManager!!.setString(SharedPreferencesKeys.businessName, businessNAme)
-//            prefManager!!.setString(SharedPreferencesKeys.businessOwner, businessOwnerNAme)
-//            prefManager!!.setBoolean("isLogin", true)
-//            prefManager!!.setString("businessID", item.id.toString())
-//
-//            val inten = Intent()
-//            inten.action = "businessChoosed"
-//            context.sendBroadcast(inten)
-//
-//        }
+
+
         return convertView!!
     }
 

@@ -17,17 +17,11 @@ interface ApiInterface {
     fun loginAdminUser(@Field("email") emailId: String?,
                        @Field("password") password: String?): Call<LoginRs>
 
-    @GET("keys")
-    fun getkeys(): Call<KeyResponce?>
-
     @GET
     fun getUsers(@Url url: String?,@Header("x-api-key") x_api_key: String?): Call<String?>?
 
     @GET
     fun findOrder(@Url url: String?,@Header("x-api-key") x_api_key: String?): Call<String?>?
-
-    @GET
-    fun getNotificationToken(@Url url: String?,@Header("x-api-key") x_api_key: String?): Call<String?>?
 
     @FormUrlEncoded
     @PUT("https://apiv4.ordering.co/v400/en/menuo/orders/{order_id}")

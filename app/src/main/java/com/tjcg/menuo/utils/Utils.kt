@@ -4,6 +4,9 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProviders
 import butterknife.internal.Utils
 import com.tjcg.menuo.viewmodel.SyncViewModel
@@ -46,6 +49,17 @@ class Utils {
 //        return outletsRS;
 //    }
 
+    fun dismissAllDialogs(manager: FragmentManager?) {
+        val fragments: List<Fragment> = manager!!.getFragments() ?: return
+        for (fragment in fragments) {
+            if (fragment is DialogFragment) {
+                val dialogFragment: DialogFragment = fragment as DialogFragment
+                dialogFragment.dismissAllowingStateLoss()
+            }
+            val childFragmentManager: FragmentManager = fragment.getChildFragmentManager()
+            if (childFragmentManager != null) dismissAllDialogs(childFragmentManager)
+        }
+    }
 
 
 
