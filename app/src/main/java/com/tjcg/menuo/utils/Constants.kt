@@ -21,6 +21,9 @@ object Constants {
     @JvmStatic
     var bearrToken = ""
 
+    @JvmStatic
+    var bearrToken_subUSER = ""
+
     const val URL = "http://apiv4.ordering.co/v400/en/menuo/orders?"
     const val NOTIFY_API_URL = "https://menuo.area81-ns.se/menuo-notify/public/api/v1/"
 //    const val BUSINESS_URL = "https://apiv4.ordering.co/v400/en/menuo/users/"

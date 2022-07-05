@@ -137,11 +137,11 @@
     <string name="lbl_reject_possible">Call your customer to resolve the issue as politely as possible.</string>
     <string name="lbl_reject_noification">The order will be marked as rejected and the customer will be informed with an notification.</string>
     <string name="lbl_phone_number">Phone number:</string>
-    <string name="lbl_Cancelled">Cancelled</string>
-    <string name="lbl_StillLoggedIn">Still LoggedIn</string>
+    <string name="lbl_Cancelled">Avbruten</string>
+    <string name="lbl_StillLoggedIn">Fortfarande inloggad</string>
     <string name="dialog_ok">Ok</string>
     <string name="lbl_LoggedOut">LoggedOut</string>
-    <string name="lbl_WantToLogOut"> You want to logout</string>
+    <string name="lbl_WantToLogOut"> Vill du logga ut?</string>
     <string name="lbl_NoInternet"> No Internet ! Check your internet connectivity</string>
     <string name="lbl_reject"> Are you sure you want to reject?</string>
     <string name="lbl_accept"> Are you sure you want to accept?</string>
@@ -151,7 +151,16 @@
     <string name="lbl_noBusinessFound"> Business not found with this login</string>
     <string name="lbl_chooseBusiness"> Välj företag</string>
     <string name="lbl_error"> Something went wrong ! Try again</string>
-    <string name="lbl_NO">No</string>
-    <string name="lbl_YES">Yes</string>
+    <string name="lbl_NO">Nej</string>
+    <string name="lbl_YES">ja</string>
     <string name="lbl_OK">OK</string>
+    <string name="email"> Enter E-postadress</string>
+    <string name="Password">Lösenord</string>
+    <string name="DoneOrder">Arkiv</string>
+    <string name="Logout">Logga ut</string>
+    <string name="Sicess">Inloggad</string>
+
+    <string name="Completeorder">Färdigbehandlade</string>
+    <string name="Forgotpassword">Glömt lösenordet?</string>
+    <string name="Signin">Logga in</string>
 </resources>

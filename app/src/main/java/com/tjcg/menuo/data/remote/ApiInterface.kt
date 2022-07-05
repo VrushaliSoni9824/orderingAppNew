@@ -2,6 +2,7 @@ package com.tjcg.menuo.data.remote
 
 import androidx.lifecycle.LiveData
 import com.tjcg.menuo.data.repository.ApiResponse
+import com.tjcg.menuo.data.response.GETAPIKEY.getAPIKEY
 import com.tjcg.menuo.data.response.IntermediatorServerAPI.IntermediatorLogin
 import com.tjcg.menuo.data.response.IntermediatorServerAPI.IntermediatorLogout
 import com.tjcg.menuo.data.response.Keys.KeyResponce
@@ -20,8 +21,16 @@ interface ApiInterface {
     @GET
     fun getUsers(@Url url: String?,@Header("x-api-key") x_api_key: String?): Call<String?>?
 
+
     @GET
     fun findOrder(@Url url: String?,@Header("x-api-key") x_api_key: String?): Call<String?>?
+
+//    @Query
+    @POST("https://apiv4.ordering.co/v400/en/menuo/users/{userID}/keys")
+    fun getAPIKEY(@Path("userID") userID : String, @Body body: Any = Object()): Call<getAPIKEY>;
+//    fun createPostRequest(@Body body: Any = Object()): Call<YourResponseType>
+
+
 
     @FormUrlEncoded
     @PUT("https://apiv4.ordering.co/v400/en/menuo/orders/{order_id}")

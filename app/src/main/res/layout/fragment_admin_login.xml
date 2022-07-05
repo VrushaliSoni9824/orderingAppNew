@@ -47,7 +47,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_5sdp"
                         android:layout_marginTop="@dimen/_10sdp"
-                        android:text="Email Address"
+                        android:text="@string/email"
                         android:textColor="@color/white" />
 
                     <EditText
@@ -70,7 +70,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_5sdp"
                         android:layout_marginTop="@dimen/_10sdp"
-                        android:text="Password"
+                        android:text="@string/Password"
                         android:textColor="@color/white" />
 
                     <!--                    <com.google.android.material.textfield.TextInputLayout-->
@@ -125,7 +125,7 @@
                         android:background="@drawable/button_orange"
                         android:gravity="center"
                         android:padding="@dimen/_8sdp"
-                        android:text="Sign In"
+                        android:text="@string/Signin"
                         android:textAllCaps="false"
                         android:textColor="@color/white"
                         android:textSize="@dimen/_18ssp"
@@ -192,7 +192,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="Forget password?" />
+                    android:text="@string/Forgotpassword" />
 
             </LinearLayout>
         </LinearLayout>

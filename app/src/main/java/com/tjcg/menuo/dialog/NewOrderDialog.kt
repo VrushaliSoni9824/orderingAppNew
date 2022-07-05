@@ -212,6 +212,10 @@ class NewOrderDialog( var orderId : String) : DialogFragment() {
 
         binding!!.imageViewBack.setOnClickListener {
             dialog!!.dismiss()
+            val inten = Intent()
+            inten.action = "refreshLocal"
+            requireContext().sendBroadcast(inten)
+
         }
 
         binding!!.bottomSheetOrderMinutes.tv11.setOnClickListener { preparedIn = "10"; setButtonColor(tv11 = true)}
@@ -311,6 +315,7 @@ class NewOrderDialog( var orderId : String) : DialogFragment() {
 
                     }
 
+                    woyouService!!.sendRAWData(alignLeft(), null)
                     if(product.comment.toString().equals("null")){
 
                     }else{
@@ -508,6 +513,14 @@ class NewOrderDialog( var orderId : String) : DialogFragment() {
         result[0] = Default.ESC
         result[1] = 97
         result[2] = 1
+        return result
+    }
+
+    fun alignLeft(): ByteArray? {
+        val result = ByteArray(3)
+        result[0] = Default.ESC
+        result[1] = 97
+        result[2] = 0
         return result
     }
 

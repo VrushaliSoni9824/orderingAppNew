@@ -44,6 +44,7 @@ import com.tjcg.menuo.OrderPreviewActivity
 import com.tjcg.menuo.adapter.chooseBusinessKt
 //import com.tjcg.menuo.adapter.ChooseBusinessListAdapter
 import com.tjcg.menuo.data.response.BusinessList.BusinessItem
+import com.tjcg.menuo.data.response.GETAPIKEY.getAPIKEY
 import com.tjcg.menuo.utils.*
 import java.lang.Exception
 
@@ -126,7 +127,9 @@ class AdminLoginFragment : Fragment() {
                     prefManager!!.setString("auth_token", accessToken)
                     prefManager!!.setString("owner_id", owner_id.toString())
                     prefManager!!.setString(SharedPreferencesKeys.businessOwner, owner_name.toString())
-                    getUsers(Constants.apiKey)
+
+                    getAPIKEY(owner_id.toString())
+//                    getUsers(Constants.apiKey)
                 } else {
                     lottieProgressDialog!!.cancelDialog()
                     Toast.makeText(activity,"Wrong detail",Toast.LENGTH_SHORT).show()
@@ -141,7 +144,34 @@ class AdminLoginFragment : Fragment() {
             }
         })
     }
+    fun getAPIKEY(owner_id: String) {
 
+        ServiceGenerator.nentoApi2.getAPIKEY(owner_id).enqueue(object :
+            Callback<getAPIKEY?> {
+            @SuppressLint("NewApi", "ResourceAsColor")
+            @RequiresApi(Build.VERSION_CODES.O)
+            override fun onResponse(call: Call<getAPIKEY?>, response: Response<getAPIKEY?>) {
+                if (response.isSuccessful) {
+//                    Toast.makeText(activity,"siccess",Toast.LENGTH_SHORT).show()
+                    var SubUSERAPIKEy=response.body()!!.result.key
+                    prefManager!!.setString("SubUSERAPIKEy", SubUSERAPIKEy)
+                    getUsers(SubUSERAPIKEy)
+                } else {
+                    lottieProgressDialog!!.cancelDialog()
+                    Toast.makeText(activity,"Wrong detail",Toast.LENGTH_SHORT).show()
+                    Log.e("tag", " =  = = =error = ==  " + response.message())
+                }
+            }
+
+            override fun onFailure(call: Call<getAPIKEY?>, t: Throwable) {
+                lottieProgressDialog!!.cancelDialog()
+                Toast.makeText(activity,"Error",Toast.LENGTH_SHORT).show()
+                Log.e("tag", " =  = = =error = ==  " + t.message)
+            }
+        })
+
+
+    }
     fun getOrders(key: String) {
         var url =Constants.URL
         url=url+"page_size="+"5000"+"&mode="+"dashboard"+"&page="+"1"
@@ -163,7 +193,7 @@ class AdminLoginFragment : Fragment() {
                     i.putExtra("odata",orderResult)
                     i.putExtra(SharedPreferencesKeys.isDBLoadRequired,true)
                     startActivity(i)
-
+                    activity!!.finish()
 
                 } else {
                     lottieProgressDialog!!.cancelDialog()
@@ -200,16 +230,20 @@ class AdminLoginFragment : Fragment() {
                     val jobj = JSONObject(orderResult)
                     val jsnResult : JSONArray = jobj.getJSONArray("result")!!
                     for (result in 0..jsnResult.length()-1) {
+
+
                         var jsonUser : JSONObject = jsnResult.getJSONObject(result)
                         var id =  jsonUser.getString("id")
                         var emailNew =  jsonUser.getString("email")
-                        var owner_id_api =  jsonUser.getString("owner_id")
+//                        var owner_id_api =  jsonUser.getString("owner_id")
                         var businessName =  jsonUser.getString("name")
+                        var bItem = BusinessItem(id,businessName,email)
+                        arrBusinessItem.add(bItem)
 //                        if(emailNew.equals(email) && businessName.equals("Menuo Demo") && owner_id_pref.equals(owner_id_api)){
-                        if(emailNew.equals(email) && owner_id_pref.equals(owner_id_api)){
-                            var bItem = BusinessItem(id,businessName,owner_id_api,email)
-                            arrBusinessItem.add(bItem)
-                        }
+//                        if(emailNew.equals(email) && owner_id_pref.equals(owner_id_api)){
+//                            var bItem = BusinessItem(id,businessName,owner_id_api,email)
+//                            arrBusinessItem.add(bItem)
+//                        }
                     }
                     if(arrBusinessItem.size>1){
                         dialog = Dialog(requireContext())
@@ -249,7 +283,7 @@ class AdminLoginFragment : Fragment() {
 
                     }else if(arrBusinessItem.size==1){
 
-                        var businessOwnerNAme = arrBusinessItem.get(0).owner_id
+//                        var businessOwnerNAme = arrBusinessItem.get(0).owner_id
 
                         var businessNAme = arrBusinessItem.get(0).itemName
                         businessId = arrBusinessItem.get(0).id
@@ -315,6 +349,7 @@ class AdminLoginFragment : Fragment() {
                         i.putExtra("businessID",businessId)
                         i.putExtra(SharedPreferencesKeys.isDBLoadRequired,true)
                         startActivity(i)
+                        activity!!.finish()
 
                     }
                 } else {

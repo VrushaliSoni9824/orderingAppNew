@@ -105,6 +105,7 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
         mIntentFilter = IntentFilter()
         mIntentFilter!!.addAction("new_order")
         mIntentFilter!!.addAction("status_changed")
+        mIntentFilter!!.addAction("refreshLocal")
         registerReceiver(reMyreceive, mIntentFilter)
         dialog = Dialog(this@Expandablectivity)
         dialogOrderPreview  = Dialog(this@Expandablectivity)
@@ -250,7 +251,11 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
                     count = count + 1
                     responceString = response.body().toString()
 
-                    if(isFromNewOrder) parseOrderDataJson(responceString, true) else parseOrderDataJson(responceString)
+                    if(isFromNewOrder)
+                        parseOrderDataJson(responceString, true)
+                    else
+                        //demo
+                        parseOrderDataJson(responceString)
                 } else {
                     if(!isFromNewOrder) lottieProgressDialog!!.cancelDialog()
                     responceString = "error"
@@ -537,8 +542,8 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
                     buisnessJson.getString("address"),
                     buisnessJson.getString("address_notes"),
                     buisnessJson.getString("zipcode"),
-                    buisnessJson.getInt("cellphone"),
-                    buisnessJson.getInt("phone"),
+                    buisnessJson.getString("cellphone"),
+                    buisnessJson.getString("phone"),
                     buisnessJson.getString("location"),
                     buisnessJson.getString("header"),
                     buisnessJson.getString("pickup_time"),
@@ -763,7 +768,11 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
             paginationLink
 
             for (link in paginationLink) {
-                if(isFromNewOrder) getOrders(link, Constants.apiKey,true) else getOrders(link, Constants.apiKey)
+                if(isFromNewOrder)
+                    getOrders(link, Constants.apiKey,true)
+                else
+                    //demo
+                    getOrders(link, Constants.apiKey)
             }
 
         } catch (e: JSONException) {
@@ -819,7 +828,10 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
             prefManager!!.setBoolean(SharedPreferencesKeys.isFromLogin, true)
             var url = Constants.URL
             url = url + "page_size=" + "10" + "&mode=" + "dashboard" + "&page=" + "1" + "&where=[{\"attribute\":\"business_id\",\"value\":[" + businessId + "]}]"
-            if(isFromNewOrder) getPaginationInfor(url, Constants.apiKey, true) else getPaginationInfor(url, Constants.apiKey)
+            if(isFromNewOrder)
+                getPaginationInfor(url, Constants.apiKey, true)
+            else
+                getPaginationInfor(url, Constants.apiKey)
         }else{
             var orderListPending : List<Int> = orderDao!!.getPendingOrder()
             var orderListInprocess : List<Int> = orderDao!!.getInProgressOrder()
@@ -838,7 +850,8 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
                 )
             expandableListViewExample!!.setAdapter(expandableListAdapter)
             expandableListViewExample!!.expandGroup(1)
-            if(!isFromNewOrder) lottieProgressDialog!!.cancelDialog()
+            if(!isFromNewOrder)
+                lottieProgressDialog!!.cancelDialog()
         }
     }
     fun refreshFromLocal(){
@@ -1099,6 +1112,11 @@ class Expandablectivity : AppCompatActivity(),NewOrderDialog.ClickListener {
 //                        finish()
                         refreshFromLocal()
                     }
+                }
+                if(intent.action == "refreshLocal"){
+                    Log.e("refreshLocal", "called")
+                    refreshFromLocal()
+                    manageQue()
                 }
             } catch (e: Exception) {
                Log.e("Error BR", e.message.toString())
